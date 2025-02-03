@@ -232,7 +232,7 @@ export async function GET(req, res) {
 
     // If no valid conditions, return early or set a fallback query
     if (agendaConditions.length === 0) {
-      return []; // or return a fallback query
+      return NextResponse.json({ data: [] }, { status: 200 }); // return an empty data array
     }
 
     console.log("the agenda conditions", agendaConditions);
