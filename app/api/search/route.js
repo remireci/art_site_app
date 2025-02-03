@@ -96,12 +96,9 @@ const compareAgendaItems = (item1, item2) => {
 
 export async function GET(req, res) {
 
-  console.log("this is the roue");
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('terms');
   const queryTerms = query ? query.match(/(?:[^\s"]+|"[^"]*")/g) || [] : [];
-
-  console.log(`this is the route and this are the ${queryTerms}`);
 
   try {
     // Create an array of conditions for each search term
@@ -235,8 +232,6 @@ export async function GET(req, res) {
     if (agendaConditions.length === 0) {
       return NextResponse.json({ data: [] }, { status: 200 }); // return an empty data array
     }
-
-    console.log("the agenda conditions", agendaConditions);
 
     // Now safely pass the query to MongoDB
     const agendaResults = await getAgendaItems({ $and: agendaConditions }, { url: 1, text: 1 });

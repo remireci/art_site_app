@@ -255,8 +255,6 @@ const Search = () => {
                                         })}
                                 </ul>
                             )}
-
-
                             {/* Show message if no results */}
                             {results.length === 0 && (
                                 <p>No results found.</p>
