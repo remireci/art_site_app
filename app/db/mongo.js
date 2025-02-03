@@ -3,6 +3,8 @@ import { MongoClient } from 'mongodb';
 // Connection URI, replace with your actual MongoDB connection string
 const uri = process.env.MONGODB_URI || 'your-connection-string';
 
+if (!uri) throw new Error("MongoDB uri is not defined");
+
 // Database and collection names
 const dbNameTexts = 'd_art_w_texts_r';
 const collectionNameTexts = 'DWR_Texts';

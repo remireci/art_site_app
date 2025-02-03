@@ -95,9 +95,13 @@ const compareAgendaItems = (item1, item2) => {
 
 
 export async function GET(req, res) {
+
+  console.log("this is the roue");
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('terms');
   const queryTerms = query ? query.match(/(?:[^\s"]+|"[^"]*")/g) || [] : [];
+
+  console.log(`this is the route and this are the ${queryTerms}`);
 
   try {
     // Create an array of conditions for each search term
@@ -183,43 +187,57 @@ export async function GET(req, res) {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize time to midnight
 
-    const agendaConditions = queryTerms.map((term) => {
-      const isExactPhrase = term.startsWith('"') && term.endsWith('"');
+    // If queryTerms is empty, return early or skip the search
+    if (queryTerms.length === 0) {
+      return []; // or return a fallback query if needed
+    }
 
-      const textSearch = isExactPhrase
-        ? {
-          $or: [
-            { title: new RegExp(term.replace(/"/g, ""), "i") },
-            { subtitle: new RegExp(term.replace(/"/g, ""), "i") },
-            { text: new RegExp(term.replace(/"/g, ""), "i") },
-            { url: new RegExp(term.replace(/"/g, ""), "i") },
-          ]
-        }
-        : {
-          $or: [
-            { title: { $regex: term, $options: "i" } },
-            { location: { $regex: term, $options: "i" } },
-            { artists: { $regex: term, $options: "i" } },
-            { url: { $regex: term, $options: "i" } },
-          ]
-        };
+    const agendaConditions = queryTerms
+      .map((term) => {
+        const isExactPhrase = term.startsWith('"') && term.endsWith('"');
 
-      return {
-        $and: [
-          { show: { $ne: false } }, // Exclude hidden documents
-          textSearch, // Apply text search
-          { date_end_st: { $gte: today.toISOString() } }, // Filter where event is ongoing
-          {
+        const textSearch = isExactPhrase
+          ? {
             $or: [
-              { date_begin_st: { $lte: today.toISOString() } }, // Event has started
-              { date_begin_st: { $eq: null } } // Or, date_begin_st is null
+              { title: new RegExp(term.replace(/"/g, ""), "i") },
+              { subtitle: new RegExp(term.replace(/"/g, ""), "i") },
+              { text: new RegExp(term.replace(/"/g, ""), "i") },
+              { url: new RegExp(term.replace(/"/g, ""), "i") },
             ]
           }
-        ]
-      };
-    });
+          : {
+            $or: [
+              { title: { $regex: term, $options: "i" } },
+              { location: { $regex: term, $options: "i" } },
+              { artists: { $regex: term, $options: "i" } },
+              { url: { $regex: term, $options: "i" } },
+            ]
+          };
 
+        return {
+          $and: [
+            { show: { $ne: false } }, // Exclude hidden documents
+            textSearch, // Apply text search
+            { date_end_st: { $gte: today.toISOString() } }, // Filter where event is ongoing
+            {
+              $or: [
+                { date_begin_st: { $lte: today.toISOString() } }, // Event has started
+                { date_begin_st: { $eq: null } } // Or, date_begin_st is null
+              ]
+            }
+          ]
+        };
+      })
+      .filter(condition => condition !== null); // Remove any invalid or empty conditions
 
+    // If no valid conditions, return early or set a fallback query
+    if (agendaConditions.length === 0) {
+      return []; // or return a fallback query
+    }
+
+    console.log("the agenda conditions", agendaConditions);
+
+    // Now safely pass the query to MongoDB
     const agendaResults = await getAgendaItems({ $and: agendaConditions }, { url: 1, text: 1 });
 
     console.log("the agenda results", agendaResults);
