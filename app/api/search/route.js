@@ -189,7 +189,8 @@ export async function GET(req, res) {
 
     // If queryTerms is empty, return early or skip the search
     if (queryTerms.length === 0) {
-      return []; // or return a fallback query if needed
+      // Return an empty array inside a valid Response object
+      return NextResponse.json({ data: [] }, { status: 200 });
     }
 
     const agendaConditions = queryTerms
