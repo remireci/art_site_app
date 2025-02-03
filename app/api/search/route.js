@@ -97,7 +97,6 @@ const compareAgendaItems = (item1, item2) => {
 export async function GET(req, res) {
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('terms');
-
   const queryTerms = query ? query.match(/(?:[^\s"]+|"[^"]*")/g) || [] : [];
 
   try {
@@ -128,24 +127,102 @@ export async function GET(req, res) {
     const articleResults = [];
 
     // Similarly, create conditions and query for agenda database
-    const agendaConditions = queryTerms.map(term => {
+    // const agendaConditions = queryTerms.map(term => {
+    //   const isExactPhrase = term.startsWith('"') && term.endsWith('"');
+
+    //   if (isExactPhrase) {
+    //     const phraseWithoutQuotes = term.replace(/"/g, "");
+    //     return { $or: [{ title: new RegExp(phraseWithoutQuotes, 'i') }, { subtitle: new RegExp(phraseWithoutQuotes, 'i') }, { text: new RegExp(phraseWithoutQuotes, 'i') }, { url: new RegExp(phraseWithoutQuotes, 'i') }] };
+    //   } else {
+    //     return {
+    //       $or: [
+    //         { title: { $regex: term, $options: 'i' } },
+    //         { location: { $regex: term, $options: 'i' } },
+    //         { artists: { $regex: term, $options: 'i' } },
+    //         { url: { $regex: term, $options: 'i' } },
+    //       ],
+    //     };
+    //   }
+    // });
+
+    // const agendaConditions = queryTerms.map((term) => {
+    //   const isExactPhrase = term.startsWith('"') && term.endsWith('"');
+
+    //   if (isExactPhrase) {
+    //     const phraseWithoutQuotes = term.replace(/"/g, "");
+    //     return {
+    //       $and: [
+    //         { show: { $ne: false } }, // Exclude documents where show is false
+    //         {
+    //           $or: [
+    //             { title: new RegExp(phraseWithoutQuotes, "i") },
+    //             { subtitle: new RegExp(phraseWithoutQuotes, "i") },
+    //             { text: new RegExp(phraseWithoutQuotes, "i") },
+    //             { url: new RegExp(phraseWithoutQuotes, "i") },
+    //           ],
+    //         },
+    //       ],
+    //     };
+    //   } else {
+    //     return {
+    //       $and: [
+    //         { show: { $ne: false } }, // Exclude documents where show is false
+    //         {
+    //           $or: [
+    //             { title: { $regex: term, $options: "i" } },
+    //             { location: { $regex: term, $options: "i" } },
+    //             { artists: { $regex: term, $options: "i" } },
+    //             { url: { $regex: term, $options: "i" } },
+    //           ],
+    //         },
+    //       ],
+    //     };
+    //   }
+    // });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize time to midnight
+
+    const agendaConditions = queryTerms.map((term) => {
       const isExactPhrase = term.startsWith('"') && term.endsWith('"');
 
-      if (isExactPhrase) {
-        const phraseWithoutQuotes = term.replace(/"/g, "");
-        return { $or: [{ title: new RegExp(phraseWithoutQuotes, 'i') }, { subtitle: new RegExp(phraseWithoutQuotes, 'i') }, { text: new RegExp(phraseWithoutQuotes, 'i') }, { url: new RegExp(phraseWithoutQuotes, 'i') }] };
-      } else {
-        return {
+      const textSearch = isExactPhrase
+        ? {
           $or: [
-            { title: { $regex: term, $options: 'i' } },
-            { location: { $regex: term, $options: 'i' } },
-            { artists: { $regex: term, $options: 'i' } },
-            { url: { $regex: term, $options: 'i' } },
-          ],
+            { title: new RegExp(term.replace(/"/g, ""), "i") },
+            { subtitle: new RegExp(term.replace(/"/g, ""), "i") },
+            { text: new RegExp(term.replace(/"/g, ""), "i") },
+            { url: new RegExp(term.replace(/"/g, ""), "i") },
+          ]
+        }
+        : {
+          $or: [
+            { title: { $regex: term, $options: "i" } },
+            { location: { $regex: term, $options: "i" } },
+            { artists: { $regex: term, $options: "i" } },
+            { url: { $regex: term, $options: "i" } },
+          ]
         };
-      }
+
+      return {
+        $and: [
+          { show: { $ne: false } }, // Exclude hidden documents
+          textSearch, // Apply text search
+          { date_end_st: { $gte: today.toISOString() } }, // Filter where event is ongoing
+          {
+            $or: [
+              { date_begin_st: { $lte: today.toISOString() } }, // Event has started
+              { date_begin_st: { $eq: null } } // Or, date_begin_st is null
+            ]
+          }
+        ]
+      };
     });
+
+
     const agendaResults = await getAgendaItems({ $and: agendaConditions }, { url: 1, text: 1 });
+
+    console.log("the agenda results", agendaResults);
 
     // const uniqueAgendaResults = [];
 
@@ -171,7 +248,6 @@ export async function GET(req, res) {
       source: result.hasOwnProperty('date_end') ? 'agenda' : 'articles', // Assuming agenda items have a property named 'date_end'
       ...result // Spread all fields from the result object
     }));
-
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {

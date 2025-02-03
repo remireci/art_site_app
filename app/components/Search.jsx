@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { formatDate } from '../utils/formatDate';
 import ImageDisplay from './ImageDisplay';
+import GetLocation from './GetLocation'
 
 const Search = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState('articles');
+    const [activeTab, setActiveTab] = useState('list');
     const [showClearButton, setShowClearButton] = useState(false);
 
 
@@ -88,10 +89,22 @@ const Search = () => {
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block"></div>
 
             <div className="w-full px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
-                <h1>Welcome to the Informational Site</h1>
+                <h1></h1>
                 <div className='input-container flex flex-row items-end justify-between w-full h-2/3 '>
                     <div className='flex flex-row items-end relative w-full mx-4'>
-                        <textarea className='w-full h-10 bg-slate-200 mr-4 p-2 rounded' type="text" value={query} onChange={handleInputChange} />
+                        <textarea
+                            className='w-full h-10 bg-slate-200 mr-4 p-2 rounded'
+                            type="text"
+                            placeholder='artist, city, museum, title...'
+                            value={query}
+                            onChange={handleInputChange}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleSearch(); // Trigger search when Enter is pressed
+                                }
+                            }}
+                        />
                         {showClearButton && <button className='clear-button absolute right-8 top-2' onClick={handleClear}>x</button>}
                     </div>
                     <button className='w-1/5 h-10 bg-[#87bdd8] hover:bg-blue-800 text-sm text-white mx-4 p-2 rounded' onClick={handleSearch}>Search</button>
@@ -108,19 +121,20 @@ const Search = () => {
 
             <div className="w-full px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
                 <div>
-                    <p className='text-center font-bold tracking-widest mb-4'>Results</p>
+                    <p className='text-center font-bold tracking-widest mb-4'></p>
                 </div>
                 <div className='flex justify-center space-x-10 mb-4'>
-                    <button className={`px-4 py-2 rounded ${activeTab === 'articles' ? 'bg-blue-800 text-white' : 'bg-gray-200 text-gray-800 border-2 border-blue-800'}`} onClick={() => handleTabChange('articles')}>Informatie</button>
-                    <button className={`px-4 py-2 rounded ${activeTab === 'agenda' ? 'bg-blue-800 text-white' : 'bg-gray-200 text-gray-800 border-2 border-blue-800'}`} onClick={() => handleTabChange('agenda')}>Agenda</button>
+                    <button className={`px-4 py-2 rounded ${activeTab === 'list' ? 'bg-blue-800 text-white' : 'bg-gray-200 text-gray-800 border-2 border-blue-800'}`} onClick={() => handleTabChange('list')}>List</button>
+                    <button className={`px-4 py-2 rounded ${activeTab === 'map' ? 'bg-blue-800 text-white' : 'bg-gray-200 text-gray-800 border-2 border-blue-800'}`} onClick={() => handleTabChange('map')}>Map</button>
+
                 </div>
-                <div className='results-container fixed bottom-0 overflow-y-auto' style={{ maxHeight: '40vh' }}>
+                <div className='results-container fixed bottom-0 overflow-y-auto' style={{ maxHeight: '60vh' }}>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
                         <>
                             {/* Show text or agenda results based on activeTab */}
-                            {activeTab === 'articles' && results.filter(result => result.source === 'articles').length > 0 && (
+                            {activeTab === 'map' && results.filter(result => result.source === 'articles').length > 0 && (
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
                                     {results.filter(result => result.source === 'articles').map((result, index) => (
                                         <li key={index} className='mb-4'>
@@ -135,18 +149,19 @@ const Search = () => {
                                 </ul>
                             )}
 
-                            {activeTab === 'agenda' && results.filter(result => result.source === 'agenda').length > 0 && (
+                            {activeTab === 'list' && results.filter(result => result.source === 'agenda').length > 0 && (
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
                                     {results
                                         .filter(result => result.source === 'agenda' && result.date_end_st !== null)
-                                        .filter(result => {
-                                            // Parse the end date into a Date object
-                                            const endDate = new Date(result.date_end_st);
-                                            const today = new Date(); // Get the current date
+                                        // .filter(result => {
+                                        //     // Parse the end date into a Date object
+                                        //     const endDate = new Date(result.date_end_st);
+                                        //     const beginDate = new Date(result.date_begin_st)
+                                        //     const today = new Date(); // Get the current date
 
-                                            // Compare dates: Keep only results where the end date is in the future or today
-                                            return endDate >= today;
-                                        })
+                                        //     // Compare dates: Keep only results where the end date is in the future or today
+                                        //     return beginDate <= today && endDate >= today;
+                                        // })
                                         .map((result, index) => {
                                             // Helper function to ensure URL is correctly formatted
                                             const formatUrl = (url) => {
@@ -166,46 +181,75 @@ const Search = () => {
 
                                             // Check if image_reference is an array and has elements
                                             if (Array.isArray(result.image_reference) && result.image_reference.length > 0) {
-                                                // Randomly select an image reference from the array
-                                                const randomIndex = Math.floor(Math.random() * result.image_reference.length);
-                                                imagePath = result.image_reference[randomIndex];
+                                                // Define the priority order for image formats
+                                                const priorityOrder = ['jpg', 'jpeg', 'png', 'svg'];
+
+                                                // Filter and sort the image references by priority
+                                                const sortedImages = result.image_reference.sort((a, b) => {
+                                                    const getExtensionPriority = (url) => {
+                                                        try {
+                                                            const ext = url.split(/[?#]/)[0].split('.').pop().toLowerCase(); // Extract clean file extension
+                                                            return priorityOrder.indexOf(ext) !== -1 ? priorityOrder.indexOf(ext) : Infinity;
+                                                        } catch (err) {
+                                                            console.error("Failed to extract extension for:", url, err);
+                                                            return Infinity; // Push malformed URLs to the end
+                                                        }
+                                                    };
+
+                                                    return getExtensionPriority(a) - getExtensionPriority(b);
+                                                });
+
+                                                console.log("Sorted images:", sortedImages); // Debug the sorted order
+
+                                                // Select the first image in the sorted list
+                                                imagePath = sortedImages[0];
                                             } else {
                                                 // Fallback if image_reference is empty or not an array
                                                 imagePath = result.image_reference || "";
                                             }
 
                                             // Remove trailing "?" if present
-                                            if (imagePath.endsWith('?')) {
+                                            if (String(imagePath).endsWith('?')) {
                                                 imagePath = imagePath.slice(0, -1);
+                                            }
+
+                                            if (!String(imagePath).startsWith("http")) {
+                                                imagePath = "";
                                             }
 
                                             const title = result.title || "";
 
-                                            console.log('imagePath:', imagePath); // Debugging step
-
                                             return (
-                                                <li key={index} className='mb-4'>
-                                                    {exhibitionUrl ? (
-                                                        <a href={exhibitionUrl} target="_blank" rel="noopener noreferrer" className='mt-2 text-sm italic'>
-                                                            {`${result.title}`}
-                                                            {/* Show artists if present */}
-                                                            {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
+                                                <li key={index} className='mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between'>
+                                                    <div className="flex-1">
+                                                        {exhibitionUrl ? (
+                                                            <a href={exhibitionUrl} target="_blank" rel="noopener noreferrer" className='mt-2 block text-sm italic'>
+                                                                {`${result.title}`}
+                                                                {/* Show artists if present */}
+                                                                {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
+                                                            </a>
+                                                        ) : (
+                                                            <a href={locationUrl} target="_blank" rel="noopener noreferrer" className='mt-2 block text-sm italic'>
+                                                                {`${result.title}`}
+                                                            </a>
+                                                        )}
+                                                        <p className='mt-2 text-sm' dangerouslySetInnerHTML={{ __html: `tot ${formatDate(result.date_end_st)}` }} />
+                                                        <a href={locationUrl} target="_blank" rel="noopener noreferrer" className='mt-2 text-sm block sm:inline'>
+                                                            {`in ${result.location}`}
                                                         </a>
-                                                    ) : (
-                                                        <a href={locationUrl} target="_blank" rel="noopener noreferrer" className='mt-2 text-sm italic'>
-                                                            {`${result.title}`}
-                                                        </a>
-                                                    )}
-                                                    <p className='mt-2 text-sm' dangerouslySetInnerHTML={{ __html: `tot ${formatDate(result.date_end_st)}` }} />
-                                                    <a href={locationUrl} target="_blank" rel="noopener noreferrer" className='mt-2 text-sm'>
-                                                        {`in ${result.location}`}
+                                                    </div>
+                                                    <a href={exhibitionUrl || locationUrl} target="_blank" rel="noopener noreferrer">
+                                                        <div
+                                                            className="relative mt-2 sm:mt-0 sm:ml-4 flex-shrink-0"
+                                                            style={{ width: '160px', height: '160px' }}>
+                                                            <ImageDisplay
+                                                                imagePath={imagePath}
+                                                                title={title}
+                                                                width="160"
+                                                                height="160"
+                                                            />
+                                                        </div>
                                                     </a>
-                                                    <ImageDisplay
-                                                        imagePath={imagePath}
-                                                        title={title}
-                                                        width="60"
-                                                        height="60"
-                                                    />
                                                 </li>
                                             );
                                         })}
@@ -223,10 +267,12 @@ const Search = () => {
             </div>
 
             <div className="w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5 ">
-
+                <GetLocation />
             </div>
 
-            <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block"></div>
+            <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block">
+
+            </div>
 
             <div className="w-full px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 "></div>
 

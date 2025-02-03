@@ -9,7 +9,7 @@ const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_API_KEY
 );
 
-const ImageDisplay = ({ imagePath, title, width, height }) => {
+const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
     // const [imageUrl, setImageUrl] = useState('');
 
     // console.log("from ImageDisplay", imagePath);
@@ -41,16 +41,16 @@ const ImageDisplay = ({ imagePath, title, width, height }) => {
     }
 
     return (
-        <div className="grid gap-2 sm:gap-4 grid-cols-[repeat(auto-fit,_minmax(400px,_1fr))]">
-            <div className="relative h-[400px]">
-                <Image
-                    src={imagePath}
-                    alt={title}
-                    width={120}
-                    height={120}
-                // style={{ objectFit: resizeMode }}
-                />
-            </div>
+        <div className="relative" style={{ width: `${width}px`, height: `${height}px` }}>
+            {/* <div className="relative h-[100px]"> */}
+            <Image
+                src={imagePath}
+                alt={title}
+                layout="fill" // This ensures the image fills the container
+                objectFit="contain" // Ensures the image fits within the dimensions
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimize based on screen size
+            />
+            {/* </div> */}
         </div>
     );
 };
