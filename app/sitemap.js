@@ -1,7 +1,10 @@
 import { getLocations } from "../app/db/mongo";
 
 // @TODO add domain conditionaly
-const URL = "http://localhost:3000";
+const URL =
+    process.env.NODE_ENV === "production"
+        ? "https://www.artnowdatabase.eu"
+        : "http://localhost:3000";
 
 export default async function sitemap() {
     try {
