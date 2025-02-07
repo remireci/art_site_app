@@ -44,6 +44,7 @@ const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
         <div className="relative" style={{ width: `${width}px`, height: `${height}px` }}>
             {/* <div className="relative h-[100px]"> */}
             <Image
+                unoptimized
                 src={imagePath}
                 alt={title}
                 layout="fill" // This ensures the image fills the container

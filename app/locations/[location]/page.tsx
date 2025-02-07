@@ -48,6 +48,7 @@ export default async function LocationPage({ params }: { params: { location: str
                         {/* <h2 className="text-xl font-semibold">{exhibition._id}</h2> */}
                         {exhibition.image_reference && (
                             <Image
+                                unoptimized
                                 src={exhibition.image_reference[0]}
                                 alt={exhibition.title}
                                 width={300}

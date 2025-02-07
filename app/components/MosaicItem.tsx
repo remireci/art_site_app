@@ -45,6 +45,7 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                 <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden">
 
                     <Image
+                        unoptimized
                         src={exhibition.image_reference[0]}
                         alt={exhibition.title}
                         layout="fill"
