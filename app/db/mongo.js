@@ -39,15 +39,10 @@ export async function getDocuments(query) {
 // Function to connect to MongoDB and retrieve Agenda items
 export async function getAgendaItems(query) {
 
-  console.log("from get agenda items, this is the uri", uri);
-
   const client = new MongoClient(uri);
-
-  console.log("this is the client", client)
 
   try {
     await client.connect();
-    console.log('Connected to MongoDB');
 
     const database = client.db(dbNameAgenda);
     const collection = database.collection(collectionNameAgenda);

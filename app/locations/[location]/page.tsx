@@ -44,8 +44,8 @@ export default async function LocationPage({ params }: { params: { location: str
                 {data.map((exhibition: any) => (
                     <li key={exhibition.id} className="border p-4 rounded-lg shadow">
                         <h2 className="text-xl font-semibold">{exhibition.title}</h2>
-                        <h2 className="text-xl font-semibold">{exhibition.date_end_st}</h2>
-                        <h2 className="text-xl font-semibold">{exhibition._id}</h2>
+                        <p className="text-xl font-semibold">{exhibition.date_end_st}</p>
+                        {/* <h2 className="text-xl font-semibold">{exhibition._id}</h2> */}
                         {exhibition.image_reference && (
                             <Image
                                 src={exhibition.image_reference[0]}

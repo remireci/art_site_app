@@ -29,7 +29,7 @@ export default function GetLocation() {
 
     return (
         <div>
-            <button onClick={getUserLocation}>Provide My Location</button>
+            <button onClick={getUserLocation}>My Location</button>
             {location.latitude && location.longitude && (
                 <p>
                     Latitude: {location.latitude}, Longitude: {location.longitude}

@@ -209,6 +209,7 @@ export async function GET(req, res) {
               { location: { $regex: term, $options: "i" } },
               { artists: { $regex: term, $options: "i" } },
               { url: { $regex: term, $options: "i" } },
+              { city: { $regex: term, $options: "i" } },
             ]
           };
 

@@ -49,6 +49,7 @@ const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
                 layout="fill" // This ensures the image fills the container
                 objectFit="contain" // Ensures the image fits within the dimensions
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimize based on screen size
+                className="transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
             />
             {/* </div> */}
         </div>

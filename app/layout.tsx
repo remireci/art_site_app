@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import Header from "./components/Header.jsx";
-// import Footer from "./components/Footer";
+import CookieBanner from "./components/CookieBanner";
+import Footer from "./components/Footer";
 // import CookieConsentPopup from './components/CookieConsentPopup';
 import GoogleAnalytics from '../GoogleAnalytics';
 
@@ -41,10 +42,12 @@ export default function RootLayout({
         <meta name="google-site-verification" content="sqDRvFAe2TaopdkctiZlPCROfVd1C3w3HROJFc32K0w" /> */}
       </head>
       <body className={inter.className}>
-        {/* <div className=""> */}
-        <Header />
-        {children}
-        {/* </div> */}
+        <div className="main-container min-h-screen">
+          <Header />
+          {children}
+          <CookieBanner />
+          <Footer />
+        </div>
       </body>
     </html>
   );

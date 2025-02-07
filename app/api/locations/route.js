@@ -1,6 +1,6 @@
 // app/api/locations/route.ts
 import { NextResponse } from "next/server";
-import { getAgendaItems } from "../../db/mongo"; // Adjust path based on your project structure
+import { getAgendaItems } from "../../db/mongo";
 
 export async function GET() {
   try {

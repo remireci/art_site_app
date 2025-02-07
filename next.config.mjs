@@ -9,6 +9,12 @@ const nextConfig = {
                 port: '',
                 pathname: '/storage/v1/object/public/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'pub-1070865a23b94011a35efcf0cf91803e.r2.dev',
+                port: '',
+                pathname: '/agenda/**',
+            }
         ],
     }
 };

@@ -42,23 +42,21 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
             className="relative w-full h-40"
         >
             <Link href={exhibition.url} target="_blank">
-                <div className="w-full h-full object-cover rounded-md shadow-md">
-                    <div className="w-full h-full transition-transform duration-300 ease-in-out group-hover:scale-110">
-                        <Image
-                            src={exhibition.image_reference[0]}
-                            alt={exhibition.title}
-                            layout="fill"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            priority={true} // Loads images faster
-                            loading="eager"
-                        />
-                    </div>
+                <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden">
+
+                    <Image
+                        src={exhibition.image_reference[0]}
+                        alt={exhibition.title}
+                        layout="fill"
+                        objectFit="contain"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        priority={true} // Loads images faster
+                        loading="eager"
+                        className="transition-transform duration-700 ease-in-out hover:scale-[2.5] hover:z-10"
+                    />
+
                 </div>
-                {/* <img
-                    src={exhibition.image_reference}
-                    alt={exhibition.title}
-                    className="w-full h-full rounded-lg shadow-lg"
-                /> */}
+
                 <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-[8px] px-1 truncate">
                     <p>{exhibition.title}</p>
                     <p>{exhibition.location}</p>
