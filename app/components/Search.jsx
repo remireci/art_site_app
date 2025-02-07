@@ -226,7 +226,8 @@ const Search = () => {
                                             };
 
                                             // Format the URLs
-                                            const exhibitionUrl = result.exh_url ? formatUrl(result.exh_url) : null;
+                                            const exhibitionUrl = result.exh_url && result.exh_url !== 'N/A' && /^https?:\/\//.test(result.exh_url) ? formatUrl(result.exh_url) : null;
+
                                             const locationUrl = formatUrl(result.url);
 
 
