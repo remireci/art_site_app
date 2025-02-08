@@ -56,7 +56,7 @@ export default function RootLayout({
     <html lang="en">
       {/* <GoogleAnalytics /> */}
       <head>
-        <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS || 'default-ga-id'} />
+
         <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER || 'default-gtm-id'} />
         <script
           type="application/ld+json"
@@ -87,7 +87,7 @@ export default function RootLayout({
         </div>
         <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER || 'default-gtm-id'} />
       </body>
-
+      <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS || 'default-ga-id'} />
     </html>
   );
 }
