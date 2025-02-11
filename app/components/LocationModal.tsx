@@ -27,7 +27,7 @@ export default function Modal({ url, location }: { url: string; location: string
                         </button>
                         <h2 className="text-xl font-semibold mb-4">Leaving Our Site</h2>
                         <p className="mb-4">
-                            You are about to visit <strong>{location}</strong>. Click "Continue" to proceed.
+                            You are about to visit <strong>{location}</strong>. Click &quot;Continue&quot; to proceed.
                         </p>
                         <div className="flex justify-end space-x-2">
                             <button onClick={() => setIsOpen(false)} className="px-4 py-2 bg-gray-300 rounded">
