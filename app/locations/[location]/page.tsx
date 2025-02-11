@@ -48,9 +48,9 @@ export default async function LocationPage({ params }: { params: { location: str
             </ul>
 
             <div className="md:w-2/3 lg:w-1/3">
-                {data.length > 0 &&
+                {/* {data.length > 0 &&
                     <p className="mt-4">{data[0].description}
-                    </p>}
+                    </p>} */}
             </div>
         </main>
     );
