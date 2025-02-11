@@ -5,8 +5,9 @@ import "./styles/globals.css";
 import Header from "./components/Header.jsx";
 import CookieBanner from "./components/CookieBanner";
 import Footer from "./components/Footer";
+import GoogleAnalytics from './components/GoogleAnalytics';
 // import CookieConsentPopup from './components/CookieConsentPopup';
-import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
+import { GoogleTagManager } from '@next/third-parties/google';
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +22,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://www.artnowdatabase.eu',
   },
-  title: "Art Calendar",
-  description: "Find an art exhibition nearby, Belgium, Netherlands, Germany, France, Suisse, Art In Europe by Art Now Database",
-  keywords: 'contemporary visual arts, modern visual arts, museum, gallery, art spaces, beeldende kunst'
+  title: "Art Exhibitions Calendar | Discover Contemporary Art in Europe",
+  description: "Discover upcoming art exhibitions in Western Europe. Explore museums, galleries, and cultural spaces showcasing modern and contemporary art. Search by country, city, venue, or artist!",
+  keywords: "art exhibitions, contemporary art, modern art, European art events, art museums, art galleries, art calendar, art openings, art fairs, art shows, artist exhibitions, art spaces in Europe"
 };
 
 const addJsonLd = () => {
@@ -52,6 +53,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
+
+  const measurementId = process.env.GOOGLE_ANALYTICS;
+
   return (
     <html lang="en">
       {/* <GoogleAnalytics /> */}
@@ -78,6 +82,7 @@ export default function RootLayout({
         {/* <meta name="google-site-verification" content="UNtcJZ8yHZDo0WEb9SE5VrtDIBoBX_5zuo0ZNtokwtQ" />
         <meta name="google-site-verification" content="sqDRvFAe2TaopdkctiZlPCROfVd1C3w3HROJFc32K0w" /> */}
       </head>
+      {measurementId && <GoogleAnalytics GA_MEASUREMENT_ID={measurementId} />}
       <body className={roboto.className}>
         <div className="main-container min-h-screen">
           <Header />
@@ -87,7 +92,6 @@ export default function RootLayout({
         </div>
         <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER || 'default-gtm-id'} />
       </body>
-      <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS || 'default-ga-id'} />
     </html>
   );
 }

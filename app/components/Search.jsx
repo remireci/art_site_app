@@ -150,7 +150,7 @@ const Search = () => {
                     <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'map' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('map')}>Map</button>
                 </div>
 
-                <div className='results-container overflow-y-auto sm:mt-4' style={{ maxHeight: '65vh' }}>
+                <div className='results-container overflow-y-auto sm:mt-4' style={{ maxHeight: '60vh' }}>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (

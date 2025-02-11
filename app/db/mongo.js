@@ -11,6 +11,7 @@ const collectionNameTexts = 'DWR_Texts';
 
 const dbNameAgenda = 'Agenda';
 const collectionNameAgenda = 'Agenda';
+const collectionNameLocations = 'Locations';
 
 // Function to connect to MongoDB and retrieve documents from the "texts" collection
 export async function getDocuments(query) {
@@ -101,12 +102,18 @@ export async function getLocations() {
   try {
     await client.connect();
     const database = client.db(dbNameAgenda);
-    const collection = database.collection(collectionNameAgenda);
+    const collection_agenda = database.collection(collectionNameAgenda);
+    const collection_locations = database.collection(collectionNameLocations);
 
-    const locations = await collection
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in "yyyy-mm-dd" format
+
+    const locations = await collection_agenda
       .aggregate([
         {
-          $match: { url: { $ne: null } }, // Ensure URL exists
+          $match: {
+            url: { $ne: null }, // Ensure URL exists
+            date_end_st: { $gte: today }, // Only future events
+          },
         },
         {
           $project: {
@@ -128,10 +135,26 @@ export async function getLocations() {
           },
         },
         {
+          $lookup: {
+            from: collectionNameLocations,
+            localField: "cleanDomain",
+            foreignField: "domain",
+            as: "locationData",
+          },
+        },
+        {
+          $unwind: { path: "$locationData", preserveNullAndEmptyArrays: true },
+        },
+        {
+          $match: {
+            $or: [{ "locationData.show": { $ne: false } }, { locationData: { $exists: false } }],
+          },
+        },
+        {
           $group: {
-            _id: "$cleanDomain", // Group by cleaned domain
-            name: { $first: "$name" }, // Pick the first location name
-            originalUrl: { $first: "$originalUrl" }, // Keep an example of original URL
+            _id: "$cleanDomain", // Group by domain to ensure uniqueness
+            name: { $first: "$name" }, // Take the first occurrence
+            originalUrl: { $first: "$originalUrl" }, // Keep an example of the original URL
           },
         },
         {
@@ -141,7 +164,7 @@ export async function getLocations() {
       .toArray();
 
     return locations.map(loc => ({
-      domain: loc._id, // Already cleaned
+      domain: loc._id, // Cleaned domain
       name: loc.name || loc.originalUrl, // Use original URL if name is missing
     }));
   } catch (error) {
@@ -151,3 +174,78 @@ export async function getLocations() {
     await client.close();
   }
 }
+
+
+
+// export async function getLocations() {
+//   const client = new MongoClient(uri);
+//   try {
+//     await client.connect();
+//     const database = client.db(dbNameAgenda);
+//     const collection_agenda = database.collection(collectionNameAgenda);
+//     const collection_locations = database.collection(collectionNameLocations);
+
+//     const locations = await collection_agenda
+//       .aggregate([
+//         {
+//           $match: { url: { $ne: null } }, // Ensure URL exists
+//         },
+//         {
+//           $project: {
+//             originalUrl: "$url",
+//             cleanDomain: {
+//               $replaceAll: {
+//                 input: {
+//                   $replaceAll: {
+//                     input: { $replaceAll: { input: "$url", find: "https://", replacement: "" } },
+//                     find: "http://",
+//                     replacement: "",
+//                   },
+//                 },
+//                 find: "www.",
+//                 replacement: "",
+//               },
+//             },
+//             name: "$location",
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: collectionNameLocations, // Join with locations collection
+//             localField: "cleanDomain",
+//             foreignField: "domain", // Assuming "domain" is the field in locations
+//             as: "locationData",
+//           },
+//         },
+//         {
+//           $unwind: { path: "$locationData", preserveNullAndEmptyArrays: true },
+//         },
+//         {
+//           $match: {
+//             $or: [{ "locationData.show": { $ne: false } }, { locationData: { $exists: false } }],
+//           },
+//         },
+//         {
+//           $group: {
+//             _id: "$cleanDomain", // Group by cleaned domain
+//             name: { $first: "$name" }, // Pick the first location name
+//             originalUrl: { $first: "$originalUrl" }, // Keep an example of original URL
+//           },
+//         },
+//         {
+//           $sort: { name: 1 }, // Sort alphabetically
+//         },
+//       ])
+//       .toArray();
+
+//     return locations.map(loc => ({
+//       domain: loc._id, // Already cleaned
+//       name: loc.name || loc.originalUrl, // Use original URL if name is missing
+//     }));
+//   } catch (error) {
+//     console.error("Error fetching locations:", error);
+//     return [];
+//   } finally {
+//     await client.close();
+//   }
+// }
