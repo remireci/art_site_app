@@ -49,7 +49,7 @@ export default function MosaicPage() {
             const scrollTop = window.innerHeight + document.documentElement.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight;
 
-            if (scrollTop >= scrollHeight - 200) { // Trigger earlier for smoother experience
+            if (scrollTop >= scrollHeight - 400) {
                 loadingRef.current = true;
                 page.current += 1;
 

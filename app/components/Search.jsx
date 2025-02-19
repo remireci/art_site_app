@@ -1,20 +1,30 @@
 // components/Search.js
 "use client"
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { formatDate } from '../utils/formatDate';
+import SearchList from './SearchList';
+import SearchMap from './SearchMap';
 import ImageDisplay from './ImageDisplay';
-import GetLocation from './GetLocation'
+import GetLocation from './GetLocation';
+import dynamic from 'next/dynamic';
+import MosaicTab from './MosaicTab';
 
-const Search = () => {
+const DynamicMap = dynamic(() => import('./showmap/MapTest'), {
+    ssr: false
+});
+
+
+const Search = ({ initialLocations, exhibitions }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [initialLoad, setInitialLoad] = useState(true);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('list');
     const [showClearButton, setShowClearButton] = useState(false);
+    const [locations, setLocations] = useState(initialLocations);
 
 
-    const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams"];
+    const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal'];
     const number = initialSearchTerms.length;
     const indexInitialSearch = Math.floor(Math.random(number) * number);
     const initialSearchTerm = initialSearchTerms[indexInitialSearch];
@@ -47,7 +57,7 @@ const Search = () => {
         initialSearch()
     }, [])
 
-    const handleSearch = async () => {
+    const handleSearch = useCallback(async () => {
         setInitialLoad(false)
         try {
             setLoading(true);
@@ -73,7 +83,8 @@ const Search = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [query]);
+
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -109,7 +120,12 @@ const Search = () => {
         <div className="main-container flex flex-wrap">
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block h-14 lg:h-40"></div>
             <div className="flex flex-col justify-between w-full px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 h-14 lg:h-40">
-                <div className='input-container flex flex-row items-end justify-between w-full h-2/3'>
+                {activeTab === 'list' ? (
+                    <SearchList query={query} setQuery={setQuery} onSearch={handleSearch} />
+                ) : (
+                    <SearchMap query={query} setQuery={setQuery} />
+                )}
+                {/* <div className='input-container flex flex-row items-end justify-between w-full h-2/3'>
                     <div className='flex flex-row items-end relative w-full ml-2 text-slate-400'>
                         <textarea
                             className="w-full h-8 bg-slate-50 mr-2 p-1 placeholder:text-slate-300 placeholder:text-sm placeholder:font-light rounded border border-slate-300 focus:border-orange-400 focus:outline-none focus:ring-0 focus:shadow-[0_0_1px_1px_#f97316]"
@@ -124,7 +140,7 @@ const Search = () => {
                                 }
                             }}
                         />
-                        {showClearButton && <button className='clear-button absolute right-8 top-1' onClick={handleClear}>x</button>}
+                        <
                     </div>
                     <button
                         className="w-1/5 h-8 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 mx-1 rounded flex items-center justify-center"
@@ -132,7 +148,7 @@ const Search = () => {
                     >
                         Search
                     </button>
-                </div>
+                </div> */}
 
             </div>
 
@@ -144,13 +160,14 @@ const Search = () => {
 
             </div>
 
-            <div className="w-full px-1 my-1 mt-4 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
+            <div className="w-full px-1 mb-8 mt-2 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
                 <div className='flex justify-center space-x-10'>
                     <button className={`text-sm h-6 px-2 sm:mt-2  rounded ${activeTab === 'list' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('list')}>List</button>
                     <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'map' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('map')}>Map</button>
+                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>Mosaic</button>
                 </div>
 
-                <div className='results-container overflow-y-auto sm:mt-4' style={{ maxHeight: '60vh' }}>
+                <div className='results-container overflow-y-auto sm:mt-4' style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
@@ -173,25 +190,40 @@ const Search = () => {
                             )} */}
                             {/* Show text or agenda results based on activeTab */}
                             {activeTab === 'map' && (
-                                <ul className='flex flex-col items-center w-full bg-slate-50 z-5 p-4 rounded text-xs'>
-                                    <div className='my-10 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100'>
-                                        <GetLocation />
+                                <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
+                                    <div className='flex flex-col items-center mt-8 space-y-6'>
+                                        <div className=' w-20 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100'>
+                                            <GetLocation />
+                                        </div>
+                                        <div>
+                                            <DynamicMap
+                                                searchQuery={query}
+                                                locations={locations}
+                                                exhibitions={exhibitions}
+                                            />
+                                        </div>
+
+                                        {results.filter(result => result.source === 'agenda').map((result, index) => (
+                                            <li key={index} className='mb-4'>
+                                                <p className='mt-2 text-sm' dangerouslySetInnerHTML={{ __html: `${highlightQuery(result.snippet, query)}` }} />
+                                            </li>
+                                        ))}
+
                                     </div>
+                                </ul>
+                            )}
 
-                                    {results.filter(result => result.source === 'agenda').map((result, index) => (
-                                        <li key={index} className='mb-4'>
-                                            <p className='mt-2 text-sm' dangerouslySetInnerHTML={{ __html: `${highlightQuery(result.snippet, query)}` }} />
-                                            {/* <a href={`/texts/${result._id}`} target="_blank" rel="noopener noreferrer">
-                                                <p><span className='text-2xl ml-4 mr-2 mt-4'>&#8640;</span> {`/texts/${result._id}`}
-                                                    Coming soon
-                                                </p>
-                                            </a> */}
-                                            <p>
-                                                Coming soon
-                                            </p>
+                            {activeTab === 'mosaic' && (
+                                <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
+                                    <div
+                                    // className='flex flex-col items-center mt-8 space-y-6'
+                                    >
+                                        <MosaicTab
+                                            activeTab={activeTab}
+                                            exhibitions={exhibitions}
+                                        />
 
-                                        </li>
-                                    ))}
+                                    </div>
                                 </ul>
                             )}
 
@@ -254,7 +286,7 @@ const Search = () => {
                                                     return getExtensionPriority(a) - getExtensionPriority(b);
                                                 });
 
-                                                console.log("Sorted images:", sortedImages); // Debug the sorted order
+                                                // console.log("Sorted images:", sortedImages); // Debug the sorted order
 
                                                 // Select the first image in the sorted list
                                                 imagePath = sortedImages[0];

@@ -132,6 +132,7 @@ export async function getLocations() {
               },
             },
             name: "$location",
+
           },
         },
         {
@@ -154,7 +155,9 @@ export async function getLocations() {
           $group: {
             _id: "$cleanDomain", // Group by domain to ensure uniqueness
             name: { $first: "$name" }, // Take the first occurrence
-            originalUrl: { $first: "$originalUrl" }, // Keep an example of the original URL
+            originalUrl: { $first: "$originalUrl" },
+            lat: { $first: { $ifNull: ["$locationData.coordinates.latitude", null] } }, // Default to null
+            lon: { $first: { $ifNull: ["$locationData.coordinates.longitude", null] } },
           },
         },
         {
@@ -166,6 +169,8 @@ export async function getLocations() {
     return locations.map(loc => ({
       domain: loc._id, // Cleaned domain
       name: loc.name || loc.originalUrl, // Use original URL if name is missing
+      latitude: loc.lat ?? null, // Ensure it matches LocationContextType
+      longitude: loc.lon ?? null, // Ensure it matches LocationContextType
     }));
   } catch (error) {
     console.error("Error fetching locations:", error);

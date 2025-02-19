@@ -16,13 +16,16 @@ export async function GET() {
                 show: true,
                 date_end_st: { $gt: currentDateString }, // Compare string dates
                 $or: [
-                    // Case when date_begin_st is either non-existent or in the future
-                    { date_begin_st: { $exists: false } },
-                    { date_begin_st: { $gte: currentDateString } }
+                    { date_begin_st: { $exists: false } }, // Doesn't exist
+                    { date_begin_st: null }, // Explicitly null
+                    { date_begin_st: "" }, // Empty string
+                    { date_begin_st: { $not: { $regex: /^\d{4}-\d{2}-\d{2}$/ } } }, // Invalid date format
+                    { date_begin_st: { $lte: currentDateString, $regex: /^\d{4}-\d{2}-\d{2}$/ } } // Valid date in the past
                 ]
             },
             { title: 1, location: 1, url: 1, image_reference: 1 }
         );
+
 
         // Log the number of exhibitions
         console.log(`Number of exhibitions fetched: ${exhibitions.length}`);

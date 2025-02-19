@@ -53,7 +53,7 @@ const Header = () => {
                     <div className='absolute top-0 md:top-8 brightness-85 contrast-75 transition duration-1000 ease-in-out'>
                         <div className="mt-0 md:-mt-8 lineUp flex flex-col items-center text-slate-400 p-4 w-fit">
                             <Link href="/">
-                                <h1 className="text-center font-semibold text-2xl tracking-widest uppercase hover:text-gray-600">
+                                <h1 className="text-center font-semibold text-lg md:text-2xl tracking-widest uppercase hover:text-gray-600">
                                     Art Exhibitions Calendar
                                 </h1>
                             </Link>

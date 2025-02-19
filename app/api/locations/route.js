@@ -11,7 +11,7 @@ export async function GET() {
     // Base conditions for date filtering
     const conditions = {
       date_end_st: { $gte: today.toISOString() },
-      show: { $ne: true },
+      // show: { $ne: true },
     };
 
     const locations = await getAgendaItems(conditions);
@@ -26,6 +26,8 @@ export async function GET() {
         { status: 404 }
       );
     }
+
+    console.log('from the api/locations route, the exhibitions', locations[12]);
 
     return NextResponse.json(locations, { status: 200 });
   } catch (error) {

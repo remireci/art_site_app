@@ -11,12 +11,11 @@ const Menu = () => {
     return (
         <div className="flex flex-col justify-end">
             <nav className="flex items-center text-sm md:text-lg space-x-6 md:space-x-12 my-4 text-slate-500 hover:text-gray-600">
-
-                <Link href="/mosaic_one">
-                    <h2 className='text-center text-sm font-light underline'>Mosaic</h2>
+                <Link href="/on-the-map">
+                    <h2 className='text-center text-sm font-light underline'>On the map</h2>
                 </Link>
 
-                <Link href="/mosaic_one">
+                <Link href="/advertising">
                     <h2 className='text-center text-sm font-light underline'>Advertising</h2>
                 </Link>
                 {/* <Link href="/account?message=wishlist"> */}

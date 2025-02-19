@@ -15,11 +15,11 @@ interface MosaicItemProps {
 
 export default function MosaicItem({ exhibition }: MosaicItemProps) {
 
-    const number_of_pictures = exhibition.image_reference.length + 1;
-    const index_picture = Math.floor(Math.random() + number_of_pictures);
-    const picture_src = exhibition.image_reference[index_picture]
+    // const number_of_pictures = exhibition.image_reference.length + 1;
+    // const index_picture = Math.floor(Math.random() + number_of_pictures);
+    // const picture_src = exhibition.image_reference[index_picture]
 
-    console.log("this is the picture source", picture_src);
+    // console.log("this is the picture source", picture_src);
 
 
     return (
@@ -51,7 +51,7 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                         layout="fill"
                         objectFit="contain"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        priority={true} // Loads images faster
+                        priority={true}
                         loading="eager"
                         className="transition-transform duration-700 ease-in-out hover:scale-[2.5] hover:z-10"
                     />

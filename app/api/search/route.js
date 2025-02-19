@@ -237,7 +237,7 @@ export async function GET(req, res) {
     // Now safely pass the query to MongoDB
     const agendaResults = await getAgendaItems({ $and: agendaConditions }, { url: 1, text: 1 });
 
-    console.log("the agenda results", agendaResults);
+    // console.log("the agenda results", agendaResults);
 
     // const uniqueAgendaResults = [];
 

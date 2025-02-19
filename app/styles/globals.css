@@ -74,3 +74,24 @@ body {
 .results-container {
   position: relative;  
 }
+
+.leaflet-popup-content-wrapper {
+  background-color: rgba(30, 30, 30, 0.9) !important; /* Match Tailwind bg */
+  /* color: black !important; */
+  border-radius: 10px !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important; /* Remove default margins */
+  /* width: auto !important; */
+}
+
+.leaflet-popup-tip {
+  background: rgba(30, 30, 30, 0.9) !important; /* Match popup background */
+  border: none !important;
+}
+
+

@@ -3,6 +3,8 @@ import { Roboto } from 'next/font/google';
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import Header from "./components/Header.jsx";
+
+import { LocationProvider } from "./context/LocationContext";
 import CookieBanner from "./components/CookieBanner";
 import Footer from "./components/Footer";
 import GoogleAnalytics from './components/GoogleAnalytics';
@@ -28,24 +30,24 @@ export const metadata: Metadata = {
 };
 
 const addJsonLd = () => {
-  return {
-    __html: `{
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Art Now Database",
-      "alternateName": "Art Calendar",
-      "url": "https://www.artnowdatabase.eu",
-      "logo": "",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "info@artnowdatabase.eu",
-        "contactType": "customer support",
-        "areaServed": ["BE", "NL", "FR", "UK", "DE", "CH"],
-        "availableLanguage": ["Dutch", "English", "French"]
-      }
-    }`
-  };
+  const jsonld = `{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Art Now Database",
+    "alternateName": "Art Calendar",
+    "url": "https://www.artnowdatabase.eu",
+    "logo": "",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "info@artnowdatabase.eu",
+      "contactType": "customer support",
+      "areaServed": ["BE", "NL", "FR", "UK", "DE", "CH"],
+      "availableLanguage": ["Dutch", "English", "French"]
+    }
+  }`;
+  return { __html: jsonld };
 };
+
 
 export default function RootLayout({
   children,
@@ -67,26 +69,14 @@ export default function RootLayout({
           dangerouslySetInnerHTML={addJsonLd()}
           key="product-jsonld"
         />
-        {/* <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" /> */}
-        {/* <link rel="manifest" href="/images/site.webmanifest" /> */}
-        {/* <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5" />
-        <link rel="shortcut icon" href="/images/favicon.ico" />
-        <meta name="msapplication-TileColor" content="#ffc40d" />
-        <meta name="msapplication-config" content="/images/browserconfig.xml" />
-        <meta name="theme-color" content="#f4f3e6" /> */}
-
-        {/* <link rel="manifest" href="/manifest.json" /> */}
-
-        {/* <meta name="google-site-verification" content="UNtcJZ8yHZDo0WEb9SE5VrtDIBoBX_5zuo0ZNtokwtQ" />
-        <meta name="google-site-verification" content="sqDRvFAe2TaopdkctiZlPCROfVd1C3w3HROJFc32K0w" /> */}
       </head>
       {measurementId && <GoogleAnalytics GA_MEASUREMENT_ID={measurementId} />}
       <body className={roboto.className}>
         <div className="main-container min-h-screen">
           <Header />
-          {children}
+          <LocationProvider>
+            {children}
+          </LocationProvider>
           <CookieBanner />
           <Footer />
         </div>

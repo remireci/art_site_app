@@ -47,10 +47,13 @@ export default async function LocationPage({ params }: { params: { location: str
                 ))}
             </ul>
 
-            <div className="md:w-2/3 lg:w-1/3">
-                {/* {data.length > 0 &&
-                    <p className="mt-4">{data[0].description}
-                    </p>} */}
+            <div className="md:w-2/3 lg:w-1/3 text-slate-200 min-h-screen flex flex-col justify-end">
+                <div>
+                    {data.length > 0 &&
+                        <p className="mt-4">{data[0].description}
+                        </p>}
+
+                </div>
             </div>
         </main>
     );

@@ -20,6 +20,10 @@ const Footer = () => {
                     <Link href="/privacy">
                         <p className="text-xs hover:text-gray-400">Your Privacy</p>
                     </Link>
+
+                    <Link href="/disclaimer">
+                        <p className="text-xs hover:text-gray-400">Disclaimer</p>
+                    </Link>
                     <div className='flex space-x-2' >
 
 
