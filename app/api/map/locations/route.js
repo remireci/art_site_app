@@ -19,6 +19,7 @@ export async function GET() {
       (location) => location.name !== "N/A"
     );
 
+
     return NextResponse.json(filteredLocations, { status: 200 });
   } catch (error) {
     console.error("Error fetching locations:", error);

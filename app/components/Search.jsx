@@ -90,6 +90,12 @@ const Search = ({ initialLocations, exhibitions }) => {
         setActiveTab(tab);
     };
 
+    useEffect(() => {
+        if (activeTab === "map") {
+            document.getElementById("results-container")?.scrollTo(0, 0);
+        }
+    }, [activeTab]);
+
     // Function to highlight the query text within the snippet and limit the length of the snippet
     const highlightQuery = (snippet, query) => {
         if (!query) return snippet; // Return the snippet as is if the query is empty
@@ -117,14 +123,17 @@ const Search = ({ initialLocations, exhibitions }) => {
         return startIndex > 0 ? `...${highlightedSnippet}...` : highlightedSnippet;
     };
     return (
-        <div className="main-container flex flex-wrap">
+        <div className="main-container flex flex-wrap" id="map-container">
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block h-14 lg:h-40"></div>
             <div className="flex flex-col justify-between w-full px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 h-14 lg:h-40">
-                {activeTab === 'list' ? (
+                {activeTab === 'list' && (
                     <SearchList query={query} setQuery={setQuery} onSearch={handleSearch} />
-                ) : (
-                    <SearchMap query={query} setQuery={setQuery} />
-                )}
+                )
+                }
+                {activeTab === 'map' && (
+                    <SearchMap query={query} setQuery={setQuery} onSearch={handleSearch} />
+                )
+                }
                 {/* <div className='input-container flex flex-row items-end justify-between w-full h-2/3'>
                     <div className='flex flex-row items-end relative w-full ml-2 text-slate-400'>
                         <textarea
@@ -167,7 +176,7 @@ const Search = ({ initialLocations, exhibitions }) => {
                     <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>Mosaic</button>
                 </div>
 
-                <div className='results-container overflow-y-auto sm:mt-4' style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
+                <div className='results-container overflow-y-auto sm:mt-4' id="results-container" style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (

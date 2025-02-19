@@ -27,7 +27,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/page.ts",
-    "app/api/locations/route.js"
+    "app/api/locations/route.js",
+    "app/api/map/locations/route.js"
   ],
   "exclude": ["node_modules"]
 }
