@@ -26,8 +26,6 @@ export default function MosaicTab({ exhibitions }: { exhibitions: Exhibition[] }
     const loadingRef = useRef(false);
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-    console.log("these are the exhibitions passed to the mosaic tab", exhibitions);
-
     useEffect(() => {
         async function fetchExhibitions() {
             // const res = await fetch(`/api/exhibitions`);

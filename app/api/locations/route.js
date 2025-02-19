@@ -15,10 +15,6 @@ export async function GET() {
     };
 
     const locations = await getAgendaItems(conditions);
-    // const locations = await getAgendaItems({
-    //   date_end_st: { $gt: currentDate }, // Filter exhibitions whose `date_end_st` is greater than the current date
-    //   show: { $ne: false }, // Ensure only visible exhibitions are included
-    // }).distinct("location"); // Get distinct locations
 
     if (!locations.length) {
       return NextResponse.json(
@@ -26,8 +22,6 @@ export async function GET() {
         { status: 404 }
       );
     }
-
-    console.log('from the api/locations route, the exhibitions', locations[12]);
 
     return NextResponse.json(locations, { status: 200 });
   } catch (error) {

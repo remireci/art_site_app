@@ -27,12 +27,12 @@ const Disclaimer = () => {
 
                     <p className="mt-6">
                         <strong className="text-gray-900">Art Now Database</strong> follows a non-hierarchical approach to presenting exhibitions.
-                        On the map, every institution is treated equally—just as in the mosaic, our <em>"random pic show"</em>.
+                        On the map, every institution is treated equally—just as in the mosaic, our <em>random picture show</em>.
                     </p>
 
                     <p className="mt-4">
                         We believe that art should be accessible to everyone.
-                        That's why it only costs <span className="font-semibold text-gray-900">€50 per year</span> to present your exhibitions in the Art Exhibitions Calendar.
+                        That&apos;s why it only costs <span className="font-semibold text-gray-900">€50 per year</span> to present your exhibitions in the Art Exhibitions Calendar.
 
                         Meanwhile, you can contact us at: <strong><a href="mailto:info@artnowdatabase.eu">info@artnowdatabase.eu</a></strong>.
                     </p>

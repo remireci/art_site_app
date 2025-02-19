@@ -49,32 +49,6 @@ const SearchList = ({ query, setQuery, onSearch, onClear }) => {
         </div>
     );
 
-    // return (
-    //     <div className='input-container flex flex-row items-end justify-between w-full h-2/3'>
-    //         <div className='flex flex-row items-end relative w-full ml-2 text-slate-400'>
-    //             <textarea
-    //                 className="w-full h-8 bg-slate-50 mr-2 p-1 placeholder:text-slate-300 placeholder:text-sm placeholder:font-light rounded border border-slate-300 focus:border-orange-400 focus:outline-none focus:ring-0 focus:shadow-[0_0_1px_1px_#f97316]"
-    //                 type="text"
-    //                 placeholder='artist, city, museum, title...'
-    //                 value={query}
-    //                 onChange={handleInputChange}
-    //                 onKeyDown={(e) => {
-    //                     if (e.key === 'Enter') {
-    //                         e.preventDefault();
-    //                         handleSearch(); // Trigger search when Enter is pressed
-    //                     }
-    //                 }}
-    //             />
-    //             {showClearButton && <button className='clear-button absolute right-8 top-1' onClick={handleClear}>x</button>}
-    //         </div>
-    //         <button
-    //             className="w-1/5 h-8 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 mx-1 rounded flex items-center justify-center"
-    //             onClick={handleSearch}
-    //         >
-    //             Search
-    //         </button>
-    //     </div>
-    // )
 }
 
 export default SearchList;

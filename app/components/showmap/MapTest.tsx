@@ -203,7 +203,7 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
     return (
         <div>
             <MapContainer
-                className="h-[60vh] w-full sm:w-[60vw]"
+                className="h-[60vh] sm:w-[100vw] md:w-[38vw]"
                 // style={{
                 //     height: '60vh',
                 //     width: '38vw'

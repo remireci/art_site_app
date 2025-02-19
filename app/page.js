@@ -1,37 +1,35 @@
-// pages/index.js
-import Search from './components/Search.jsx';
+import Search from "./components/Search";
 
+const URL =
+  process.env.NODE_ENV === "production"
+    ? "https://www.artnowdatabase.eu"
+    : "http://localhost:3000";
 
-const HomePage = async () => {
-  // const locations = await getLocations();
-  const URL =
-    process.env.NODE_ENV === "production"
-      ? "https://www.artnowdatabase.eu"
-      : "http://localhost:3000";
+export default async function HomePage() {
+  try {
+    const locationsResponse = await fetch(`${URL}/api/map/locations`, {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    });
 
-  const cacheOption = process.env.NODE_ENV === "development"
-    ? { cache: 'no-store' }
-    : { next: { revalidate: 3600 } }; // Cache for 1 hour in production
+    const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    });
 
-  const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
+    if (!locationsResponse.ok || !exhibitionsResponse.ok) {
+      throw new Error("Failed to fetch data");
+    }
 
-  const locations = await locationsResponse.json();
+    const locations = await locationsResponse.json();
+    const exhibitions = await exhibitionsResponse.json();
+    const filteredExhibitions = exhibitions.filter((ex) => ex.show !== false);
 
-  const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
-
-  const exhibitions = await exhibitionsResponse.json();
-
-  const filteredExhibitions = exhibitions.filter((exhibition) => exhibition.show !== false);
-
-
-  return (
-    <div>
-      <Search
-        initialLocations={locations}
-        exhibitions={filteredExhibitions}
-      />
-    </div>
-  );
-};
-
-export default HomePage;
+    return (
+      <div>
+        <Search initialLocations={locations} exhibitions={filteredExhibitions} />
+      </div>
+    );
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return <div>Error loading data. Please try again later.</div>;
+  }
+}
