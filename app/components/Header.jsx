@@ -67,7 +67,7 @@ const Header = () => {
             </div>
             <div className="flex flex-col items-start justify-end w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
                 {/* Hamburger menu icon */}
-                <div className="absolute top-5 left-5 md:hidden cursor-pointer text-slate-400" onClick={toggleMenu}>
+                <div className="absolute top-5 left-5 lg:hidden cursor-pointer text-slate-400" onClick={toggleMenu}>
                     <FiMenu size={24} />
                 </div>
                 {/* Navigation menu for small screens */}
@@ -83,7 +83,7 @@ const Header = () => {
 
                 {
                     !showMenu && (
-                        <div className="hidden md:block">
+                        <div className="hidden lg:block">
                             <Menu />
                         </div>
                     )

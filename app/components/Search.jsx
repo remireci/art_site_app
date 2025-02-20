@@ -176,7 +176,7 @@ const Search = ({ initialLocations, exhibitions }) => {
                     <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>Mosaic</button>
                 </div>
 
-                <div className='results-container overflow-y-auto sm:mt-4' id="results-container" style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
+                <div className='results-container overflow-x-auto overflow-y-auto sm:mt-4' id="results-container" style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
@@ -211,13 +211,6 @@ const Search = ({ initialLocations, exhibitions }) => {
                                                 exhibitions={exhibitions}
                                             />
                                         </div>
-
-                                        {results.filter(result => result.source === 'agenda').map((result, index) => (
-                                            <li key={index} className='mb-4'>
-                                                <p className='mt-2 text-sm' dangerouslySetInnerHTML={{ __html: `${highlightQuery(result.snippet, query)}` }} />
-                                            </li>
-                                        ))}
-
                                     </div>
                                 </ul>
                             )}

@@ -15,11 +15,11 @@ const config: Config = {
       },
     },
     screens: {
-      'sm': '300px',
-      'md': '600px',
-      'lg': '992px',
-      'xl': '1200px'
-    }
+      sm: "300px",
+      md: "600px",
+      lg: "992px",
+      xl: "1400px",
+    },
   },
   plugins: [],
 };

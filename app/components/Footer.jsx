@@ -3,48 +3,35 @@ import Link from 'next/link';
 
 const Footer = () => {
     return (
-        <footer className="bottom-0 flex flex-row mt-auto h-15 w-full bg-slate-500 px-1 py-3 text-slate-100 font-extralight shadow-md">
-            <div className="container mx-auto w-1/3 h-5 flex flex-col md:flex-row items-end justify-between">
-                <div className="text-center">
-                    <p className="text-xs">© {new Date().getFullYear()}
-                        <a
-                            href="mailto:info@artnowdatabase.eu"
-                            className='ml-2 hover:text-gray-400'
-                        >
-                            Art Now Database
-                        </a>
-                    </p>
-                </div>
-                <div className="mt-2 md:mt-0 h-5 flex items-end space-x-12 md:space-x-12">
+        <footer className="bottom-0 w-full bg-slate-500 px-4 py-3 text-slate-100 font-extralight shadow-md">
+            <div className="container mx-auto flex flex-wrap items-center justify-between gap-4 text-center sm:text-left">
 
-                    <Link href="/privacy">
-                        <p className="text-xs hover:text-gray-400">Your Privacy</p>
+                {/* Left Section */}
+                <p className="text-xs">
+                    © {new Date().getFullYear()}
+                    <a
+                        href="mailto:info@artnowdatabase.eu"
+                        className="ml-2 hover:text-gray-400"
+                    >
+                        Art Now Database
+                    </a>
+                </p>
+
+                {/* Center Section - Links stay in a row even on small screens */}
+                <div className="flex flex-wrap justify-center sm:justify-end gap-4">
+                    <Link href="/privacy" className="text-xs hover:text-gray-400">
+                        Your Privacy
                     </Link>
 
-                    <Link href="/disclaimer">
-                        <p className="text-xs hover:text-gray-400">Disclaimer</p>
+                    <Link href="/disclaimer" className="text-xs hover:text-gray-400">
+                        Disclaimer
                     </Link>
-                    <div className='flex space-x-2' >
 
-
-                        <p className="text-center md:text-left text-xl">
-
-
-                        </p>
-                        <p className="text-center md:text-left text-xl">
-
-                        </p>
-                    </div>
-
+                    <Link href="/locations" className="text-xs text-slate-600">
+                        Locations
+                    </Link>
                 </div>
             </div>
-            <div>
-                <Link href="/locations">
-                    <p className="text-xs text-slate-600">Locations</p>
-                </Link>
-
-            </div>
-
         </footer >
     );
 };
