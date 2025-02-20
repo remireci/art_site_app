@@ -176,7 +176,7 @@ const Search = ({ initialLocations, exhibitions }) => {
                     <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>Mosaic</button>
                 </div>
 
-                <div className='results-container overflow-x-auto overflow-y-auto sm:mt-4' id="results-container" style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
+                <div className='results-container flex-grow overflow-x-auto overflow-y-auto sm:mt-4' id="results-container" style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
@@ -201,7 +201,7 @@ const Search = ({ initialLocations, exhibitions }) => {
                             {activeTab === 'map' && (
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
                                     <div className='flex flex-col items-center mt-8 space-y-6'>
-                                        <div className=' w-20 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100'>
+                                        <div className='w-20 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100'>
                                             <GetLocation />
                                         </div>
                                         <div>

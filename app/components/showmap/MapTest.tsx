@@ -81,6 +81,7 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
     const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
     const [filteredLocations, setFilteredLocations] = useState<LocationWithMarker[]>([]);
     const [shouldCenter, setShouldCenter] = useState(false);
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 
     console.log("Map re-rendering", userLocation);
@@ -204,10 +205,8 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
         <div>
             <MapContainer
                 className="h-[60vh] w-[80vw] md:w-[60vw] lg:w-[65vw] xl:w-[38vw]"
-
                 center={coord}
                 zoom={13}
-                scrollWheelZoom={false}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -265,18 +264,24 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
                                 }
                                 eventHandlers={{
                                     mouseover: (e) => {
-                                        e.target.openPopup(); // Open popup on hover
+                                        if (!isTouchDevice) {
+                                            e.target.openPopup();
+                                        }
+                                    },
+                                    click: (e) => {
+                                        if (isTouchDevice) {
+                                            e.target.openPopup();
+                                        }
                                     },
                                     mouseout: (e) => {
-                                        // Delay closing the popup to allow hovering over it
                                         setTimeout(() => {
-                                            const popup = e.target.getPopup();
-                                            if (!popup || !popup.getElement()?.matches(':hover')) {
-                                                e.target.closePopup(); // Close popup only if not hovering over it
+                                            if (!e.target.getPopup().getElement()?.matches(':hover')) {
+                                                e.target.closePopup();
                                             }
-                                        }, 500); // Adjust delay as needed
+                                        }, 500);
                                     }
                                 }}
+
                             >
                                 {/* <Tooltip>{location.address}</Tooltip> */}
                                 <Popup
