@@ -1,0 +1,19 @@
+# robots.txt for Art Now Database
+
+# Allow all search engines to index the entire site
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /user-data/
+Disallow: /private/
+
+# Allow Googlebot and other search engines to access everything else
+User-agent: Googlebot
+Allow: /
+
+# Prevent access to the privacy policy and disclaimer page
+Disallow: /privacy
+Disallow: /disclaimer
+
+# Sitemap
+Sitemap: https://www.artnowdatabase.eu/sitemap.xml

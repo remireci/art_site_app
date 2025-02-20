@@ -26,7 +26,10 @@ export const metadata: Metadata = {
   },
   title: "Art Exhibitions Calendar | Discover Contemporary Art in Europe",
   description: "Discover upcoming art exhibitions in Western Europe. Explore museums, galleries, and cultural spaces showcasing modern and contemporary art. Search by country, city, venue, or artist!",
-  keywords: "art exhibitions, contemporary art, modern art, European art events, art museums, art galleries, art calendar, art openings, art fairs, art shows, artist exhibitions, art spaces in Europe"
+  keywords: "art exhibitions, contemporary art, modern art, European art events, art museums, art galleries, art calendar, art openings, art fairs, art shows, artist exhibitions, art spaces in Europe",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 const addJsonLd = () => {
@@ -62,7 +65,6 @@ export default function RootLayout({
     <html lang="en">
       {/* <GoogleAnalytics /> */}
       <head>
-
         <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER || 'default-gtm-id'} />
         <script
           type="application/ld+json"

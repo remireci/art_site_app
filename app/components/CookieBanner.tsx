@@ -36,7 +36,7 @@ export default function CookieBanner() {
     if (!showBanner || analyticsConsent !== null) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[1000]">
             <div className="banner-slide-in bg-gray-800 text-slate-400 p-6 rounded-lg w-11/12 md:w-2/5 shadow-lg">
                 {!showSettings ? (
                     <>
