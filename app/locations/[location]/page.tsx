@@ -16,7 +16,7 @@ export default async function LocationPage({ params }: { params: { location: str
             <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
                 <a href="/">
                     <h1 className="text-xl w-auto uppercase hover:text-gray-600">
-                        To the Calendar
+                        Find exhibitions
                     </h1>
                 </a>
             </div>
@@ -27,11 +27,9 @@ export default async function LocationPage({ params }: { params: { location: str
                 <p className="text-gray-500">No data available</p>
             )}
 
-
-            {/* <ul className="flex flex-col items-center mt-4 space-y-4 w-1/4"> */}
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
                 {data.map((exhibition: any) => (
-                    <li className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
+                    <li key={exhibition._id || exhibition.id} className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
                         <h2 className="text-sm">{exhibition.title}</h2>
                         <p className="text-xs">{exhibition.date_end_st}</p>
                         {exhibition.image_reference && (
@@ -47,6 +45,7 @@ export default async function LocationPage({ params }: { params: { location: str
                     </li>
                 ))}
             </ul>
+
 
             <div className="md:w-2/3 lg:w-1/3 text-slate-200 min-h-screen flex flex-col justify-end">
                 <div>
