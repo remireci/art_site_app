@@ -13,10 +13,10 @@ export default async function LocationPage({ params }: { params: { location: str
 
     return (
         <main className="flex flex-col items-center p-4 min-h-screen">
-            <div className="p-1 lg:w-1/5 h-8 my-40 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
+            <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
                 <a href="/">
-                    <h1 className="font-semibold text-xl tracking-widest uppercase hover:text-gray-600">
-                        Back to the Calendar
+                    <h1 className="text-xl w-auto uppercase hover:text-gray-600">
+                        To the Calendar
                     </h1>
                 </a>
             </div>
@@ -28,18 +28,19 @@ export default async function LocationPage({ params }: { params: { location: str
             )}
 
 
-            <ul className="mt-4 space-y-4">
+            {/* <ul className="flex flex-col items-center mt-4 space-y-4 w-1/4"> */}
+            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
                 {data.map((exhibition: any) => (
-                    <li key={exhibition.id} className="border p-4 rounded-lg shadow">
-                        <h2 className="text-xl font-semibold">{exhibition.title}</h2>
-                        <p className="text-xl font-semibold">{exhibition.date_end_st}</p>
+                    <li className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
+                        <h2 className="text-sm">{exhibition.title}</h2>
+                        <p className="text-xs">{exhibition.date_end_st}</p>
                         {exhibition.image_reference && (
                             <Image
                                 unoptimized
                                 src={exhibition.image_reference[0]}
                                 alt={exhibition.title}
-                                width={300}
-                                height={200}
+                                width={150}
+                                height={100}
                                 className="rounded-lg"
                             />
                         )}

@@ -4,10 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 import Image from 'next/image';
 
 // Initialize Supabase client
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_API_KEY
-);
+// const supabase = createClient(
+//     process.env.NEXT_PUBLIC_SUPABASE_URL,
+//     process.env.NEXT_PUBLIC_SUPABASE_API_KEY
+// );
 
 const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
     // const [imageUrl, setImageUrl] = useState('');

@@ -2,8 +2,8 @@ export const formatDate = (dateString) => {
   if (!dateString) return "";
 
   const months = [
-    "januari", "februari", "maart", "april", "mei", "juni",
-    "juli", "augustus", "september", "oktober", "november", "december"
+    "jan", "feb", "mar", "apr", "mai", "jun",
+    "jul", "aug", "sep", "okt", "nov", "dec"
   ];
 
   const [year, month, day] = dateString.split("-");

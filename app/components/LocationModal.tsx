@@ -12,7 +12,7 @@ export default function Modal({ url, location }: { url: string; location: string
 
     return (
         <>
-            <button onClick={() => setIsOpen(true)} className="text-2xl underline text-blue-500 hover:text-blue-700">
+            <button onClick={() => setIsOpen(true)} className="text-sm underline pointer">
                 {location}
             </button>
 

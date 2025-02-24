@@ -326,7 +326,7 @@ const Search = ({ initialLocations, exhibitions }) => {
                                                                         {`${result.title}`}
                                                                     </a>
                                                                 )}
-                                                                <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `tot ${formatDate(result.date_end_st)}` }} />
+                                                                <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `&#8702; ${formatDate(result.date_end_st)}` }} />
                                                                 <a href={locationUrl} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
                                                                     {`in ${result.location}`}
                                                                 </a>
@@ -356,7 +356,7 @@ const Search = ({ initialLocations, exhibitions }) => {
                                                                         {`${result.title}`}
                                                                     </a>
                                                                 )}
-                                                                <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `tot ${formatDate(result.date_end_st)}` }} />
+                                                                <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `&#8702; ${formatDate(result.date_end_st)}` }} />
                                                                 <a href={locationUrl} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
                                                                     {`in ${result.location}`}
                                                                 </a>
