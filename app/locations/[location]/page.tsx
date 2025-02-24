@@ -28,8 +28,8 @@ export default async function LocationPage({ params }: { params: { location: str
             )}
 
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
-                {data.map((exhibition: any) => (
-                    <li key={exhibition._id || exhibition.id} className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
+                {data.map((exhibition: any, index: number) => (
+                    <li key={exhibition._id || exhibition.id || index} className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
                         <h2 className="text-sm">{exhibition.title}</h2>
                         <p className="text-xs">{exhibition.date_end_st}</p>
                         {exhibition.image_reference && (
