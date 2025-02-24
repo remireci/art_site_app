@@ -73,7 +73,7 @@ const Header = () => {
                 {/* Navigation menu for small screens */}
                 {
                     showMenu && (
-                        <div id="mobile-menu" className="absolute top-12 left-0 w-full bg-slate-50 shadow-lg p-1 md:hidden z-40">
+                        <div id="mobile-menu" className="absolute top-12 left-0 w-full bg-slate-50 shadow-lg p-1 lg:hidden z-40">
                             <nav className="flex flex-col space-y-4">
                                 <Menu />
                             </nav>

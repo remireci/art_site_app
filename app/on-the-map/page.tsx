@@ -4,7 +4,7 @@
 
 const Disclaimer = () => {
     return (
-        <div className="main-container flex flex-wrap">
+        <div className="main-container flex flex-wrap min-h-screen overflow-auto">
             {/* <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block h-14 lg:h-40"></div>
             <div className="flex flex-col justify-between w-full px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 h-14 lg:h-40">
 

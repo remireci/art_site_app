@@ -19,7 +19,7 @@ const Disclaimer = () => {
 
             <div className="w-full px-1 mb-8 mt-2 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
                 <div className='flex flex-col justify-center space-x-10 space-y-16 mt-20'>
-                    <h2 className="bold"><strong>Advertising</strong></h2>
+                    <h2 className="bold ml-4"><strong>Advertising</strong></h2>
 
                     <p>
                         In the near future, you will be able to upload your ad directly on this page.
