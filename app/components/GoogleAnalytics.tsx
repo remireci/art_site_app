@@ -9,9 +9,7 @@ function GoogleAnalyticsInner({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_ID: string
     const pathname = usePathname();
 
     useEffect(() => {
-        console.log(pathname);
         pageview(GA_MEASUREMENT_ID, pathname);
-
     }, [pathname, GA_MEASUREMENT_ID]);
 
     return null;

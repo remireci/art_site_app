@@ -15,8 +15,6 @@ export async function GET(
 
     // console.log("is the location passed?", params.location);
 
-    console.log("today", today.toISOString());
-
     // Query MongoDB for exhibitions at this location
     const exhibitions = await getAgendaItems({
       location: { $regex: `^${locationName}$`, $options: "i" },

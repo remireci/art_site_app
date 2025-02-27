@@ -14,7 +14,7 @@ const collectionNameAgenda = 'Agenda';
 const collectionNameLocations = 'Locations';
 
 // Function to connect to MongoDB and retrieve documents from the "texts" collection
-export async function getDocuments(query) {
+export async function getDocuments(query, skip, pageSize) {
   const client = new MongoClient(uri);
 
   try {
@@ -24,8 +24,12 @@ export async function getDocuments(query) {
     const database = client.db(dbNameTexts);
     const collection = database.collection(collectionNameTexts);
 
-    // Perform the query, adjust as needed
-    const documents = await collection.find(query).toArray();
+    // Fetch documents with pagination
+    const documents = await collection
+      .find(query)
+      .skip(skip)  // Skip documents based on the current page
+      .limit(pageSize)              // Limit the number of documents per page
+      .toArray();
 
     return documents;
   } catch (error) {
@@ -36,6 +40,30 @@ export async function getDocuments(query) {
     console.log('Disconnected from MongoDB');
   }
 }
+
+
+// export async function getDocuments(query) {
+//   const client = new MongoClient(uri);
+
+//   try {
+//     await client.connect();
+//     console.log('Connected to MongoDB');
+
+//     const database = client.db(dbNameTexts);
+//     const collection = database.collection(collectionNameTexts);
+
+//     // Perform the query, adjust as needed
+//     const documents = await collection.find(query).toArray();
+
+//     return documents;
+//   } catch (error) {
+//     console.error('Error connecting to MongoDB:', error);
+//     throw error;
+//   } finally {
+//     await client.close();
+//     console.log('Disconnected from MongoDB');
+//   }
+// }
 
 // Function to connect to MongoDB and retrieve Agenda items
 export async function getAgendaItems(query) {

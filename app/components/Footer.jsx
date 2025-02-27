@@ -26,10 +26,9 @@ const Footer = () => {
                     <Link href="/disclaimer" className="text-xs hover:text-gray-400">
                         Disclaimer
                     </Link>
-
-                    <Link href="/locations" className="text-xs text-slate-600">
+                    {/* <Link href="/locations" className="text-xs text-slate-600">
                         Locations
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
         </footer >

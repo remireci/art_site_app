@@ -31,10 +31,6 @@ const nextConfig = {
             "pub-1070865a23b94011a35efcf0cf91803e.r2.dev",
         ],
     },
-
-    experimental: {
-        serverActions: true,
-    },
 };
 
 export default nextConfig;

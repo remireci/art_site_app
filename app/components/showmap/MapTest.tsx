@@ -83,7 +83,7 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
     const [shouldCenter, setShouldCenter] = useState(false);
 
 
-    console.log("Map re-rendering", userLocation);
+    // console.log("Map re-rendering", userLocation);
 
     // const debouncedFetchLocations = useCallback(debounce(async (bounds) => {
     //     const newLocations = await fetchLocationsFromDatabase(bounds);
@@ -145,11 +145,30 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
     useEffect(() => {
         if (!mapBounds || !locations) return; // Ensure mapBounds and locations are defined
 
+        const excludedLocations: LocationWithMarker[] = [];
+
+        locations.forEach(location => {
+            const lat = Number(location.latitude);
+            const lon = Number(location.longitude);
+            const isInsideBounds = mapBounds.contains(L.latLng(lat, lon));
+
+            if (!isInsideBounds) {
+                excludedLocations.push({
+                    lat,
+                    lon,
+                    address: `${location.name}`, // Combine domain and name as the address
+                    domain: location.domain,
+                    name: location.name,
+                });
+            }
+        });
+
         const newFilteredLocations: LocationWithMarker[] = locations
             .filter(location => {
                 // Ensure latitude and longitude are valid before checking bounds
-                return location.latitude != null && location.longitude != null &&
-                    mapBounds.contains(L.latLng(location.latitude, location.longitude));
+                const lat = Number(location.latitude);
+                const lon = Number(location.longitude);
+                return !isNaN(lat) && !isNaN(lon) && mapBounds.contains(L.latLng(lat, lon));
             })
             .map(location => ({
                 lat: location.latitude,
@@ -158,6 +177,7 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
                 domain: location.domain,
                 name: location.name,
             }));
+
 
         // Update state only if locations actually change
         setFilteredLocations(prevLocations => {

@@ -12,8 +12,13 @@ export default async function HomePage() {
         ? { cache: "no-store" } // Disable caching in development
         : { next: { revalidate: 3600 } }; // Cache for 1 hour in production
 
-    const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
-    const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
+    // const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
+    // const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
+    console.log("Fetching locations from:", `${URL}/api/map/locations`);
+    const locationsResponse = await fetch(`${URL}/api/map/locations`);
+    console.log("Fetch completed, status:", locationsResponse.status);
+    const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`);
+
 
     if (!locationsResponse.ok || !exhibitionsResponse.ok) {
       throw new Error("Failed to fetch data");
@@ -21,11 +26,13 @@ export default async function HomePage() {
 
     const locations = await locationsResponse.json();
     const exhibitions = await exhibitionsResponse.json();
-    const filteredExhibitions = exhibitions.filter((ex) => ex.show !== false);
+
+    console.log("Sample locations data:", locations.slice(0, 10));
+
 
     return (
       <div>
-        <Search initialLocations={locations} exhibitions={filteredExhibitions} />
+        <Search initialLocations={locations} exhibitions={exhibitions} />
       </div>
     );
   } catch (error) {
