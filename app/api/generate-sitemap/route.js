@@ -1,42 +1,22 @@
-import { getLocations, getExhibitionsByDomain } from "../app/db/mongo";
-import fs from 'fs';
-import path from 'path';
+import { getLocations, getExhibitionsByDomain } from "../../db/mongo";
+import fs from "fs";
+import path from "path";
 
-// @TODO add domain conditionaly
 const URL =
     process.env.NODE_ENV === "production"
         ? "https://www.artnowdatabase.eu"
         : "http://localhost:3000";
 
-const sitemapCachePath = path.join(process.cwd(), 'public', 'sitemap.xml');
+const sitemapCachePath = path.join(process.cwd(), "public", "sitemap.xml");
 
-export default async function sitemap() {
+export async function GET(req) {
     try {
-
-        const cacheDuration = 7 * 24 * 60 * 60 * 1000; // 1 week in milliseconds
-        const currentTime = Date.now();
-
-        // Check if cached sitemap exists and is fresh
-        if (fs.existsSync(sitemapCachePath)) {
-            const stats = fs.statSync(sitemapCachePath);
-            const lastModifiedTime = stats.mtimeMs;
-
-            if (currentTime - lastModifiedTime < cacheDuration) {
-                // If cached sitemap is fresh, return it directly
-                const sitemapXml = fs.readFileSync(sitemapCachePath, 'utf-8');
-                return sitemapXml;
-            }
-        }
-
         const locationsData = await getLocations();
-
         const locationsWithExhibitions = [];
 
         for (const location of locationsData) {
             const exhibitions = await getExhibitionsByDomain(location.domain);
-            console.log(exhibitions);
 
-            // If there's at least one exhibition for this location, include it in the sitemap
             if (exhibitions.length > 0) {
                 const encodedDomain = encodeURIComponent(location.domain);
                 locationsWithExhibitions.push({
@@ -54,7 +34,7 @@ export default async function sitemap() {
             "/locations",
             "/advertising",
             "/artist_without_exhibition",
-            "/texts"
+            "/texts",
         ].map((route) => ({
             url: `${URL}${route}`,
             lastModified: new Date().toISOString(),
@@ -62,9 +42,30 @@ export default async function sitemap() {
             priority: 1,
         }));
 
-        return [...routes, ...locationsWithExhibitions];
+        const sitemapXml = generateSitemapXml([...routes, ...locationsWithExhibitions]);
+
+        // Write to the sitemap file in the public folder
+        fs.writeFileSync(sitemapCachePath, sitemapXml);
+        return new Response("Sitemap generated successfully", { status: 200 });
     } catch (error) {
         console.error("Error generating sitemap:", error.message);
-        return [];
+        return new Response("Error generating sitemap", { status: 500 });
     }
+}
+
+function generateSitemapXml(urls) {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        ${urls
+            .map(
+                (url) => `
+        <url>
+            <loc>${url.url}</loc>
+            <lastmod>${url.lastModified}</lastmod>
+            <changefreq>${url.changeFrequency}</changefreq>
+            <priority>${url.priority}</priority>
+        </url>`
+            )
+            .join("")}
+    </urlset>`;
 }

@@ -12,12 +12,8 @@ export default async function HomePage() {
         ? { cache: "no-store" } // Disable caching in development
         : { next: { revalidate: 3600 } }; // Cache for 1 hour in production
 
-    // const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
-    // const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
-    console.log("Fetching locations from:", `${URL}/api/map/locations`);
-    const locationsResponse = await fetch(`${URL}/api/map/locations`);
-    console.log("Fetch completed, status:", locationsResponse.status);
-    const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`);
+    const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
+    const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
 
 
     if (!locationsResponse.ok || !exhibitionsResponse.ok) {
