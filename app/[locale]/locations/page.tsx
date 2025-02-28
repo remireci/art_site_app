@@ -1,4 +1,4 @@
-import { getLocations } from "../db/mongo";
+import { getLocations } from "../../db/mongo";
 
 
 export default async function LocationsListPage() {

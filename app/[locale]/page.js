@@ -1,4 +1,4 @@
-import Search from "./components/Search";
+import Search from "../components/Search";
 
 const URL =
   process.env.NODE_ENV === "production"
@@ -23,7 +23,7 @@ export default async function HomePage() {
     const locations = await locationsResponse.json();
     const exhibitions = await exhibitionsResponse.json();
 
-    console.log("Sample locations data:", locations.slice(0, 10));
+    // console.log("Sample locations data:", locations.slice(0, 10));
 
 
     return (

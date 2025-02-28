@@ -1,7 +1,7 @@
 import { getExhibitionsByDomain } from "@/app/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import Modal from "../../components/LocationModal";
+import Modal from "../../../components/LocationModal";
 
 export default async function LocationPage({ params }: { params: { location: string } }) {
     const { location } = params;
@@ -33,9 +33,6 @@ export default async function LocationPage({ params }: { params: { location: str
                         className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
                         <h2 className="text-sm">{exhibition.title}</h2>
                         <p className="text-xs">{exhibition.date_end_st}</p>
-                        <p className="text-xs">exhibition.id: {exhibition.id}</p>
-                        <p className="text-xs">exhibition._id: {exhibition._id}</p>
-                        <p className="text-xs">index: {index}</p>
 
                         {exhibition.image_reference && (
                             <Image
