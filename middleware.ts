@@ -6,9 +6,11 @@ import i18nConfig from "./i18nConfig";
 export function middleware(request: NextRequest) {
   // Add a new header x-current-path which passes the path to downstream components
   if (request.nextUrl.pathname === "/") {
-    return NextResponse.redirect(
-      new URL(`/${i18nConfig.defaultLocale}/`, request.url)
-    );
+    const detectedLocale =
+      request.headers.get("accept-language")?.split(",")[0].slice(0, 2) ||
+      i18nConfig.defaultLocale;
+    const newUrl = new URL(`/${detectedLocale}`, request.url);
+    return NextResponse.redirect(newUrl);
   }
 
   const response = i18nRouter(request, i18nConfig);
