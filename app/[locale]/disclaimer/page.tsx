@@ -1,5 +1,5 @@
 // pages/index.js
-import Disclaimer from '../components/Disclaimer';
+import Disclaimer from '../../components/Disclaimer';
 
 
 const DisclaimerPage = async () => {
