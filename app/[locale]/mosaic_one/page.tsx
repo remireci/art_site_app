@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import MosaicItem from "../components/MosaicItem";
+import MosaicItem from "../../components/MosaicItem";
 
 interface Exhibition {
     title: string;
