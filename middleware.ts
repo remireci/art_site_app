@@ -1,32 +1,29 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { i18nRouter } from "next-i18n-router";
 import i18nConfig from "./i18nConfig";
 
 export function middleware(request: NextRequest) {
-  // Add a new header x-current-path which passes the path to downstream components
-  if (request.nextUrl.pathname === "/") {
-    const detectedLocale =
-      request.headers.get("accept-language")?.split(",")[0].slice(0, 2) ||
-      i18nConfig.defaultLocale;
-    const newUrl = new URL(`/${detectedLocale}`, request.url);
-    return NextResponse.redirect(newUrl);
+  const { pathname } = request.nextUrl;
+
+  // Check if the path starts with a valid locale (like /en, /fr, /nl)
+  const hasLocalePrefix = i18nConfig.locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
+
+  // If the path already has a locale prefix, continue to the requested path
+  if (hasLocalePrefix) {
+    return NextResponse.next();
   }
 
-  const response = i18nRouter(request, i18nConfig);
-  const headers = new Headers(response.headers);
-  headers.set("x-current-path", request.nextUrl.pathname);
-
-  return NextResponse.next({ headers });
+  // If no locale prefix is found, prepend the default locale /en
+  const defaultLocale = i18nConfig.defaultLocale || "en"; // Use the default locale from config
+  const newUrl = new URL(`/${defaultLocale}${pathname}`, request.url); // Prepend the default locale
+  return NextResponse.redirect(newUrl);
 }
 
 export const config = {
-  matcher: "/((?!api|static|.*\\..*|_next).*)",
+  matcher: [
+    "/((?!api|static|.*\\..*|_next).*)", // Match all pages except API/static files
+    "/locations/:path*", // Ensure middleware runs on dynamic routes
+  ],
 };
-
-// export const config = {
-//   matcher: [
-//     // match all routes except static files and APIs
-//     "/((?!api|_next/static|_next/image|favicon.ico).*)",
-//   ],
-// };

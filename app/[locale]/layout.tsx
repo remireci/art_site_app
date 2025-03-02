@@ -85,7 +85,7 @@ const addJsonLd = () => {
   return { __html: jsonld };
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params,
 }: Readonly<{
@@ -94,7 +94,11 @@ export default function RootLayout({
 }>) {
 
   const measurementId = process.env.GOOGLE_ANALYTICS;
-  const locale = params.locale || "en";
+  // const locale = params.locale || "en";
+
+  const { locale } = params;
+  const metadata = await generateMetadata({ params: { locale } });
+  const { alternates } = metadata;
 
   return (
     <html lang={locale}>
