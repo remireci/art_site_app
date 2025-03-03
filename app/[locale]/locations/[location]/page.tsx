@@ -15,14 +15,23 @@ export default async function LocationPage({ params }: { params: { location: str
         <main className="flex flex-col items-center p-4 min-h-screen">
             <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
                 <a href="/">
-                    <h1 className="text-xl w-auto uppercase hover:text-gray-600">
+                    <p className="text-xl w-auto uppercase hover:text-gray-600">
                         Search exhibitions
-                    </h1>
+                    </p>
                 </a>
             </div>
 
             {data.length > 0 && data[0]?.url && data[0]?.location ? (
-                <Modal url={data[0].url} location={data[0].location} />
+                <h1>
+                    <Modal url={data[0].url} location={data[0].location} />
+                    {/* Display city only if it's valid */}
+                    {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
+                        <span className="text-sm text-gray-600 lowercase">
+                            {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
+                        </span>
+                    )}
+
+                </h1>
             ) : (
                 <p className="text-gray-500">No data available</p>
             )}
