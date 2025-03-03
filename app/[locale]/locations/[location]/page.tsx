@@ -16,7 +16,7 @@ export default async function LocationPage({ params }: { params: { location: str
             <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
                 <a href="/">
                     <h1 className="text-xl w-auto uppercase hover:text-gray-600">
-                        Find exhibitions
+                        Search exhibitions
                     </h1>
                 </a>
             </div>
