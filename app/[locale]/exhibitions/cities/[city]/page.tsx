@@ -1,58 +1,86 @@
-import { getExhibitionsByDomain } from "@/app/db/mongo";
+import { getExhibitionsByCity } from "@/app/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import Modal from "../../../components/LocationModal";
 
-export default async function LocationPage({ params }: { params: { location: string } }) {
-    const { location } = params;
-    const data = await getExhibitionsByDomain(location);
+export default async function CityPage({ params }: { params: { city: string } }) {
+    const { city } = params;
+
+    const data = await getExhibitionsByCity(city);
 
     if (!data) {
         return notFound();
     }
 
+    const formatDate = (dateStr: String) => {
+        const [year, month, day] = dateStr.split('-');
+        return `${day}-${month}-${year}`;
+    };
+
+
     return (
         <main className="flex flex-col items-center p-4 min-h-screen">
+            <div className="mt-20">
+
+                {data.length > 0 && data[0]?.url && data[0]?.location ? (
+                    <h1>
+                        {/* <Modal url={data[0].url} location={data[0].location} /> */}
+                        {/* Display city only if it's valid */}
+                        {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
+                            <span className="text-xl md:text-3xl text-gray-600 uppercase">Exhibitions in
+                                {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
+                            </span>
+                        )}
+
+                    </h1>
+                ) : (
+                    <p className="text-gray-500">No data available</p>
+                )}
+
+            </div>
             <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
-                <a href="/">
+                <form action="/" method="GET">
+                    <input type="hidden" name="city" value={city} />
+                    <button type="submit" className="text-xl w-auto uppercase hover:text-gray-600">
+                        Show on map
+                    </button>
+                </form>
+
+                {/* <a href={`/?city=${city}`}>
                     <p className="text-xl w-auto uppercase hover:text-gray-600">
-                        Search exhibitions
+                        See the Map
                     </p>
-                </a>
+                </a> */}
             </div>
 
-            {data.length > 0 && data[0]?.url && data[0]?.location ? (
-                <h1>
-                    <Modal url={data[0].url} location={data[0].location} />
-                    {/* Display city only if it's valid */}
-                    {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
-                        <span className="text-sm text-gray-600 lowercase">
-                            {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
-                        </span>
-                    )}
-
-                </h1>
-            ) : (
-                <p className="text-gray-500">No data available</p>
-            )}
-
-            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
+            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2 space-y-1">
                 {data.map((exhibition: any, index: number) => (
                     <li key={exhibition._id}
                         className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
-                        <h2 className="text-sm">{exhibition.title}</h2>
-                        <p className="text-xs">{exhibition.date_end_st}</p>
-
+                        <h2 className="text-sm italic">{exhibition.title}</h2>
+                        {/* <h3 className="text-sm">{exhibition.city}</h3> */}
                         {exhibition.image_reference && (
-                            <Image
-                                unoptimized
-                                src={exhibition.image_reference[0]}
-                                alt={exhibition.title}
-                                width={150}
-                                height={100}
-                                className="rounded-lg"
-                            />
+                            <a href={exhibition.url} target="_blank" rel="noopener noreferrer" className="relative group">
+                                <Image
+                                    unoptimized
+                                    src={exhibition.image_reference[0]}
+                                    alt={exhibition.title}
+                                    width={100}
+                                    height={50}
+                                    className="rounded-lg"
+                                />
+                                <span className="absolute top-0 right-0 bg-gray-900 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
+                                    Open external site
+                                </span>
+                            </a>
+
                         )}
+                        {exhibition.artists && exhibition.artists !== "N/A" &&
+                            <p className='text-xs'>{exhibition.artists}</p>
+                        }
+                        {exhibition.location && exhibition.location !== "N/A" &&
+                            <p className='text-xs'>{exhibition.location}</p>
+                        }
+                        <p className="text-xs mt-4">&#8702; {formatDate(exhibition.date_end_st)}</p>
                     </li>
                 ))}
             </ul>

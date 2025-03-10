@@ -12,6 +12,7 @@ const collectionNameTexts = 'DWR_Texts';
 const dbNameAgenda = 'Agenda';
 const collectionNameAgenda = 'Agenda';
 const collectionNameLocations = 'Locations';
+const collectionCities = 'city_mapping';
 
 // Function to connect to MongoDB and retrieve documents from the "texts" collection
 export async function getDocuments(query, skip, pageSize) {
@@ -124,6 +125,97 @@ export async function getExhibitionsByDomain(domain) {
   }
 }
 
+function normalizeCity(city) {
+  if (typeof city !== "string" || city.trim() === "") {
+    console.error("Invalid city name provided:", city);
+    return "";
+  }
+
+  // Decode URL-encoded string if necessary
+  const decodedCity = decodeURIComponent(city);
+
+  // Normalize the city name
+  const normalized = decodedCity
+    .replace(/\d+[A-Z]*\s*\|\s*/i, "")   // Remove leading numbers and pipe separator (e.g., '16E | ')
+    .replace(/\s*\|.*$/, "")             // Remove country or extra details after '|' (e.g., '| FRANCE')
+    .trim();                            // Trim whitespace
+
+  return normalized;
+}
+
+function escapeRegExp(str) {
+  // Escape special regex characters (e.g., ".", "|", "(", etc.)
+  return str.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&');
+}
+
+
+export async function getExhibitionsByCity(city) {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const database = client.db(dbNameAgenda);
+    const collection = database.collection(collectionNameAgenda);
+
+    const todayISO = new Date().toISOString(); // Get today's date in ISO format
+
+    // Normalize input domain (strip http, https, www)
+    const normalizedCity = normalizeCity(city);
+
+    if (!normalizedCity) {
+      console.error("City name is invalid or could not be normalized.");
+      return [];  // Exit if city normalization failed
+    }
+
+    const escapedCity = escapeRegExp(normalizedCity);
+
+    console.log("the city normalized", escapedCity);
+
+    // Construct MongoDB query
+    const query = {
+      city: {
+        $regex: new RegExp(`^${escapedCity}(?=\s*\|.*$|$)`, "i")  // Match the city name and optionally allow extra details after |
+      },       // Match city name (case-insensitive)
+      date_end_st: { $gte: todayISO }, // End date must be in the future
+      $or: [
+        { date_begin_st: { $lte: todayISO } }, // If begin date exists, it must be in the past
+        { date_begin_st: null }, // Or begin date can be missing
+      ],
+      show: { $ne: false }, // Exclude hidden documents
+    };
+
+    const exhibitions = await collection.find(query).toArray();
+
+    return exhibitions;
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    throw error;
+  } finally {
+    await client.close();
+    console.log("Disconnected from MongoDB");
+  }
+}
+
+// Functionality to add using the city_mapping_collection:
+
+// def get_exhibitions_by_city(city_name):
+//     """Fetch exhibitions by city name, considering all possible alternatives."""
+//     city_mapping = city_mapping_collection.find_one({"city": city_name})
+
+//     if city_mapping:
+//         city_variants = city_mapping["alternatives"]
+//     else:
+//         city_variants = [city_name]  # Fallback to the input name
+
+//     # Fetch all locations matching any of the city variants
+//     locations = collection_Locations.find({"city": {"$in": city_variants}})
+//     location_ids = [loc["_id"] for loc in locations]
+
+//     # Fetch exhibitions linked to these locations
+//     exhibitions = collection_Exhibitions.find({"location_id": {"$in": location_ids}})
+
+//     return list(exhibitions)
+
+
 
 export async function getLocations() {
   const client = new MongoClient(uri);
@@ -184,6 +276,7 @@ export async function getLocations() {
             _id: "$cleanDomain", // Group by domain to ensure uniqueness
             name: { $first: "$name" }, // Take the first occurrence
             originalUrl: { $first: "$originalUrl" },
+            city: { $first: "$locationData.city" },
             lat: { $first: { $ifNull: ["$locationData.coordinates.latitude", null] } }, // Default to null
             lon: { $first: { $ifNull: ["$locationData.coordinates.longitude", null] } },
           },
@@ -197,6 +290,7 @@ export async function getLocations() {
     return locations.map(loc => ({
       domain: loc._id, // Cleaned domain
       name: loc.name || loc.originalUrl, // Use original URL if name is missing
+      city: loc.city,
       latitude: loc.lat ?? null, // Ensure it matches LocationContextType
       longitude: loc.lon ?? null, // Ensure it matches LocationContextType
     }));
@@ -206,6 +300,44 @@ export async function getLocations() {
   } finally {
     await client.close();
   }
+}
+
+export const getUniqueCities = async () => {
+  const cities = await db.collection('locations').distinct('city').toArray;
+  return cities;
+};
+
+
+export async function getCities() {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const database = client.db(dbNameAgenda);
+    const collection_cities = database.collection(collectionCities);
+
+    // Query to fetch all documents and project only the `city` field
+    const citiesCursor = await collection_cities.find({}, { projection: { city: 1, _id: 1 } });
+
+    // Convert the cursor to an array of cities
+    const cities = await citiesCursor.toArray();
+
+    // Extract the `city` field from each document and sort alphabetically
+    const cityList = cities
+      .map((doc) => ({
+        id: doc._id,  // Use the MongoDB `_id` field as the id
+        city: doc.city,
+      }))
+      .sort((a, b) => a.city.localeCompare(b.city));
+
+    return cityList;  // Return the array of cities
+  } catch (error) {
+    console.error('Error fetching cities:', error);
+    return [];
+  } finally {
+    await client.close();
+  }
+
 }
 
 

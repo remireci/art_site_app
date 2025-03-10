@@ -1,9 +1,15 @@
-import { getLocations } from "../../db/mongo";
+import { getLocations } from "../../../db/mongo";
 
+interface LocationsListPageProps {
+    params: {
+        locale: string;
+    };
+}
 
-export default async function LocationsListPage() {
+export default async function LocationsListPage({ params }: LocationsListPageProps) {
     const locations: Array<any> = await getLocations();
     const filteredLocations = locations.filter(location => location.name !== "N/A");
+    const { locale } = params;
 
     return (
         <main className="flex flex-col items-center p-4 min-h-screen text-slate-100">
@@ -19,7 +25,7 @@ export default async function LocationsListPage() {
                 <ul className="">
                     {filteredLocations.map(location => (
                         <li key={location.domain} className="bg-slate-100">
-                            <a href={`/locations/${location.domain}`}>{location.name}</a>
+                            <a href={`/${locale}/exhibitions/locations/${location.domain}`}>{location.name}</a>
                         </li>
                     ))}
                 </ul>

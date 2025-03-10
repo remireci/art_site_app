@@ -8,13 +8,15 @@ import ImageDisplay from './ImageDisplay';
 import GetLocation from './GetLocation';
 import dynamic from 'next/dynamic';
 import MosaicTab from './MosaicTab';
+import { useSearchParams } from 'next/navigation';
+
 
 const DynamicMap = dynamic(() => import('./showmap/MapTest'), {
     ssr: false
 });
 
 
-const Search = ({ initialLocations, exhibitions }) => {
+const Search = ({ initialLocations, exhibitions, tab }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [initialLoad, setInitialLoad] = useState(true);
@@ -22,7 +24,8 @@ const Search = ({ initialLocations, exhibitions }) => {
     const [activeTab, setActiveTab] = useState('list');
     const [showClearButton, setShowClearButton] = useState(false);
     const [locations, setLocations] = useState(initialLocations);
-
+    const searchParams = useSearchParams();
+    const city = searchParams.get("city");
 
     const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal'];
     const number = initialSearchTerms.length;
@@ -95,6 +98,15 @@ const Search = ({ initialLocations, exhibitions }) => {
             document.getElementById("results-container")?.scrollTo(0, 0);
         }
     }, [activeTab]);
+
+    useEffect(() => {
+        if (city) {
+            setActiveTab("map");
+            setQuery(city);
+        }
+    }, [city]);
+
+
 
     // Function to highlight the query text within the snippet and limit the length of the snippet
     const highlightQuery = (snippet, query) => {
