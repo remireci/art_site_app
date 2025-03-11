@@ -314,8 +314,11 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                                 imagePath = imagePath.slice(0, -1);
                                             }
 
-                                            if (!String(imagePath).startsWith("http")) {
-                                                imagePath = "";
+                                            if (imagePath && imagePath.startsWith("https://")) {
+                                                // Assuming the image is hosted on Cloudflare or a similar service
+                                                // Append the resize parameters (adjust based on your cloud provider)
+                                                const resizedImagePath = `${imagePath}?width=100&height=50&fit=cover`; // Adjust the parameters as needed
+                                                imagePath = resizedImagePath;
                                             }
 
                                             const title = result.title || "";
