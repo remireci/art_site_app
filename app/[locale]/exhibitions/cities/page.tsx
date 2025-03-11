@@ -10,9 +10,6 @@ export default async function CityList({ params }: LocationsListPageProps) {
     const { locale } = params;
     const cities: Array<any> = await getCities();
 
-    console.log("these are the cituies", cities);
-
-
     return (
         <main className="flex flex-col items-center p-4 min-h-screen text-slate-500">
             <div>
@@ -27,7 +24,7 @@ export default async function CityList({ params }: LocationsListPageProps) {
                 <ul className="">
                     {cities.map(city => (
                         <li key={city.id}>
-                            <a href={`/${locale}/exhibitions/cities/${city.city}`}>{city.city}</a>
+                            <a href={`/${locale}/exhibitions/cities/${encodeURIComponent(city.city)}`}>{city.city}</a>
                         </li>
                     ))}
                 </ul>
