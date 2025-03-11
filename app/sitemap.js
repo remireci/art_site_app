@@ -125,7 +125,7 @@ function generateSitemapIndexXml(sitemaps) {
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     ${sitemaps.map(sitemap => `
     <sitemap>
-        <loc>${URL}/public/${path.basename(sitemap)}</loc>
+        <loc>${URL}/${path.basename(sitemap)}</loc>
         <lastmod>${new Date().toISOString()}</lastmod>
     </sitemap>`).join("")}
 </sitemapindex>`;
