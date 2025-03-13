@@ -31,6 +31,16 @@ const nextConfig = {
             "pub-1070865a23b94011a35efcf0cf91803e.r2.dev",
         ],
     },
+
+    async redirects() {
+        return [
+            {
+                source: '/locations/:slug',
+                destination: '/exhibitions/locations/:slug',
+                permanent: true,
+            },
+        ]
+    }
 };
 
 export default nextConfig;
