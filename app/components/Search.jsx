@@ -106,8 +106,6 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
         }
     }, [city]);
 
-
-
     // Function to highlight the query text within the snippet and limit the length of the snippet
     const highlightQuery = (snippet, query) => {
         if (!query) return snippet; // Return the snippet as is if the query is empty
@@ -134,6 +132,8 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
 
         return startIndex > 0 ? `...${highlightedSnippet}...` : highlightedSnippet;
     };
+
+
     return (
         <div className="main-container flex flex-wrap" id="map-container">
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block h-14 lg:h-40"></div>

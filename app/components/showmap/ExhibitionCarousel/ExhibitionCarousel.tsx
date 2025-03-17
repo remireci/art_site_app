@@ -40,14 +40,18 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
     };
 
     return (
-        <div className='w-[200px]'>
+        <div className="w-[200px] h-[280px]">
             {exhibitionsInLocation.map((exhibition, index) => (
                 <div
                     key={exhibition._id}
                     style={{ display: index === currentExhibitionIndex ? "block" : "none" }}
+                    className="flex flex-col justify-between h-full"
                 >
-                    <h3 className="italic pt-2 leading-tight">{exhibition.title}</h3>
-                    <div className='flex items-center justify-center bg-gray-300 backdrop-blur-sm'>
+                    <h3 className="italic pt-2 leading-tight text-ellipsis overflow-hidden whitespace-nowrap">
+                        {exhibition.title}
+                    </h3>
+
+                    <div className="flex items-center justify-center bg-gray-300 backdrop-blur-sm h-[140px] overflow-hidden">
                         <Image
                             unoptimized
                             src={exhibition.image_reference[0]}
@@ -57,35 +61,50 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
                             className="w-full max-h-[150px] object-cover transition-transform duration-700 ease-in-out hover:scale-125"
                         />
                     </div>
-                    <div className="flex flex-col space-y-1 overflow-visible">
+                    <div className="flex flex-col -space-y-1 leading-none">
                         {exhibitionsInLocation.length > 1 && (
                             <div className='flex flex-row justify-between font-bold mt-1' >
                                 <button onClick={handlePrevExhibition}>&lt;</button>
                                 <button onClick={handleNextExhibition}> &gt;</button>
                             </div>
                         )}
+                        <div className="flex flex-col -space-y-8 leading-none">
+                            {exhibition.artists && exhibition.artists !== "N/A" && (
+                                <p className="text-sm leading-tight overflow-hidden text-ellipsis line-clamp-2">
+                                    {exhibition.artists}
+                                </p>
 
-                        {exhibition.artists && exhibition.artists !== "N/A" &&
+                            )}
+                            <div className="flex flex-col -space-y-4 leading-none">
+                                {exhibition.location && exhibition.location !== "N/A" && (
+                                    <a href={exhibition.url} target="_blank" rel="noopener noreferrer">
+                                        <p className="text-sm">{exhibition.location}</p>
+                                    </a>
+                                )}
+                                <p className="text-xs">&#8702; {formatDate(exhibition.date_end_st)}</p>
+                            </div>
+                        </div>
+                        {/* {exhibition.artists && exhibition.artists !== "N/A" &&
                             <p className='text-sm'>{exhibition.artists}</p>
                         }
                         {exhibition.location && exhibition.location !== "N/A" &&
-                            <p className='text-sm'>{exhibition.location}</p>
+                            <a
+                                href={exhibition.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            // className="text-blue-500 text-xs mt-1 inline-block z-10"
+                            // style={{ position: "relative", zIndex: 10 }}
+                            >
+                                <p className='text-sm'>{exhibition.location}</p>
+                            </a>
                         }
-                        <p className='text-xs'> &#8702; {formatDate(exhibition.date_end_st)}</p>
-                        <a
-                            href={exhibition.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        // className="text-blue-500 text-xs mt-1 inline-block z-10"
-                        // style={{ position: "relative", zIndex: 10 }}
-                        >
-                            More Info
-                        </a>
+                        <p className='text-xs'> &#8702; {formatDate(exhibition.date_end_st)}</p> */}
                     </div>
                 </div>
-            ))}
+            ))
+            }
 
-        </div>
+        </div >
     );
 };
 
