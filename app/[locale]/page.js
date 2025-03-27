@@ -9,12 +9,11 @@ export default async function HomePage() {
   try {
     const cacheOption =
       process.env.NODE_ENV === "development"
-        ? { cache: "no-store" } // Disable caching in development
-        : { next: { revalidate: 3600 } }; // Cache for 1 hour in production
+        ? { cache: "no-store" }
+        : { next: { revalidate: 3600 } };
 
     const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
     const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
-
 
     if (!locationsResponse.ok || !exhibitionsResponse.ok) {
       throw new Error("Failed to fetch data");

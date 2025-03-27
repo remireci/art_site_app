@@ -287,6 +287,8 @@ export async function getLocations() {
       ])
       .toArray();
 
+    console.log("from the function", locations.length);
+
     return locations.map(loc => ({
       domain: loc._id, // Cleaned domain
       name: loc.name || loc.originalUrl, // Use original URL if name is missing

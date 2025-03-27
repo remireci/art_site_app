@@ -71,6 +71,12 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
         [49.6117, 6.1319], // Luxembourg City, Luxembourg       
     ];
 
+    const thisExh = locations.find((e) => e.name === "Kraupa-Tuskany Zeidler");
+
+
+    console.log("the exhibitions", thisExh);
+
+
     const getRandomLocation = (): LatLngTuple => {
         return possibleStartLocations[Math.floor(Math.random() * possibleStartLocations.length)];
     };

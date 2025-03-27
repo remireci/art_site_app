@@ -43,6 +43,15 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
         setShowClearButton(false); // Hide clear button after clearing the field
     };
 
+    // Get unique locations using a Set
+    const uniqueLocations = new Set(exhibitions.map(exhibition => exhibition.location));
+
+    // Log the count of unique locations
+    console.log(`Number of unique locations: ${uniqueLocations}`);
+
+
+    console.log(`Number of locations: ${initialLocations[0]}`);
+
     useEffect(() => {
         const initialSearch = async () => {
             const response = await fetch(`/api/search?terms=${initialSearchTerm}`);
@@ -132,7 +141,6 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
 
         return startIndex > 0 ? `...${highlightedSnippet}...` : highlightedSnippet;
     };
-
 
     return (
         <div className="main-container flex flex-wrap" id="map-container">

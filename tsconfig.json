@@ -29,6 +29,6 @@
     "app/page.ts",
     "app/api/locations/route.js",
     "app/api/map/locations/route.js"
-, "app/[locale]/page.js"  ],
+, "app/[locale]/page.ts"  ],
   "exclude": ["node_modules"]
 }

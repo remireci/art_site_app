@@ -27,8 +27,15 @@ export async function GET() {
         );
 
 
-        // Log the number of exhibitions
-        console.log(`Number of exhibitions fetched: ${exhibitions.length}`);
+        // // Log the number of exhibitions
+        // console.log(`Number of exhibitions fetched: ${exhibitions.length}`);
+
+        // // Get unique locations using a Set
+        // const uniqueLocations = new Set(exhibitions.map(exhibition => exhibition.location));
+
+        // // Log the count of unique locations
+        // console.log(`Number of unique locations: ${uniqueLocations.size}`);
+
 
         return NextResponse.json(exhibitions, { status: 200 });
     } catch (error) {

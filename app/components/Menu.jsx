@@ -2,6 +2,7 @@
 // import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import LocaleSwitcher from "./LocaleSwitcher";
 
 
 const Menu = () => {
@@ -19,10 +20,10 @@ const Menu = () => {
                     <h2 className='text-center text-sm font-light underline'>Advertising</h2>
                 </Link>
                 {/* <Link href="/account?message=wishlist"> */}
-                {/* <div className="relative hover:text-gray-600 cursor-pointer"
+                <div className="relative hover:text-gray-600 cursor-pointer"
                 >
-
-                </div> */}
+                    <LocaleSwitcher />
+                </div>
                 {/* </Link> */}
                 {/* <button
                     className="relative hover:text-gray-400"
