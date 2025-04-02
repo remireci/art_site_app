@@ -19,10 +19,6 @@ export async function GET() {
       (location) => location.name !== "N/A"
     );
 
-    const kraupa = locations.find((l) => l.name === "Kraupa-Tuskany Zeidler");
-
-    console.log("number of locations fetched", kraupa);
-
 
     return NextResponse.json(filteredLocations, { status: 200 });
   } catch (error) {

@@ -227,74 +227,78 @@ export async function getLocations() {
 
     const today = new Date().toISOString().split("T")[0]; // Get today's date in "yyyy-mm-dd" format
 
-    const locations = await collection_agenda
-      .aggregate([
-        {
-          $match: {
-            url: { $ne: null }, // Ensure URL exists
-            date_end_st: { $gte: today }, // Only future events
-          },
-        },
-        {
-          $project: {
-            originalUrl: "$url",
-            cleanDomain: {
-              $replaceAll: {
-                input: {
-                  $replaceAll: {
-                    input: { $replaceAll: { input: "$url", find: "https://", replacement: "" } },
-                    find: "http://",
-                    replacement: "",
-                  },
-                },
-                find: "www.",
-                replacement: "",
-              },
-            },
-            name: "$location",
-
-          },
-        },
-        {
-          $lookup: {
-            from: collectionNameLocations,
-            localField: "cleanDomain",
-            foreignField: "domain",
-            as: "locationData",
-          },
-        },
-        {
-          $unwind: { path: "$locationData", preserveNullAndEmptyArrays: true },
-        },
-        {
-          $match: {
-            $or: [{ "locationData.show": { $ne: false } }, { locationData: { $exists: false } }],
-          },
-        },
-        {
-          $group: {
-            _id: "$cleanDomain", // Group by domain to ensure uniqueness
-            name: { $first: "$name" }, // Take the first occurrence
-            originalUrl: { $first: "$originalUrl" },
-            city: { $first: "$locationData.city" },
-            lat: { $first: { $ifNull: ["$locationData.coordinates.latitude", null] } }, // Default to null
-            lon: { $first: { $ifNull: ["$locationData.coordinates.longitude", null] } },
-          },
-        },
-        {
-          $sort: { name: 1 }, // Sort alphabetically
-        },
-      ])
+    const locations = await collection_locations
+      .find({ show: { $ne: false } }) // Only select locations where show is not false
       .toArray();
 
-    console.log("from the function", locations.length);
+    // const locations = await collection_agenda
+    //   .aggregate([
+    //     {
+    //       $match: {
+    //         url: { $ne: null }, // Ensure URL exists
+    //         date_end_st: { $gte: today }, // Only future events
+    //       },
+    //     },
+    //     {
+    //       $project: {
+    //         originalUrl: "$url",
+    //         cleanDomain: {
+    //           $replaceAll: {
+    //             input: {
+    //               $replaceAll: {
+    //                 input: { $replaceAll: { input: "$url", find: "https://", replacement: "" } },
+    //                 find: "http://",
+    //                 replacement: "",
+    //               },
+    //             },
+    //             find: "www.",
+    //             replacement: "",
+    //           },
+    //         },
+    //         name: "$location",
+
+    //       },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: collectionNameLocations,
+    //         localField: "cleanDomain",
+    //         foreignField: "domain",
+    //         as: "locationData",
+    //       },
+    //     },
+    //     {
+    //       $unwind: { path: "$locationData", preserveNullAndEmptyArrays: true },
+    //     },
+    //     {
+    //       $match: {
+    //         $or: [{ "locationData.show": { $ne: false } }, { locationData: { $exists: false } }],
+    //       },
+    //     },
+    //     {
+    //       $group: {
+    //         _id: "$cleanDomain", // Group by domain to ensure uniqueness
+    //         name: { $first: "$name" }, // Take the first occurrence
+    //         originalUrl: { $first: "$originalUrl" },
+    //         city: { $first: "$locationData.city" },
+    //         lat: { $first: { $ifNull: ["$locationData.coordinates.latitude", null] } }, // Default to null
+    //         lon: { $first: { $ifNull: ["$locationData.coordinates.longitude", null] } },
+    //       },
+    //     },
+    //     {
+    //       $sort: { name: 1 }, // Sort alphabetically
+    //     },
+    //   ])
+    //   .toArray();
+
 
     return locations.map(loc => ({
-      domain: loc._id, // Cleaned domain
-      name: loc.name || loc.originalUrl, // Use original URL if name is missing
+      domain: loc.domain, // Cleaned domain
+      name: loc.location || loc.originalUrl, // Use original URL if name is missing
       city: loc.city,
-      latitude: loc.lat ?? null, // Ensure it matches LocationContextType
-      longitude: loc.lon ?? null, // Ensure it matches LocationContextType
+      latitude: loc.coordinates?.latitude ?? null, // Ensure correct path
+      longitude: loc.coordinates?.longitude ?? null,
+      hasMultipleLocations: loc.hasMultipleLocations ?? false,// Ensure it matches LocationContextType
     }));
   } catch (error) {
     console.error("Error fetching locations:", error);

@@ -46,11 +46,31 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
     // Get unique locations using a Set
     const uniqueLocations = new Set(exhibitions.map(exhibition => exhibition.location));
 
-    // Log the count of unique locations
-    console.log(`Number of unique locations: ${uniqueLocations}`);
+    const locationNames = initialLocations.map(locationObj => locationObj.domain);
+
+    // console.log(`locations: ${locationNames}`);
+
+    const missingLocations = [...uniqueLocations].filter(location => !locationNames.includes(location));
+
+    // // Log the count of unique locations
+    // console.log(`Number of unique locations: ${missingLocations}`);
+
+    // const domainCounts = locations.reduce((acc, location) => {
+    //     if (location.domain) {
+    //         acc[location.domain] = (acc[location.domain] || 0) + 1;
+    //     }
+    //     return acc;
+    // }, {});
+
+    // // Log only domains that appear more than once
+    // Object.entries(domainCounts).forEach(([domain, count]) => {
+    //     if (count > 1) {
+    //         console.log(`Domain "${domain}" appears ${count} times.`);
+    //     }
+    // });
 
 
-    console.log(`Number of locations: ${initialLocations[0]}`);
+
 
     useEffect(() => {
         const initialSearch = async () => {
@@ -88,7 +108,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
             const articles = data.filter(result => result.source === 'articles');
 
             localStorage.setItem('articles', JSON.stringify(articles));
-            console.log("localStorage set");
+            // console.log("localStorage set");
 
         } catch (error) {
             console.error('Error searching:', error);
@@ -228,7 +248,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                             <DynamicMap
                                                 searchQuery={query}
                                                 locations={locations}
-                                                exhibitions={exhibitions}
+                                                groupedExhibitions={exhibitions}
                                             />
                                         </div>
                                     </div>

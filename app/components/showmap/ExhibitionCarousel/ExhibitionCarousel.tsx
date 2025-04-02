@@ -40,7 +40,7 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
     };
 
     return (
-        <div className="w-[200px] h-[280px]">
+        <div className="w-[200px] min-h-[280px]">
             {exhibitionsInLocation.map((exhibition, index) => (
                 <div
                     key={exhibition._id}
@@ -75,11 +75,13 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
                                 </p>
 
                             )}
-                            <div className="flex flex-col -space-y-4 leading-none">
+                            <div className="flex flex-col -space-y-4 h-1/2">
                                 {exhibition.location && exhibition.location !== "N/A" && (
-                                    <a href={exhibition.url} target="_blank" rel="noopener noreferrer">
-                                        <p className="text-sm">{exhibition.location}</p>
-                                    </a>
+                                    <p className="text-sm">
+                                        <a href={exhibition.url} target="_blank" rel="noopener noreferrer">
+                                            {exhibition.location}
+                                        </a>
+                                    </p>
                                 )}
                                 <p className="text-xs">&#8702; {formatDate(exhibition.date_end_st)}</p>
                             </div>

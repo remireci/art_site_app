@@ -19,7 +19,12 @@ import "../../styles/globals.css";
 interface MapProps {
     searchQuery: string;
     locations: Location[];
-    exhibitions: Exhibition[];
+    groupedExhibitions: Array<{
+        key: string;
+        domain: string;
+        location: string | null;
+        exhibitions: Exhibition[];
+    }>;
 }
 
 type Exhibition = {
@@ -56,7 +61,7 @@ type LocationWithMarker = LocationMarker & {
 };
 
 
-const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) => {
+const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapProps) => {
 
     const possibleStartLocations: LatLngTuple[] = [
         [50.8503, 4.3517], // Brussels, Belgium
@@ -71,10 +76,12 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
         [49.6117, 6.1319], // Luxembourg City, Luxembourg       
     ];
 
-    const thisExh = locations.find((e) => e.name === "Kraupa-Tuskany Zeidler");
+    // const bozarGroup = Object.values(groupedExhibitions).find(
+    //     group => group.key === "bozar.be"
+    // );
 
 
-    console.log("the exhibitions", thisExh);
+    console.log("the exhibitions", groupedExhibitions);
 
 
     const getRandomLocation = (): LatLngTuple => {
@@ -245,10 +252,13 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
         <div>
             <MapContainer
                 className="h-[60vh] w-[80vw] md:w-[60vw] lg:w-[65vw] xl:w-[38vw]"
-
                 center={coord}
                 zoom={13}
-                scrollWheelZoom={false}
+                scrollWheelZoom={true}
+                zoomControl={true}      // Show zoom controls
+                doubleClickZoom={true}  // Enable double-click zoom
+                touchZoom={true}        // Enable touch zoom
+                dragging={true}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -270,28 +280,45 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
                     </Marker>
                 )}
                 <>
-                    {filteredLocations.map((location, index) => {
-                        // Filter exhibitions that match the location's domain
-                        const exhibitionsInLocation = exhibitions.filter(exhibition => {
-                            if (!exhibition.url || !location.domain) return false; // Ensure both exist                            
-                            // Normalize URLs: Remove "http://", "https://", and "www."
-                            const normalizedExhibitionUrl = exhibition.url
-                                .toLowerCase()
-                                .replace(/^(https?:\/\/)?(www\.)?/, "") // Remove protocol & "www."
-                                .replace(/\/$/, ""); // Remove trailing slash
-
-                            const normalizedDomain = location.domain.toLowerCase();
-
-                            return normalizedExhibitionUrl.includes(normalizedDomain);
+                    {filteredLocations.map((location) => {
+                        // Find matching exhibition groups
+                        const locationGroups = Object.values(groupedExhibitions).filter(group => {
+                            // For multi-location institutions - more precise check
+                            if (group.key.startsWith(`${location.domain}_`)) {
+                                return group.location === location.name;
+                            }
+                            // For single-location institutions
+                            return group.domain === location.domain && !group.key.includes('_');
                         });
-                        // Check if there are any exhibitions for the current location
+
+
+                        // Flatten all exhibitions from matching groups
+                        const exhibitionsInLocation = locationGroups.flatMap(group => group.exhibitions);
+
                         if (exhibitionsInLocation.length === 0) {
                             return null;
                         }
+                        // // Filter exhibitions that match the location's domain
+                        // const exhibitionsInLocation = exhibitions.filter(exhibition => {
+                        //     if (!exhibition.url || !location.domain) return false; // Ensure both exist                            
+                        //     // Normalize URLs: Remove "http://", "https://", and "www."
+                        //     const normalizedExhibitionUrl = exhibition.url
+                        //         .toLowerCase()
+                        //         .replace(/^(https?:\/\/)?(www\.)?/, "") // Remove protocol & "www."
+                        //         .replace(/\/$/, ""); // Remove trailing slash
+
+                        //     const normalizedDomain = location.domain.toLowerCase();
+
+                        //     return normalizedExhibitionUrl.includes(normalizedDomain);
+                        // });
+                        // // Check if there are any exhibitions for the current location
+                        // if (exhibitionsInLocation.length === 0) {
+                        //     return null;
+                        // }
 
                         return (
                             <Marker
-                                key={`filtered-${index}`}
+                                key={`${location.domain}_${location.name || 'main'}`}
                                 position={[location.lat, location.lon]}
                                 icon={
                                     new L.Icon({
@@ -324,12 +351,13 @@ const MapTest = React.memo(({ searchQuery, locations, exhibitions }: MapProps) =
                                     autoPan={false} // Disable auto-pan
                                     keepInView={false} // Prevent map from adjusting
                                     closeOnClick={true} // Prevent closing on map click
+                                    closeButton={false}
                                     offset={L.point(0, 10)}
                                     eventHandlers={{
                                         mouseover: (e) => {
                                             // Keep the popup open when hovering over it
                                             const marker = e.target._source;
-                                            marker._popup._closeButton.style.display = 'none'; // Optional: Hide close button
+                                            // marker._popup._closeButton.style.display = 'none'; // Optional: Hide close button
                                         },
                                         mouseout: (e) => {
                                             // Close the popup when the cursor leaves both the marker and the popup

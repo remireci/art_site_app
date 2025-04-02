@@ -22,7 +22,7 @@ export default async function HomePage() {
     const locations = await locationsResponse.json();
     const exhibitions = await exhibitionsResponse.json();
 
-    // console.log("Sample locations data:", locations.slice(0, 10));
+    // console.log("Sample locations data:", exhibitions.slice(0, 10));
 
     const extractWords = (title) =>
       title
@@ -37,35 +37,96 @@ export default async function HomePage() {
       return domain;
     }
 
-    // Step 1: Group exhibitions by domain and date_end_st
-    const groupedExhibitions = exhibitions.reduce((acc, exhibition) => {
-      const domain = extractDomain(exhibition.url);
-      const key = `${domain}_${exhibition.date_end_st}`; // Unique group key
+    const filteredLocations = locations.filter((location) =>
+      exhibitions.some((exhibition) => extractDomain(exhibition.url) === location.domain)
+    );
 
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(exhibition);
-
-      return acc;
+    const locationsMap = filteredLocations.reduce((map, location) => {
+      // Store array of locations per domain for multi-location case
+      if (!map[location.domain]) map[location.domain] = [];
+      map[location.domain].push(location);
+      return map;
     }, {});
 
-    // Step 2: Within each group, filter out duplicates
-    const uniqueExhibitions = Object.values(groupedExhibitions).flatMap((group) => {
-      const filteredGroup = [];
+    const groupedExhibitions = {};
 
-      group.forEach((exhibition) => {
-        const titleWords = new Set(extractWords(exhibition.title));
+    for (const exhibition of exhibitions) {
+      const domain = extractDomain(exhibition.url);
+      if (!domain) continue;
 
-        // Check if an exhibition in filteredGroup already exists with at least one common word
-        const isDuplicate = filteredGroup.some((existing) => {
-          const existingWords = new Set(extractWords(existing.title));
-          return [...titleWords].some((word) => existingWords.has(word)); // Check for common words
-        });
+      // Get all locations for this domain
+      const domainLocations = locationsMap[domain] || [];
 
-        if (!isDuplicate) filteredGroup.push(exhibition);
-      });
+      // Check if any location is marked as multi-location
+      const hasMultiLocations = domainLocations.some(loc => loc.hasMultipleLocations);
 
-      return filteredGroup;
+      // Create the group key
+      const groupKey = hasMultiLocations
+        ? `${domain}_${exhibition.location}`
+        : domain;
+
+      // Initialize the group if it doesn't exist
+      if (!groupedExhibitions[groupKey]) {
+        groupedExhibitions[groupKey] = {
+          key: groupKey,
+          domain,
+          location: exhibition.location,
+          exhibitions: []  // This will directly contain the array
+        };
+      }
+
+      // Push the exhibition directly into the array
+      groupedExhibitions[groupKey].exhibitions.push(exhibition);
+    }
+
+    // Now when you extract the values, you'll get the correct structure
+    const exhibitionGroups = Object.values(groupedExhibitions);
+
+    // // Filter for SMB museum
+    // const smbGroups = exhibitionGroups.filter(group => group.domain === 'smb.museum');
+    // console.log('SMB Museum Groups:', smbGroups);
+
+    const uniqueGroups = Object.values(groupedExhibitions).map(group => {
+      const titleMap = {};
+      return {
+        ...group,
+        exhibitions: group.exhibitions.filter(exhibition => {
+          const normalizedTitle = exhibition.title.toLowerCase().trim();
+          if (!titleMap[normalizedTitle]) {
+            titleMap[normalizedTitle] = true;
+            return true;
+          }
+          return false;
+        })
+      };
     });
+
+    // Now you can get your unique exhibitions if needed
+    const uniqueExhibitions = uniqueGroups.flatMap(group => group.exhibitions);
+
+    // Filter for SMB museum
+    const smbGroups = uniqueGroups.filter(group => group.domain === 'smb.museum');
+    console.log('Deduplicated SMB Groups:', uniqueGroups);
+
+    // // // Step 2: Within each group, filter out duplicates
+    // const uniqueExhibitions = Object.values(groupedExhibitions).flatMap((group) => {
+    //   const filteredGroup = [];
+
+    //   group.forEach((exhibition) => {
+    //     const titleWords = new Set(extractWords(exhibition.title));
+
+    //     const isDuplicate = filteredGroup.some((existing) => {
+    //       const existingWords = new Set(extractWords(existing.title));
+    //       return [...titleWords].some((word) => existingWords.has(word));
+    //     });
+
+    //     if (!isDuplicate) filteredGroup.push(exhibition);
+    //   });
+
+    //   return filteredGroup;
+    // });
+
+
 
     // // Step 1: Count unique exhibitions per domain
     // const domainCounts = uniqueExhibitions.reduce((acc, exhibition) => {
@@ -89,7 +150,7 @@ export default async function HomePage() {
 
     return (
       <div>
-        <Search initialLocations={locations} exhibitions={uniqueExhibitions} />
+        <Search initialLocations={filteredLocations} exhibitions={uniqueGroups} />
       </div>
     );
   } catch (error) {
