@@ -4,13 +4,13 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import MosaicItem from "../../components/MosaicItem";
 
+// Define the Exhibition type
 interface Exhibition {
     title: string;
     location: string;
     url: string;
-    image_reference: string;
+    image_reference: string[];
 }
-
 // Fisher-Yates shuffle to randomize exhibitions
 const shuffleArray = (array: Exhibition[]) => {
     const shuffled = [...array];
