@@ -106,7 +106,7 @@ export default async function HomePage() {
 
     // Filter for SMB museum
     const smbGroups = uniqueGroups.filter(group => group.domain === 'smb.museum');
-    console.log('Deduplicated SMB Groups:', uniqueGroups);
+    // console.log('Deduplicated SMB Groups:', uniqueGroups);
 
     // // // Step 2: Within each group, filter out duplicates
     // const uniqueExhibitions = Object.values(groupedExhibitions).flatMap((group) => {

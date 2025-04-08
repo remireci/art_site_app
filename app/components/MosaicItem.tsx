@@ -9,7 +9,7 @@ interface MosaicItemProps {
         title: string;
         location: string;
         url: string;
-        image_reference: string;
+        image_reference: string[];
     };
 }
 
@@ -39,11 +39,16 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                 scale: 1,
             }}
             transition={{ duration: 2.5, ease: "easeOut" }}
-            className="relative w-full h-40"
+            className="relative w-full h-40 group"
         >
             <Link href={exhibition.url} target="_blank">
-                <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden">
 
+                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-[8px] px-1 truncate opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 z-20">
+                    <p>{exhibition.title}</p>
+                    <p>{exhibition.location}</p>
+                </div>
+
+                <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden">
                     <Image
                         unoptimized
                         src={exhibition.image_reference[0]}
@@ -53,15 +58,12 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority={true}
                         loading="eager"
-                        className="transition-transform duration-700 ease-in-out hover:scale-[2.5] hover:z-10"
+                        className="transition-transform duration-700 ease-in-out group-hover:scale-[2.5] group-hover:z-10"
                     />
 
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-[8px] px-1 truncate">
-                    <p>{exhibition.title}</p>
-                    <p>{exhibition.location}</p>
-                </div>
+
             </Link>
         </motion.div>
     );

@@ -78,7 +78,7 @@ const compareAgendaItems = (item1, item2) => {
   });
 
   // Compare date_end and location
-  const dateMatch = normalizeDate(item1.date_end) === normalizeDate(item2.date_end);
+  const dateMatch = normalizeDate(item1.date_end_st) === normalizeDate(item2.date_end_st);
 
   const locations1 = item1.location.split(' ').filter(word => word.length >= 4);
   const locations2 = item2.location.split(' ').filter(word => word.length >= 4);
@@ -259,8 +259,8 @@ export async function GET(req, res) {
     // Map each result to include information about its source
     const data = combinedResults.map(result => ({
       url: result.url,
-      snippet: result.hasOwnProperty('date_end') ? '' : getSentenceWithTerm(result.text, queryTerms[0]), // Assuming only the first search term for simplicity
-      source: result.hasOwnProperty('date_end') ? 'agenda' : 'articles', // Assuming agenda items have a property named 'date_end'
+      snippet: result.hasOwnProperty('date_end_st') ? '' : getSentenceWithTerm(result.text, queryTerms[0]), // Assuming only the first search term for simplicity
+      source: result.hasOwnProperty('date_end_st') ? 'agenda' : 'articles', // Assuming agenda items have a property named 'date_end'
       ...result // Spread all fields from the result object
     }));
 

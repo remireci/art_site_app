@@ -2,11 +2,18 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import MosaicItem from "./MosaicItem";
 
+// Define the Exhibition type
 interface Exhibition {
     title: string;
     location: string;
     url: string;
-    image_reference: string;
+    image_reference: string[];
+}
+
+// Define the DomainExhibitions type that wraps the exhibitions in each domain
+interface DomainExhibitions {
+    domain: string;
+    exhibitions: Exhibition[];
 }
 
 const shuffleArray = (array: Exhibition[]) => {
@@ -18,7 +25,7 @@ const shuffleArray = (array: Exhibition[]) => {
     return shuffled;
 };
 
-export default function MosaicTab({ exhibitions }: { exhibitions: Exhibition[] }) {
+export default function MosaicTab({ exhibitions }: { exhibitions: DomainExhibitions[] }) {
     const [showExhibitions, setShowExhibitions] = useState<Exhibition[]>([]);
     const [visibleExhibitions, setVisibleExhibitions] = useState<Exhibition[]>([]);
     const [loading, setLoading] = useState(true);
@@ -26,11 +33,15 @@ export default function MosaicTab({ exhibitions }: { exhibitions: Exhibition[] }
     const loadingRef = useRef(false);
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
+    console.log("these are the exhibitions", exhibitions);
+
     useEffect(() => {
         async function fetchExhibitions() {
             // const res = await fetch(`/api/exhibitions`);
             // const data: Exhibition[] = await res.json();
-            const filtered = exhibitions.filter(ex => ex.image_reference.length > 0);
+            const flattenedExhibitions = exhibitions.flatMap(domain => domain.exhibitions);
+            // Filter exhibitions that have an image reference
+            const filtered = flattenedExhibitions.filter(ex => ex.image_reference.length > 0);
             const shuffled = shuffleArray(filtered);
 
             setShowExhibitions(shuffled);

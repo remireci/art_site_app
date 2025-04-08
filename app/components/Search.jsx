@@ -27,7 +27,8 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
     const searchParams = useSearchParams();
     const city = searchParams.get("city");
 
-    const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal'];
+    // const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal'];
+    const initialSearchTerms = ["dessin"];
     const number = initialSearchTerms.length;
     const indexInitialSearch = Math.floor(Math.random(number) * number);
     const initialSearchTerm = initialSearchTerms[indexInitialSearch];
