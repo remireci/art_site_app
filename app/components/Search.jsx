@@ -168,7 +168,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block h-14 lg:h-40"></div>
             <div className="flex flex-col justify-between w-full px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 h-14 lg:h-40">
                 {activeTab === 'list' && (
-                    <SearchList query={query} setQuery={setQuery} onSearch={handleSearch} />
+                    <SearchList query={query} setQuery={setQuery} onSearch={handleSearch} onClear={handleClear} />
                 )
                 }
                 {activeTab === 'map' && (
@@ -301,7 +301,17 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                             };
 
                                             // Format the URLs
-                                            const exhibitionUrl = result.exh_url && result.exh_url !== 'N/A' && /^https?:\/\//.test(result.exh_url) ? formatUrl(result.exh_url) : null;
+                                            // const exhibitionUrl = result.exhibition_url && result.exhibition_url !== 'N/A' && /^https?:\/\//.test(result.exhibition_url) ? formatUrl(result.exhibition_url) : null;
+                                            // exhibition_url from AgendaAI can be an array. TODO in the futur it will always be a string, so we can go back to former code. (line above)
+                                            const rawUrl = Array.isArray(result.exhibition_url)
+                                                ? result.exhibition_url[0]
+                                                : result.exhibition_url;
+
+                                            const exhibitionUrl =
+                                                rawUrl && rawUrl !== 'N/A' && /^https?:\/\//.test(rawUrl)
+                                                    ? formatUrl(rawUrl)
+                                                    : null;
+
 
                                             const locationUrl = formatUrl(result.url);
 
@@ -343,7 +353,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                                 imagePath = imagePath.slice(0, -1);
                                             }
 
-                                            if (imagePath && imagePath.startsWith("https://")) {
+                                            if ((imagePath != "") && imagePath.startsWith("https://")) {
                                                 // Assuming the image is hosted on Cloudflare or a similar service
                                                 // Append the resize parameters (adjust based on your cloud provider)
                                                 const resizedImagePath = `${imagePath}?width=100&height=50&fit=cover`; // Adjust the parameters as needed

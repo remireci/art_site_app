@@ -1,3 +1,6 @@
+// DEPRECATED: Transitioning to Next.js native sitemap
+// Remove after 2024-01-01 if new sitemap works correctly
+
 import { getLocations, getCities } from "../app/db/mongo";
 import fs from 'fs';
 import path from 'path';

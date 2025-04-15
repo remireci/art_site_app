@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +9,7 @@ interface MosaicItemProps {
         location: string;
         url: string;
         image_reference: string[];
+        exhibition_url: string;
     };
 }
 
@@ -19,7 +19,7 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
     // const index_picture = Math.floor(Math.random() + number_of_pictures);
     // const picture_src = exhibition.image_reference[index_picture]
 
-    // console.log("this is the picture source", picture_src);
+    // console.log("the exhibition", exhibition)
 
 
     return (
@@ -41,7 +41,12 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
             transition={{ duration: 2.5, ease: "easeOut" }}
             className="relative w-full h-40 group"
         >
-            <Link href={exhibition.url} target="_blank">
+            <Link href={exhibition.exhibition_url && exhibition.exhibition_url !== null
+                ? exhibition.exhibition_url
+                : exhibition.url
+            }
+                target="_blank"
+            >
 
                 <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-[8px] px-1 truncate opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 z-20">
                     <p>{exhibition.title}</p>
@@ -56,13 +61,10 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                         layout="fill"
                         objectFit="contain"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        priority={true}
-                        loading="eager"
+                        loading="lazy"
                         className="transition-transform duration-700 ease-in-out group-hover:scale-[2.5] group-hover:z-10"
                     />
-
                 </div>
-
 
             </Link>
         </motion.div>

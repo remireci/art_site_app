@@ -1,29 +1,29 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import i18nConfig from "./i18nConfig";
+import createMiddleware from "next-intl/middleware";
+import { locales } from "./i18n.config";
 
-export function middleware(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
+export default createMiddleware({
+  // Use this locale when we can't match
+  // another with our user's preferred locales
+  // and when no locale is explicitly set.
+  defaultLocale: "en",
 
-  // Check if the path starts with a valid locale (like /en, /fr, /nl)
-  const hasLocalePrefix = i18nConfig.locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
+  // List all supported locales (en-us, ar-eg).
+  locales,
 
-  // If the path already has a locale prefix, continue to the requested path
-  if (hasLocalePrefix) {
-    return NextResponse.next();
-  }
+  // Automatic locale detection is enabled by
+  // default. We're disabling it to keep things
+  // simple for now. We'll enable it later when
+  // we cover locale detection.
+  localeDetection: false,
+});
 
-  // If no locale prefix is found, prepend the default locale /en
-  const defaultLocale = i18nConfig.defaultLocale || "en"; // Use the default locale from config
-  const newUrl = new URL(`/${defaultLocale}${pathname}${search}`, request.url); // Prepend the default locale
-  return NextResponse.redirect(newUrl);
-}
-
+// Our middleware only applies to routes that
+// match the following:
 export const config = {
   matcher: [
-    "/((?!api|static|.*\\..*|_next).*)", // Match all pages except API/static files
-    "/exhibitions/:path*", // Ensure middleware runs on dynamic routes
+    // Match all pathnames except for
+    // - … if they start with `/api`, `/_next` or `/_vercel`
+    // - … the ones containing a dot (e.g. `favicon.ico`)
+    "/((?!api|_next|_vercel|.*\\..*).*)",
   ],
 };

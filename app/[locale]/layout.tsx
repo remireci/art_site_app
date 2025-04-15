@@ -3,14 +3,14 @@ import { Roboto } from 'next/font/google';
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import Header from "../components/Header.jsx";
-
 import { LocationProvider } from "../context/LocationContext";
 import CookieBanner from "../components/CookieBanner";
 import Footer from "../components/Footer";
 import GoogleAnalytics from '../components/GoogleAnalytics';
 // import CookieConsentPopup from './components/CookieConsentPopup';
 import { GoogleTagManager } from '@next/third-parties/google';
-
+import { NextIntlClientProvider } from 'next-intl';
+import { notFound } from 'next/navigation';
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -85,18 +85,27 @@ const addJsonLd = () => {
   return { __html: jsonld };
 };
 
-export default async function RootLayout({
+export default async function LocaleLayout({
   children,
-  params,
+  params: { locale },
 }: Readonly<{
   children: React.ReactNode;
   params: { locale: string };
 }>) {
+  let messages;
+  try {
+    const commonMessages = (await import(`../../locales/${locale}/common.json`)).default;
+    const homepageMessages = (await import(`../../locales/${locale}/homepage.json`)).default;
+    messages = { ...commonMessages, ...homepageMessages };
+    // console.log('Loaded messages:', messages);
+  } catch (error) {
+    notFound();
+  }
 
   const measurementId = process.env.GOOGLE_ANALYTICS;
   // const locale = params.locale || "en";
 
-  const { locale } = params;
+  // const { locale } = params;
   const metadata = await generateMetadata({ params: { locale } });
   const { alternates } = metadata;
 
@@ -114,12 +123,18 @@ export default async function RootLayout({
       {measurementId && <GoogleAnalytics GA_MEASUREMENT_ID={measurementId} />}
       <body className={roboto.className}>
         <div className="main-container min-h-screen">
-          <Header />
-          <LocationProvider>
-            {children}
-          </LocationProvider>
-          <CookieBanner />
-          <Footer />
+          <NextIntlClientProvider
+            locale={locale}
+            messages={messages}
+            timeZone="Europe/Brussels"
+          >
+            <Header />
+            <LocationProvider>
+              {children}
+            </LocationProvider>
+            <CookieBanner />
+            <Footer />
+          </NextIntlClientProvider>
         </div>
         <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER || 'default-gtm-id'} />
       </body>

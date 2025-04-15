@@ -1,4 +1,4 @@
-// db.js
+// db.js (singleton pattern)
 // to prevent everytime we call the /api route using GET method
 // a new connection to the database will be initiated
 // (because of the call to mongoose.connect() method everytime)
@@ -6,31 +6,26 @@
 
 import mongoose from 'mongoose';
 
-// const { MONGO_URL } = process.env.MONGODB_URI;
-
 let cached = global.mongoose;
 
 if (!cached) {
-    cached = global.mongoose = { conn: null };
+    cached = global.mongoose = { conn: null, promise: null };
 }
 
 
 export const dbConnect = async () => {
     if (cached.conn) return cached.conn;
 
-    cached.conn = await mongoose.connect(process.env.NEXT_PUBLI_MONGODB_URI);
+    if (!cached.promise) {
+        if (!process.env.NEXT_PUBLIC_MONGODB_URI) {
+            throw new Error('Missing NEXT_PUBLIC_MONGODB_URI in environment');
+        }
 
+        cached.promise = mongoose.connect(process.env.MONGODB_URI, {
+            bufferCommands: false,
+        });
+    }
+
+    cached.conn = await cached.promise;
     return cached.conn;
 };
-
-
-//     try {
-//         await mongoose.connect(process.env.MONGODB_URI);
-//         console.log('MongoDB connected');
-//     } catch (error) {
-//         console.error('Error connecting to MongoDB:', error);
-//         process.exit(1);
-//     }
-// };
-
-// export default connectDB;

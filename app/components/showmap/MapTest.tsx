@@ -37,6 +37,7 @@ type Exhibition = {
     artists?: string;
     date_end_st: string;
     image_reference: string[];
+    exhibition_url: string;
 }
 
 type LocationMarker = {
@@ -81,7 +82,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
     // );
 
 
-    console.log("the exhibitions", groupedExhibitions);
+    // console.log("the exhibitions", groupedExhibitions);
 
 
     const getRandomLocation = (): LatLngTuple => {
@@ -294,6 +295,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
 
                         // Flatten all exhibitions from matching groups
                         const exhibitionsInLocation = locationGroups.flatMap(group => group.exhibitions);
+
 
                         if (exhibitionsInLocation.length === 0) {
                             return null;

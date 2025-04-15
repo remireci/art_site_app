@@ -17,6 +17,7 @@ type Exhibition = {
     artists?: string;
     date_end_st: string;
     image_reference: string[];
+    exhibition_url: string;
 }
 
 const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
@@ -78,7 +79,12 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
                             <div className="flex flex-col -space-y-4 h-1/2">
                                 {exhibition.location && exhibition.location !== "N/A" && (
                                     <p className="text-sm">
-                                        <a href={exhibition.url} target="_blank" rel="noopener noreferrer">
+                                        <a href={exhibition.exhibition_url && exhibition.exhibition_url !== 'N/A'
+                                            ? exhibition.exhibition_url
+                                            : exhibition.url
+                                        }
+                                            target="_blank" rel="noopener noreferrer"
+                                        >
                                             {exhibition.location}
                                         </a>
                                     </p>

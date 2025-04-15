@@ -1,8 +1,33 @@
 import { getCities } from "../../../db/mongo";
+import { Metadata } from 'next';
 
 interface LocationsListPageProps {
     params: {
         locale: string;
+    };
+}
+
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+    // Load translations
+    const messages = await import(`../../../../locales/${params.locale}/exhibitions.json`)
+        .then(m => m.default)
+        .catch(() => import(`../../../../locales/en/exhibitions.json`).then(m => m.default));
+
+    return {
+        title: messages.cities.metaTitle || "Art Exhibitions by City",
+        description: messages.cities.metaDescription || "Browse art exhibitions organized by city",
+        alternates: {
+            canonical: `/${params.locale}/exhibitions/cities`,
+        },
+        openGraph: {
+            title: messages.cities.metaTitle || "Art Exhibitions by City",
+            description: messages.cities.metaDescription || "Browse art exhibitions organized by city",
+            images: [{
+                url: '/og-cities.jpg', // Add an actual OG image
+                width: 1200,
+                height: 630,
+            }]
+        }
     };
 }
 

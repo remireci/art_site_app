@@ -1,6 +1,30 @@
-import { getLocations_by_city, getExhibitionsByDomain, getCities } from "@/app/db/mongo";
+import { getLocations_by_city, getExhibitionsByDomain } from "@/app/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { Metadata } from 'next';
+
+
+export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
+    const { locale, city } = params;
+
+    // Load locale-specific messages
+    let messages;
+    try {
+        messages = (await import(`../../../../../locales/${locale}/exhibitions.json`)).default;
+    } catch (error) {
+        // Fallback to English if locale messages are not found
+        messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
+    }
+
+    // Capitalize city name for display
+    const cityName = city.charAt(0).toUpperCase() + city.slice(1);
+
+    return {
+        title: `${cityName} ${messages['meta-title'] || 'Art Exhibitions'}`,
+        description: `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`,
+        keywords: `${cityName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`,
+    };
+}
 
 export default async function CityPage({ params }: { params: { city: string } }) {
     const { city } = params;
@@ -79,7 +103,7 @@ export default async function CityPage({ params }: { params: { city: string } })
                 </a> */}
             </div>
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2 space-y-1">
-                {exhibitions.map((exhibition: any, index: number) => (
+                {exhibitions.map((exhibition: any) => (
                     <li key={exhibition._id}
                         className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
                         <h2 className="text-sm italic">{exhibition.title}</h2>

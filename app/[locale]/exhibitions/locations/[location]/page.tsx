@@ -2,14 +2,66 @@ import { getExhibitionsByDomain } from "@/app/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Modal from "../../../../components/LocationModal";
+import { Metadata } from 'next';
+
+// app/[locale]/exhibitions/locations/[location]/page.tsx
+
+
+export async function generateMetadata({ params }: { params: { locale: string; location: string } }): Promise<Metadata> {
+    const { locale, location } = params;
+
+    // Load locale-specific messages
+    let messages;
+    try {
+        messages = (await import(`../../../../../locales/${locale}/location.json`)).default;
+    } catch (error) {
+        // Fallback to English if locale messages are not found
+        // @ts-ignore
+        messages = (await import(`../../../../../locales/en/location.json`)).default;
+    }
+
+
+    const originalDomain = params.location.replace(/-/g, ".");
+
+    const data = await getExhibitionsByDomain(originalDomain);
+
+    // 3. Handle empty data case
+    if (data.length === 0) {
+        return {
+            title: "Location not found",
+            description: "No exhibitions found for this location",
+            alternates: {
+                canonical: `/${locale}/exhibitions/locations/${location}`,
+            },
+            robots: {
+                index: false, // Prevent indexing of empty pages
+                follow: true,
+            },
+        };
+    }
+
+
+    // Capitalize location name for display
+    const locationName = location.charAt(0).toUpperCase() + location.slice(1);
+
+    return {
+        title: `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'}`,
+        description: `${messages['meta-description'] || 'Explore art exhibitions'} at ${data[0].location}.`,
+        keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`
+    };
+}
+
 
 export default async function LocationPage({ params }: { params: { location: string } }) {
-    const { location } = params;
-    const data = await getExhibitionsByDomain(location);
+    // const { location } = params;
+    const originalDomain = params.location.replace(/-/g, ".");
+    console.log("location", originalDomain);
+    const data = await getExhibitionsByDomain(originalDomain);
 
     if (!data) {
         return notFound();
     }
+
 
     return (
         <main className="flex flex-col items-center p-4 min-h-screen">

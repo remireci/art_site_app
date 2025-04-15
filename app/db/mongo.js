@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb';
+import { cache } from 'react';
 
 // Connection URI, replace with your actual MongoDB connection string
 const uri = process.env.MONGODB_URI || 'your-connection-string';
@@ -10,7 +11,7 @@ const dbNameTexts = 'd_art_w_texts_r';
 const collectionNameTexts = 'DWR_Texts';
 
 const dbNameAgenda = 'Agenda';
-const collectionNameAgenda = 'Agenda';
+const collectionNameAgenda = 'Agenda_AI';
 const collectionNameLocations = 'Locations';
 const collectionCities = 'city_mapping';
 
@@ -90,7 +91,8 @@ export async function getAgendaItems(query) {
   }
 }
 
-export async function getExhibitionsByDomain(domain) {
+export const getExhibitionsByDomain = cache(async (domain) => {
+  console.log("🌀 MongoDB query executing for domain:", domain);
   const client = new MongoClient(uri);
   try {
     await client.connect();
@@ -123,7 +125,7 @@ export async function getExhibitionsByDomain(domain) {
     await client.close();
     console.log("Disconnected from MongoDB");
   }
-}
+});
 
 function normalizeCity(city) {
   if (typeof city !== "string" || city.trim() === "") {
