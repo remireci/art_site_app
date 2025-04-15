@@ -17,6 +17,8 @@ const nextConfig = {
     return config;
   },
 
+
+
   images: {
     remotePatterns: [
       {
@@ -34,6 +36,20 @@ const nextConfig = {
       "qajctwxzbqddkfsqhrwn.supabase.co",
       "pub-1070865a23b94011a35efcf0cf91803e.r2.dev",
     ],
+  },
+
+  async headers() {
+    return [
+      {
+        source: '/:path*.xml',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/xml; charset=utf-8',
+          }
+        ],
+      },
+    ]
   },
 
   async redirects() {

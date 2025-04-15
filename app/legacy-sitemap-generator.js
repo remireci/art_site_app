@@ -83,6 +83,7 @@ export default async function sitemap() {
             });
 
             const sitemapEntries = [...routes, ...locationsWithExhibitions, ...citiesWithExhibitions];
+            console.log("Sample sitemap entry:", sitemapEntries[0]);
             return generateSitemapXml(sitemapEntries);
         };
 
@@ -116,9 +117,12 @@ function generateSitemapXml(entries) {
         <lastmod>${entry.lastModified}</lastmod>
         <changefreq>${entry.changeFrequency}</changefreq>
         <priority>${entry.priority}</priority>
-        ${entry.alternates.map(alt => `
-        <xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${alt.loc}"/>
-        `).join("")}
+        ${Array.isArray(entry.alternates)
+            ? entry.alternates.map(alt => `
+                <xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${alt.loc}"/>
+              `).join("")
+            : ""
+        }
     </url>`).join("")}
 </urlset>`;
 }
