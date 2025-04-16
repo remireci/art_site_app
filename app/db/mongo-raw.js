@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config({ path: '.env.local' });
 }
 
+const uri = (process.env.MONGODB_URI || '').trim();
 if (!uri) throw new Error("MongoDB uri is not defined");
 
 // Database and collection names
