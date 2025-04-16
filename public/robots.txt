@@ -1,9 +1,12 @@
-# *
+# Allow all robots
 User-agent: *
 Allow: /
 
 # Host
-Host: http://localhost:3000
+Host: https://www.artnowdatabase.eu
 
 # Sitemaps
-Sitemap: http://localhost:3000/sitemap.xml
+Sitemap: https://www.artnowdatabase.eu/sitemap.xml
+Sitemap: https://www.artnowdatabase.eu/sitemap_en.xml
+Sitemap: https://www.artnowdatabase.eu/sitemap_nl.xml
+Sitemap: https://www.artnowdatabase.eu/sitemap_fr.xml
