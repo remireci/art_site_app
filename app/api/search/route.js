@@ -1,6 +1,6 @@
 // api/search.js
 import { NextRequest, NextResponse } from 'next/server';
-import { getDocuments, getAgendaItems } from '../../db/mongo';
+import { getDocuments, getAgendaItems } from '../../db/mongo.js';
 
 const getSentenceWithTerm = (text, searchTerm) => {
 

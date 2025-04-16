@@ -1,6 +1,6 @@
 // this code we should keep as reference for a text search api!!!!!!!!!!!!!!!!
 import { NextRequest, NextResponse } from 'next/server';
-import { getDocuments } from '../../db/mongo';
+import { getDocuments } from '../../db/mongo.js';
 
 const getSentenceWithTerm = (text, searchTerm) => {
 

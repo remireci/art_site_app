@@ -1,4 +1,4 @@
-import { getDocuments } from '../../db/mongo';
+import { getDocuments } from '../../db/mongo.js';
 import Link from 'next/link';
 import Head from 'next/head';
 // interface SearchParams {

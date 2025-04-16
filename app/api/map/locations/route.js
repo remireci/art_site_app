@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getLocations } from "../../../db/mongo";
+import { getLocations } from "../../../db/mongo.js";
 
 export async function GET() {
   try {

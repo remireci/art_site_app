@@ -1,9 +1,9 @@
 // DEPRECATED: Transitioning to Next.js native sitemap
 // Remove after 2024-01-01 if new sitemap works correctly
 
-import { getLocations, getCities } from "../app/db/mongo";
-import fs from 'fs';
-import path from 'path';
+const { getLocations, getCities } = require('../app/db/mongo-raw');
+const fs = require('fs');
+const path = require('path');
 
 const URL =
     process.env.NODE_ENV === "production"
@@ -15,7 +15,7 @@ const LANGUAGES = ["en", "nl", "fr"];
 const sitemapCachePath = path.join(process.cwd(), 'public', 'sitemap.xml');
 const masterSitemapCachePath = path.join(process.cwd(), 'public', 'sitemap-index.xml'); // Master sitemap path
 
-export default async function sitemap() {
+async function sitemap() {
     try {
         const cacheDuration = 7 * 24 * 60 * 60 * 1000; // 1 week in milliseconds
         const currentTime = Date.now();
@@ -42,10 +42,12 @@ export default async function sitemap() {
             }));
         };
 
+        const slugify = (str) => str.replace(/\./g, '-');
+
         // Generate sitemap for each language
         const generateSitemapForLanguage = (lang) => {
             const locationsWithExhibitions = locationsData.flatMap(location => {
-                const basePath = `/exhibitions/locations/${encodeURIComponent(location.domain)}`;
+                const basePath = `/exhibitions/locations/${slugify(location.domain)}`;
                 return {
                     url: `${URL}/${lang}${basePath}`, // Default version
                     lastModified: new Date().toISOString(),
@@ -138,6 +140,8 @@ function generateSitemapIndexXml(sitemaps) {
 </sitemapindex>`;
 }
 
+// Run the script directly
+sitemap();
 
 // import { getLocations, getCities } from "../app/db/mongo";
 // import fs from 'fs';

@@ -1,4 +1,4 @@
-import { getLocations } from "../../../db/mongo";
+import { getLocations } from "../../../db/mongo.js";
 import Link from "next/link";
 import { Metadata } from 'next';
 

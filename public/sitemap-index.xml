@@ -2,15 +2,15 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
     <sitemap>
-        <loc>https://www.artnowdatabase.eu/sitemap_en.xml</loc>
-        <lastmod>2025-04-15T16:18:48.673Z</lastmod>
+        <loc>http://localhost:3000/sitemap_en.xml</loc>
+        <lastmod>2025-04-16T08:17:46.915Z</lastmod>
     </sitemap>
     <sitemap>
-        <loc>https://www.artnowdatabase.eu/sitemap_nl.xml</loc>
-        <lastmod>2025-04-15T16:18:48.673Z</lastmod>
+        <loc>http://localhost:3000/sitemap_nl.xml</loc>
+        <lastmod>2025-04-16T08:17:46.915Z</lastmod>
     </sitemap>
     <sitemap>
-        <loc>https://www.artnowdatabase.eu/sitemap_fr.xml</loc>
-        <lastmod>2025-04-15T16:18:48.673Z</lastmod>
+        <loc>http://localhost:3000/sitemap_fr.xml</loc>
+        <lastmod>2025-04-16T08:17:46.915Z</lastmod>
     </sitemap>
 </sitemapindex>

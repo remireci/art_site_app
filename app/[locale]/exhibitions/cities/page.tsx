@@ -1,4 +1,4 @@
-import { getCities } from "../../../db/mongo";
+import { getCities } from "../../../db/mongo.js";
 import { Metadata } from 'next';
 
 interface LocationsListPageProps {

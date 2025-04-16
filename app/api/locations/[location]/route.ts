@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import { getAgendaItems } from "../../../db/mongo"; // Adjust path based on your project structure
+import { getAgendaItems } from "../../../db/mongo.js"; // Adjust path based on your project structure
 
 export async function GET(
   req: NextRequest,

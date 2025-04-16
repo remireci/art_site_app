@@ -1,6 +1,6 @@
 // app/api/locations/route.ts
 import { NextResponse } from "next/server";
-import { getAgendaItems } from "../../db/mongo";
+import { getAgendaItems } from "../../db/mongo.js";
 
 export async function GET() {
   try {

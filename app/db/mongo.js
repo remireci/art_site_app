@@ -344,7 +344,6 @@ export async function getLocations_by_city(city) {
 }
 
 
-
 export async function getCities() {
   const client = new MongoClient(uri);
 
