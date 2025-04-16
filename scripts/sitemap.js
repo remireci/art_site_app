@@ -1,6 +1,3 @@
-// DEPRECATED: Transitioning to Next.js native sitemap
-// Remove after 2024-01-01 if new sitemap works correctly
-
 const { getLocations, getCities } = require('../app/db/mongo-raw');
 const fs = require('fs');
 const path = require('path');

@@ -1,10 +1,8 @@
 const { MongoClient } = require('mongodb');
-const dotenv = require('dotenv');
-dotenv.config({ path: '.env.local' });
 
-
-// Connection URI, replace with your actual MongoDB connection string
-const uri = (process.env.MONGODB_URI || '').trim();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config({ path: '.env.local' });
+}
 
 if (!uri) throw new Error("MongoDB uri is not defined");
 
