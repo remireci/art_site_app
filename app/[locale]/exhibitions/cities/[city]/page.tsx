@@ -103,35 +103,41 @@ export default async function CityPage({ params }: { params: { city: string } })
                 </a> */}
             </div>
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2 space-y-1">
-                {exhibitions.map((exhibition: any) => (
-                    <li key={exhibition._id}
-                        className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
-                        <h2 className="text-sm italic">{exhibition.title}</h2>
-                        {/* <h3 className="text-sm">{exhibition.city}</h3> */}
-                        {exhibition.image_reference && (
-                            <a href={exhibition.url} target="_blank" rel="noopener noreferrer" className="relative group">
-                                <Image
-                                    unoptimized
-                                    src={exhibition.image_reference[0]}
-                                    alt={exhibition.title}
-                                    width={100}
-                                    height={50}
-                                    className="rounded-lg"
-                                />
-                                <span className="absolute top-0 right-0 bg-gray-900 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
-                                    Open external site
-                                </span>
-                            </a>
-                        )}
-                        {exhibition.artists && exhibition.artists !== "N/A" &&
-                            <p className='text-xs'>{exhibition.artists}</p>
-                        }
-                        {exhibition.location && exhibition.location !== "N/A" &&
-                            <p className='text-xs'>{exhibition.location}</p>
-                        }
-                        <p className="text-xs mt-4">&#8702; {formatDate(exhibition.date_end_st)}</p>
-                    </li>
-                ))}
+                {exhibitions.map((exhibition: any) => {
+                    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+
+                    return (
+                        <li key={exhibition._id}
+                            className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
+                            <h2 className="text-sm italic">{exhibition.title}</h2>
+                            {/* <h3 className="text-sm">{exhibition.city}</h3> */}
+                            {exhibition.image_reference && (
+                                <a href={exhibition.url} target="_blank" rel="noopener noreferrer" className="relative group">
+                                    <Image
+                                        unoptimized
+                                        src={optimizedUrl}
+                                        alt={exhibition.title}
+                                        width={100}
+                                        height={50}
+                                        className="rounded-lg"
+                                    />
+                                    <span className="absolute top-0 right-0 bg-gray-900 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
+                                        Open external site
+                                    </span>
+                                </a>
+                            )}
+                            {exhibition.artists && exhibition.artists !== "N/A" &&
+                                <p className='text-xs'>{exhibition.artists}</p>
+                            }
+                            {exhibition.location && exhibition.location !== "N/A" &&
+                                <p className='text-xs'>{exhibition.location}</p>
+                            }
+                            <p className="text-xs mt-4">&#8702; {formatDate(exhibition.date_end_st)}</p>
+                        </li>
+                    )
+                })}
             </ul>
             {/* 
 
@@ -145,90 +151,3 @@ export default async function CityPage({ params }: { params: { city: string } })
         </main>
     );
 }
-
-
-// import { getExhibitionsByDomain } from "@/app/db/mongo";
-// import { notFound } from "next/navigation";
-// import Image from "next/image";
-// // import { getImageUrl } from "@/lib/supabase";
-
-// export default async function LocationPage({ params }: { params: { location: string } }) {
-
-//     const { location } = params;
-
-//     console.log("here is the location", location);
-
-
-//     const data = await getExhibitionsByDomain(location);
-
-//     console.log("and these are the location data", data);
-
-//     // // @TODO use process.env.NEXT_PUBLIC_API_BASE_URL
-//     // const response = await fetch(`http://localhost:3000/api/locations/${params.location}`);
-
-//     // console.log("this is the response", response);
-
-//     if (!data) {
-//         return notFound();
-//     }
-
-//     // const data = await response.json();
-//     // console.log("exhibitions array", data);
-//     // const exhibitions = Array.isArray(data.exhibitions) ? data.exhibitions : [];
-
-//     // return (
-//     //     <div>
-
-//     //         <p>het zal nog lukken</p>
-//     //         {/* <h1>{locationData.name}</h1>
-//     //         <p>Website: {locationData.domain}</p> */}
-//     //         {/* Render exhibitions, location details, etc. */}
-//     //     </div>
-//     // );
-
-//     return (
-//         <main className="flex flex-col justify-between items-center p-4 min-h-screen">
-
-//             {/* <button
-//                 className="w-1/5 h-8 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 mx-1 rounded flex items-center justify-center"
-//                 onClick={handleSearch}
-//             >
-//                 Search
-//             </button> */}
-//             <div className="w-1/5 h-8 my-40 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
-//                 <a href="/">
-//                     <h1 className="font-semibold text-xl tracking-widest uppercase hover:text-gray-600">
-//                         Back to the Calendar
-//                     </h1>
-//                 </a>
-//             </div>
-//             <a href={data[0].url} target="_blank" rel="noopener">
-//                 <h2 className="text-2xl">{data[0].location}</h2>
-//             </a>
-
-
-//             <ul className="mt-4 space-y-4">
-//                 {data.map((exhibition: any) => (
-//                     <li key={exhibition.id} className="border p-4 rounded-lg shadow">
-//                         <h2 className="text-xl font-semibold">{exhibition.title}</h2>
-//                         <p className="text-xl font-semibold">{exhibition.date_end_st}</p>
-//                         {exhibition.image_reference && (
-//                             <Image
-//                                 unoptimized
-//                                 src={exhibition.image_reference[0]}
-//                                 alt={exhibition.title}
-//                                 width={300}
-//                                 height={200}
-//                                 className="rounded-lg"
-//                             />
-//                         )}
-//                     </li>
-//                 ))}
-//             </ul>
-//             <div className="w-1/3">
-//                 {data.length > 0 && <p className="mt-4">{data[0].description}</p>}
-//             </div>
-//         </main>
-//     );
-
-// }

@@ -88,24 +88,31 @@ export default async function LocationPage({ params }: { params: { location: str
             )}
 
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
-                {data.map((exhibition: any, index: number) => (
-                    <li key={exhibition._id}
-                        className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
-                        <h2 className="text-sm">{exhibition.title}</h2>
-                        <p className="text-xs">{exhibition.date_end_st}</p>
+                {data.map((exhibition: any, index: number) => {
 
-                        {exhibition.image_reference && (
-                            <Image
-                                unoptimized
-                                src={exhibition.image_reference[0]}
-                                alt={exhibition.title}
-                                width={150}
-                                height={100}
-                                className="rounded-lg"
-                            />
-                        )}
-                    </li>
-                ))}
+                    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+
+                    return (
+                        <li key={exhibition._id}
+                            className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
+                            <h2 className="text-sm">{exhibition.title}</h2>
+                            <p className="text-xs">{exhibition.date_end_st}</p>
+
+                            {exhibition.image_reference && (
+                                <Image
+                                    unoptimized
+                                    src={optimizedUrl}
+                                    alt={exhibition.title}
+                                    width={150}
+                                    height={100}
+                                    className="rounded-lg"
+                                />
+                            )}
+                        </li>
+                    )
+                })}
             </ul>
 
 

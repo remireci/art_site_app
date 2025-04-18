@@ -36,15 +36,25 @@ const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
     //     }
     // }, [imagePath, width, height]);
 
-    if (!imagePath || imagePath === "") {
+    if (!imagePath || imagePath === "" || imagePath[0] === undefined) {
         return <p>Loading image...</p>;  // You can customize this part to show a loading spinner, etc.
     }
 
-    const imageName = imagePath.split('?')[0].split('/').pop();;
-
     console.log(imagePath);
 
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURIComponent(imageName)}`;
+    // const imageName = imagePath.split('?')[0].split('/').pop();;
+
+
+
+    // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURIComponent(imageName)}`;
+
+    // Get the full path after 'agenda/', and remove any query parameters
+    const imageName = imagePath.split('?')[0].split('agenda/')[1];
+
+    // Construct the Cloudflare optimized URL
+    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName)}`;
+
+    console.log("optimized", optimizedUrl);
 
     return (
         <div className="relative" style={{ width: `${width}px`, height: `${height}px` }}>
