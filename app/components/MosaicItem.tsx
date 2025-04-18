@@ -21,6 +21,10 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
 
     // console.log("the exhibition", exhibition)
 
+    const imageName = exhibition.image_reference[0].split('?')[0].split('/').pop();;
+
+    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURIComponent(imageName)}`;
+
 
     return (
         <motion.div

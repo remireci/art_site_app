@@ -1,9 +1,19 @@
 import { getDocuments } from '../../db/mongo.js';
 import Link from 'next/link';
-import Head from 'next/head';
+import { Metadata } from 'next';
 // interface SearchParams {
 //   page?: string; // or a number if you prefer
 // }
+
+export async function generateMetadata({ params, searchParams }: { params: { locale: string }; searchParams: { page?: string } }) {
+  const page = searchParams.page ? Math.max(parseInt(searchParams.page), 1) : 1;
+
+  return {
+    title: `Text List - Page ${page}`,
+    description: `Browse page ${page} of texts about modern and contemporary art`,
+    keywords: 'modern art, contemporary art, database, texts, reviews, art critics',
+  };
+}
 
 export default async function TextListPage({ searchParams }: { searchParams: { page?: string } }) {
   // Define page size for pagination
@@ -23,15 +33,7 @@ export default async function TextListPage({ searchParams }: { searchParams: { p
 
   return (
     <>
-      <Head>
-        <title>Text List - Page {page}</title>
-        <meta name="modern art, contemporary art, database, texts, reviews, art critics" content={`Browse page ${page} of texts about modern and contemporary art`} />
-        {/* Pagination Links */}
-        {page > 1 && (
-          <link rel="prev" href={`?page=${page - 1}`} />
-        )}
-        <link rel="next" href={`?page=${page + 1}`} />
-      </Head>
+
       <div>
         <h1 className='text-slate-100'>Texts</h1>
 
@@ -39,7 +41,7 @@ export default async function TextListPage({ searchParams }: { searchParams: { p
         <ul>
           {texts.map((text) => (
             <li key={text._id.toString()}>
-              <Link href={`/texts/${text._id}`} className='text-slate-100'>{text.title}</Link>
+              <Link href={`/texts/${text._id}`} className='text-slate-400'>{text.title}</Link>
             </li>
           ))}
         </ul>

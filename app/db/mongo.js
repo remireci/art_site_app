@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import { cache } from 'react';
 
 // Connection URI, replace with your actual MongoDB connection string
@@ -42,6 +42,36 @@ export async function getDocuments(query, skip, pageSize) {
     console.log('Disconnected from MongoDB');
   }
 }
+
+
+export async function getDocumentById(id) {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    console.log('Connected to MongoDB');
+
+    const database = client.db(dbNameTexts);
+    const collection = database.collection(collectionNameTexts);
+
+    const query = { _id: new ObjectId(id) }
+
+
+    // Fetch documents with pagination
+    const text = await collection
+      .findOne(query)
+
+
+    return text;
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    throw error;
+  } finally {
+    await client.close();
+    console.log('Disconnected from MongoDB');
+  }
+}
+
 
 
 // export async function getDocuments(query) {
