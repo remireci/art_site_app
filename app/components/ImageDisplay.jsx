@@ -40,8 +40,6 @@ const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
         return <p>Loading image...</p>;  // You can customize this part to show a loading spinner, etc.
     }
 
-    console.log(imagePath);
-
     // const imageName = imagePath.split('?')[0].split('/').pop();;
 
 
@@ -52,14 +50,13 @@ const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
     const imageName = imagePath.split('?')[0].split('agenda/')[1];
 
     // Construct the Cloudflare optimized URL
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName)}`;
-
-    console.log("optimized", optimizedUrl);
+    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover,format=auto/agenda/${encodeURI(imageName)}`;
 
     return (
         <div className="relative" style={{ width: `${width}px`, height: `${height}px` }}>
             {/* <div className="relative h-[100px]"> */}
             <Image
+                priority
                 unoptimized
                 src={optimizedUrl}
                 alt={title}

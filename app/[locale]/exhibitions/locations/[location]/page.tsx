@@ -102,6 +102,8 @@ export default async function LocationPage({ params }: { params: { location: str
 
                             {exhibition.image_reference && (
                                 <Image
+                                    priority={index === 0}
+                                    loading={index === 0 ? "eager" : "lazy"}
                                     unoptimized
                                     src={optimizedUrl}
                                     alt={exhibition.title}

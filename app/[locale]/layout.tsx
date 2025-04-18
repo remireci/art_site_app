@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
     description: t["meta-description"],
     keywords: t["meta-keywords"],
     alternates: {
-      canonical: `https://www.artnowdatabase.eu`,
+      canonical: `https://www.artnowdatabase.eu/${locale}`,
       languages: {
         en: "https://www.artnowdatabase.eu/en",
         fr: "https://www.artnowdatabase.eu/fr",

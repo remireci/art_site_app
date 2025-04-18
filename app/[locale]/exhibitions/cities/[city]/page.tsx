@@ -103,7 +103,7 @@ export default async function CityPage({ params }: { params: { city: string } })
                 </a> */}
             </div>
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2 space-y-1">
-                {exhibitions.map((exhibition: any) => {
+                {exhibitions.map((exhibition: any, index: number) => {
                     const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
                     const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
@@ -116,6 +116,8 @@ export default async function CityPage({ params }: { params: { city: string } })
                             {exhibition.image_reference && (
                                 <a href={exhibition.url} target="_blank" rel="noopener noreferrer" className="relative group">
                                     <Image
+                                        priority={index === 0}
+                                        loading={index === 0 ? "eager" : "lazy"}
                                         unoptimized
                                         src={optimizedUrl}
                                         alt={exhibition.title}

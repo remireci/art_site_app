@@ -48,9 +48,7 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
 
                 const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
-                // Construct the Cloudflare optimized URL
                 const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
-
 
                 return (
                     <div
@@ -64,6 +62,7 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
 
                         <div className="flex items-center justify-center bg-gray-300 backdrop-blur-sm h-[140px] overflow-hidden">
                             <Image
+                                priority={index === 0}
                                 unoptimized
                                 src={optimizedUrl}
                                 alt={exhibition.title || "No image available"}
