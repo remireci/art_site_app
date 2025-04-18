@@ -23,7 +23,7 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
 
     const imageName = exhibition.image_reference[0].split('?')[0].split('/').pop();;
 
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURIComponent(imageName)}`;
+    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURIComponent(imageName as string)}`;
 
 
     return (
@@ -60,7 +60,7 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                 <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden">
                     <Image
                         unoptimized
-                        src={exhibition.image_reference[0]}
+                        src={optimizedUrl}
                         alt={exhibition.title}
                         layout="fill"
                         objectFit="contain"
