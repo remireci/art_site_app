@@ -9,7 +9,7 @@ import Image from 'next/image';
 //     process.env.NEXT_PUBLIC_SUPABASE_API_KEY
 // );
 
-const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
+const ImageDisplay = ({ imagePath, title, width = 300, aspectRatio = "3/4" }) => {
     // const [imageUrl, setImageUrl] = useState('');
 
     // console.log("from ImageDisplay", imagePath);
@@ -37,7 +37,7 @@ const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
     // }, [imagePath, width, height]);
 
     if (!imagePath || imagePath === "" || imagePath[0] === undefined) {
-        return <p>Loading image...</p>;  // You can customize this part to show a loading spinner, etc.
+        return <p className='w-full h-full bg-gray-100 flex items-center justify-center text-sm text-gray-400'>No image...</p>;  // You can customize this part to show a loading spinner, etc.
     }
 
     // const imageName = imagePath.split('?')[0].split('/').pop();;
@@ -50,20 +50,20 @@ const ImageDisplay = ({ imagePath, title, width = 120, height = 120 }) => {
     const imageName = imagePath.split('?')[0].split('agenda/')[1];
 
     // Construct the Cloudflare optimized URL
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover,format=auto/agenda/${encodeURI(imageName)}`;
+    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=${width},quality=70,fit=cover,format=auto/agenda/${encodeURI(imageName)}`;
 
     return (
-        <div className="relative" style={{ width: `${width}px`, height: `${height}px` }}>
+        <div className={`relative w-full aspect-[${aspectRatio}]`}>
             {/* <div className="relative h-[100px]"> */}
             <Image
-                priority
+                // priority={priority}
                 unoptimized
                 src={optimizedUrl}
                 alt={title}
                 layout="fill" // This ensures the image fills the container
                 objectFit="contain" // Ensures the image fits within the dimensions
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimize based on screen size
-                className="transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
+                className="object-cover transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
             />
             {/* </div> */}
         </div>
