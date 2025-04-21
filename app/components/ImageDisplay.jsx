@@ -9,7 +9,7 @@ import Image from 'next/image';
 //     process.env.NEXT_PUBLIC_SUPABASE_API_KEY
 // );
 
-const ImageDisplay = ({ imagePath, title, width = 300, aspectRatio = "3/4" }) => {
+const ImageDisplay = ({ imagePath, title, width = 300 }) => {
     // const [imageUrl, setImageUrl] = useState('');
 
     // console.log("from ImageDisplay", imagePath);
@@ -53,17 +53,17 @@ const ImageDisplay = ({ imagePath, title, width = 300, aspectRatio = "3/4" }) =>
     const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=${width},quality=70,fit=cover,format=auto/agenda/${encodeURI(imageName)}`;
 
     return (
-        <div className={`relative w-full aspect-[${aspectRatio}]`}>
+        <div className={`relative w-full aspect-[1]`}>
             {/* <div className="relative h-[100px]"> */}
             <Image
-                // priority={priority}
+                priority
                 unoptimized
                 src={optimizedUrl}
                 alt={title}
                 layout="fill" // This ensures the image fills the container
                 objectFit="contain" // Ensures the image fits within the dimensions
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimize based on screen size
-                className="object-cover transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
+                className="transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
             />
             {/* </div> */}
         </div>
