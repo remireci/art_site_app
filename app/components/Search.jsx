@@ -395,7 +395,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                                             </div>
                                                             <a href={exhibitionUrl || locationUrl} target="_blank" rel="noopener noreferrer">
                                                                 <div className="relative mt-2 sm:mt-0 sm:ml-4 flex-shrink-0 before:absolute before:top-[0px] before:left-0 before:-translate-x-52 before:w-48 before:h-[1px] before:bg-gray-400" style={{ width: '160px', height: '160px' }}>
-                                                                    <ImageDisplay imagePath={imagePath} title={title} priority={index < 2} width="160" height="160" />
+                                                                    <ImageDisplay imagePath={imagePath} title={title} priority={index < 2} />
                                                                 </div>
                                                             </a>
                                                         </>
@@ -404,7 +404,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                                         <>
                                                             <a href={exhibitionUrl || locationUrl} target="_blank" rel="noopener noreferrer">
                                                                 <div className="relative mt-2 sm:mt-0 sm:mr-4 flex-shrink-0 before:absolute before:top-[0px] before:right-0 before:translate-x-52 before:w-48 before:h-[1px] before:bg-gray-400" style={{ width: '160px', height: '160px' }}>
-                                                                    <ImageDisplay imagePath={imagePath} title={title} width="160" height="160" />
+                                                                    <ImageDisplay imagePath={imagePath} title={title} priority={index < 2} />
                                                                 </div>
                                                             </a>
                                                             <div className="flex-1 text-right">
