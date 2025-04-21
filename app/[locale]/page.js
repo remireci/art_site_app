@@ -6,14 +6,10 @@ export const runtime = 'edge';
 
 export default async function HomePage() {
 
-  const getBaseUrl = () => {
-    if (process.env.VERCEL_URL) {
-      return `https://${process.env.VERCEL_URL}`;
-    }
-    return 'http://localhost:3000';
-  };
-
-  const BASE_URL = getBaseUrl();
+  const URL =
+    process.env.NODE_ENV === "production"
+      ? "https://www.artnowdatabase.eu"
+      : "http://localhost:3000";
 
   try {
     const cacheOption =
@@ -21,8 +17,8 @@ export default async function HomePage() {
         ? { cache: "no-store" }
         : { next: { revalidate: 3600 } };
 
-    const locationsResponse = await fetch(`${BASE_URL}/api/map/locations`, { next: { revalidate: 3600 } });
-    const exhibitionsResponse = await fetch(`${BASE_URL}/api/exhibitions`, { next: { revalidate: 3600 } });
+    const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
+    const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
 
     if (!locationsResponse.ok || !exhibitionsResponse.ok) {
       throw new Error("Failed to fetch data");
@@ -103,11 +99,11 @@ export default async function HomePage() {
     });
 
 
-    // Now you can get your unique exhibitions if needed
-    const uniqueExhibitions = uniqueGroups.flatMap(group => group.exhibitions);
+    // // Now you can get your unique exhibitions if needed
+    // const uniqueExhibitions = uniqueGroups.flatMap(group => group.exhibitions);
 
-    // Filter for SMB museum
-    const smbGroups = uniqueGroups.filter(group => group.domain === 'eenwerk.nl');
+    // // Filter for SMB museum
+    // const smbGroups = uniqueGroups.filter(group => group.domain === 'eenwerk.nl');
 
 
     console.log("cached or not?", smbGroups);
