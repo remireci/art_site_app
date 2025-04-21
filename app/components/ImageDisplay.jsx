@@ -9,7 +9,7 @@ import Image from 'next/image';
 //     process.env.NEXT_PUBLIC_SUPABASE_API_KEY
 // );
 
-const ImageDisplay = ({ imagePath, title, index }) => {
+const ImageDisplay = ({ imagePath, title, priority = false }) => {
     // const [imageUrl, setImageUrl] = useState('');
 
     // console.log("from ImageDisplay", imagePath);
@@ -57,7 +57,7 @@ const ImageDisplay = ({ imagePath, title, index }) => {
             {/* <div className="relative h-[100px]"> */}
             <Image
                 unoptimized
-                priority={index === 0}
+                priority={priority}
                 src={optimizedUrl}
                 alt={title}
                 layout="fill" // This ensures the image fills the container
