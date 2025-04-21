@@ -63,7 +63,7 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
                 src={optimizedUrl}
                 alt={title}
                 layout="fill" // This ensures the image fills the container
-                objectFit="cover" // Ensures the image fits within the dimensions
+                objectFit="contain" // Ensures the image fits within the dimensions
                 placeholder='blur'
                 blurDataURL='"/placeholder.png'
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimize based on screen size

@@ -65,10 +65,10 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                         src={optimizedUrl}
                         alt={exhibition.title}
                         layout="fill"
-                        objectFit="cover"
+                        objectFit="contain"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         loading="lazy"
-                        className="transition-transform duration-700 ease-in-out group-hover:scale-[2] group-hover:z-10"
+                        className="transition-transform duration-700 ease-in-out group-hover:scale-[2.5] group-hover:z-10"
                     />
                 </div>
 
