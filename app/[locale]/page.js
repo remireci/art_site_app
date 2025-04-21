@@ -102,6 +102,16 @@ export default async function HomePage() {
       };
     });
 
+
+    // Now you can get your unique exhibitions if needed
+    const uniqueExhibitions = uniqueGroups.flatMap(group => group.exhibitions);
+
+    // Filter for SMB museum
+    const smbGroups = uniqueGroups.filter(group => group.domain === 'eenwerk.nl');
+
+
+    console.log("cached or not?", smbGroups);
+
     return (
       <div>
         <Search initialLocations={filteredLocations} exhibitions={uniqueGroups} />

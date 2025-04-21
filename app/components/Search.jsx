@@ -7,8 +7,9 @@ import SearchMap from './SearchMap';
 import ImageDisplay from './ImageDisplay';
 import GetLocation from './GetLocation';
 import dynamic from 'next/dynamic';
-import MosaicTab from './MosaicTab';
+// import MosaicTab from './MosaicTab';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from "react";
 
 
 const DynamicMap = dynamic(() => import('./showmap/MapTest'), {
@@ -26,6 +27,11 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
     const [locations, setLocations] = useState(initialLocations);
     const searchParams = useSearchParams();
     const city = searchParams.get("city");
+
+    const MosaicTab = dynamic(() => import("./MosaicTab"), {
+        ssr: false,
+        loading: () => <div className="text-center py-10 text-gray-500">Loading Mosaic...</div>,
+    });
 
     const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal', 'dessin'];
     // const initialSearchTerms = ["dessin"];
@@ -261,11 +267,13 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                     <div
                                     // className='flex flex-col items-center mt-8 space-y-6'
                                     >
-                                        <MosaicTab
-                                            activeTab={activeTab}
-                                            exhibitions={exhibitions}
-                                        />
+                                        <Suspense fallback={null}>
+                                            <MosaicTab
+                                                activeTab={activeTab}
+                                                exhibitions={exhibitions}
 
+                                            />
+                                        </Suspense>
                                     </div>
                                 </ul>
                             )}
