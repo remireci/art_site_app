@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getLocations } from "../../../db/mongo.js";
 
+
 export async function GET() {
   try {
     console.log("API map/locations called");

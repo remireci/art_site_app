@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAgendaItems } from '../../db/mongo.js';
 
+
 export async function GET() {
     try {
         // Get the current date (start of today)

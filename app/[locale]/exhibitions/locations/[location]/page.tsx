@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: { locale: string; l
     const locationName = location.charAt(0).toUpperCase() + location.slice(1);
 
     return {
-        title: `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'}`,
+        title: `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'} in ${data[0].city}`,
         description: `${messages['meta-description'] || 'Explore art exhibitions'} at ${data[0].location}.`,
         keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`
     };
