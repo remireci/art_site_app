@@ -2,8 +2,6 @@ import Search from "../components/Search";
 
 export const runtime = 'edge';
 
-
-
 export default async function HomePage() {
 
   const URL =
@@ -106,7 +104,7 @@ export default async function HomePage() {
     // const smbGroups = uniqueGroups.filter(group => group.domain === 'eenwerk.nl');
 
 
-    console.log("cached or not?", smbGroups);
+    // console.log("cached or not?", smbGroups);
 
     return (
       <div>
