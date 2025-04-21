@@ -27,8 +27,6 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
     const [locations, setLocations] = useState(initialLocations);
     const searchParams = useSearchParams();
     const city = searchParams.get("city");
-    const INITIAL_COUNT = 4;
-    const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
 
     const MosaicTab = dynamic(() => import("./MosaicTab"), {
         ssr: false,
@@ -144,38 +142,32 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
         }
     }, [city]);
 
-    useEffect(() => {
-        const timout = setTimeout(() => setVisibleCount(results.length), 300);
-        return () => clearTimeout(timout);
-    }, [results.length]);
+    // Function to highlight the query text within the snippet and limit the length of the snippet
+    const highlightQuery = (snippet, query) => {
+        if (!query) return snippet; // Return the snippet as is if the query is empty
 
+        const maxSnippetLength = 400; // Maximum length of the snippet
+        const queryIndex = snippet.toLowerCase().indexOf(query.toLowerCase()); // Find the index of the query text in the snippet
 
-    // // Function to highlight the query text within the snippet and limit the length of the snippet
-    // const highlightQuery = (snippet, query) => {
-    //     if (!query) return snippet; // Return the snippet as is if the query is empty
+        if (queryIndex === -1) return snippet; // Return the snippet as is if the query is not found
 
-    //     const maxSnippetLength = 400; // Maximum length of the snippet
-    //     const queryIndex = snippet.toLowerCase().indexOf(query.toLowerCase()); // Find the index of the query text in the snippet
+        // Calculate the start and end indices for the substring around the query text
+        let startIndex = Math.max(0, queryIndex - 200);
+        let endIndex = Math.min(snippet.length, queryIndex + query.length + 200);
 
-    //     if (queryIndex === -1) return snippet; // Return the snippet as is if the query is not found
+        // Ensure that the snippet length does not exceed the maximum length
+        if (endIndex - startIndex > maxSnippetLength) {
+            // Adjust the start index to maintain the maximum length
+            startIndex = Math.max(0, endIndex - maxSnippetLength);
+        }
 
-    //     // Calculate the start and end indices for the substring around the query text
-    //     let startIndex = Math.max(0, queryIndex - 200);
-    //     let endIndex = Math.min(snippet.length, queryIndex + query.length + 200);
+        // Extract the substring around the query text and highlight the query text
+        const trimmedSnippet = snippet.substring(startIndex, endIndex);
+        const regex = new RegExp(query, 'gi'); // Create a case-insensitive regular expression for the query
+        const highlightedSnippet = trimmedSnippet.replace(regex, '<strong>$&</strong>'); // Wrap matched query text with <strong> tags
 
-    //     // Ensure that the snippet length does not exceed the maximum length
-    //     if (endIndex - startIndex > maxSnippetLength) {
-    //         // Adjust the start index to maintain the maximum length
-    //         startIndex = Math.max(0, endIndex - maxSnippetLength);
-    //     }
-
-    //     // Extract the substring around the query text and highlight the query text
-    //     const trimmedSnippet = snippet.substring(startIndex, endIndex);
-    //     const regex = new RegExp(query, 'gi'); // Create a case-insensitive regular expression for the query
-    //     const highlightedSnippet = trimmedSnippet.replace(regex, '<strong>$&</strong>'); // Wrap matched query text with <strong> tags
-
-    //     return startIndex > 0 ? `...${highlightedSnippet}...` : highlightedSnippet;
-    // };
+        return startIndex > 0 ? `...${highlightedSnippet}...` : highlightedSnippet;
+    };
 
     return (
         <div className="main-container flex flex-wrap" id="map-container">
