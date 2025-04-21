@@ -27,6 +27,8 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
     const [locations, setLocations] = useState(initialLocations);
     const searchParams = useSearchParams();
     const city = searchParams.get("city");
+    const INITIAL_COUNT = 4;
+    const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
 
     const MosaicTab = dynamic(() => import("./MosaicTab"), {
         ssr: false,
@@ -142,32 +144,38 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
         }
     }, [city]);
 
-    // Function to highlight the query text within the snippet and limit the length of the snippet
-    const highlightQuery = (snippet, query) => {
-        if (!query) return snippet; // Return the snippet as is if the query is empty
+    useEffect(() => {
+        const timout = setTimeout(() => setVisibleCount(results.length), 300);
+        return () => clearTimeout(timout);
+    }, [results.length]);
 
-        const maxSnippetLength = 400; // Maximum length of the snippet
-        const queryIndex = snippet.toLowerCase().indexOf(query.toLowerCase()); // Find the index of the query text in the snippet
 
-        if (queryIndex === -1) return snippet; // Return the snippet as is if the query is not found
+    // // Function to highlight the query text within the snippet and limit the length of the snippet
+    // const highlightQuery = (snippet, query) => {
+    //     if (!query) return snippet; // Return the snippet as is if the query is empty
 
-        // Calculate the start and end indices for the substring around the query text
-        let startIndex = Math.max(0, queryIndex - 200);
-        let endIndex = Math.min(snippet.length, queryIndex + query.length + 200);
+    //     const maxSnippetLength = 400; // Maximum length of the snippet
+    //     const queryIndex = snippet.toLowerCase().indexOf(query.toLowerCase()); // Find the index of the query text in the snippet
 
-        // Ensure that the snippet length does not exceed the maximum length
-        if (endIndex - startIndex > maxSnippetLength) {
-            // Adjust the start index to maintain the maximum length
-            startIndex = Math.max(0, endIndex - maxSnippetLength);
-        }
+    //     if (queryIndex === -1) return snippet; // Return the snippet as is if the query is not found
 
-        // Extract the substring around the query text and highlight the query text
-        const trimmedSnippet = snippet.substring(startIndex, endIndex);
-        const regex = new RegExp(query, 'gi'); // Create a case-insensitive regular expression for the query
-        const highlightedSnippet = trimmedSnippet.replace(regex, '<strong>$&</strong>'); // Wrap matched query text with <strong> tags
+    //     // Calculate the start and end indices for the substring around the query text
+    //     let startIndex = Math.max(0, queryIndex - 200);
+    //     let endIndex = Math.min(snippet.length, queryIndex + query.length + 200);
 
-        return startIndex > 0 ? `...${highlightedSnippet}...` : highlightedSnippet;
-    };
+    //     // Ensure that the snippet length does not exceed the maximum length
+    //     if (endIndex - startIndex > maxSnippetLength) {
+    //         // Adjust the start index to maintain the maximum length
+    //         startIndex = Math.max(0, endIndex - maxSnippetLength);
+    //     }
+
+    //     // Extract the substring around the query text and highlight the query text
+    //     const trimmedSnippet = snippet.substring(startIndex, endIndex);
+    //     const regex = new RegExp(query, 'gi'); // Create a case-insensitive regular expression for the query
+    //     const highlightedSnippet = trimmedSnippet.replace(regex, '<strong>$&</strong>'); // Wrap matched query text with <strong> tags
+
+    //     return startIndex > 0 ? `...${highlightedSnippet}...` : highlightedSnippet;
+    // };
 
     return (
         <div className="main-container flex flex-wrap" id="map-container">
@@ -395,7 +403,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                                             </div>
                                                             <a href={exhibitionUrl || locationUrl} target="_blank" rel="noopener noreferrer">
                                                                 <div className="relative mt-2 sm:mt-0 sm:ml-4 flex-shrink-0 before:absolute before:top-[0px] before:left-0 before:-translate-x-52 before:w-48 before:h-[1px] before:bg-gray-400" style={{ width: '160px', height: '160px' }}>
-                                                                    <ImageDisplay imagePath={imagePath} title={title} width="160" height="160" />
+                                                                    <ImageDisplay imagePath={imagePath} title={title} index={index} width="160" height="160" />
                                                                 </div>
                                                             </a>
                                                         </>

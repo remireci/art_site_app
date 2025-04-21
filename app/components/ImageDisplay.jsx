@@ -9,7 +9,7 @@ import Image from 'next/image';
 //     process.env.NEXT_PUBLIC_SUPABASE_API_KEY
 // );
 
-const ImageDisplay = ({ imagePath, title, width = 300 }) => {
+const ImageDisplay = ({ imagePath, title, index }) => {
     // const [imageUrl, setImageUrl] = useState('');
 
     // console.log("from ImageDisplay", imagePath);
@@ -50,18 +50,20 @@ const ImageDisplay = ({ imagePath, title, width = 300 }) => {
     const imageName = imagePath.split('?')[0].split('agenda/')[1];
 
     // Construct the Cloudflare optimized URL
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=${width},quality=70,fit=cover,format=auto/agenda/${encodeURI(imageName)}`;
+    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,quality=70,fit=cover,format=auto/agenda/${encodeURI(imageName)}`;
 
     return (
         <div className={`relative w-full aspect-[1]`}>
             {/* <div className="relative h-[100px]"> */}
             <Image
-                priority
                 unoptimized
+                priority={index === 0}
                 src={optimizedUrl}
                 alt={title}
                 layout="fill" // This ensures the image fills the container
                 objectFit="contain" // Ensures the image fits within the dimensions
+                placeholder='blur'
+                blurDataURL='"/placeholder.png'
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimize based on screen size
                 className="transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
             />

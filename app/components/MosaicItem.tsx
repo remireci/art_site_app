@@ -24,7 +24,8 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
     const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
     // Construct the Cloudflare optimized URL
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,quality=70,fit=cover,format=auto/agenda/${encodeURI(imageName as string)}`;
+
 
     return (
         <motion.div
@@ -57,9 +58,9 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                     <p>{exhibition.location}</p>
                 </div>
 
-                <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden">
+                {/* <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden"> */}
+                <div className={`relative w-full aspect-[1]`}>
                     <Image
-                        priority
                         unoptimized
                         src={optimizedUrl}
                         alt={exhibition.title}
