@@ -23,6 +23,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname === "/sitemap-index.xml" || pathname.startsWith("/sitemap")) {
+    return NextResponse.next();
+  }
+
   // 🧼 Dot-slug redirect ONLY if not yet localized
   if (pathname.startsWith("/exhibitions/locations/")) {
     const slug = pathname.split("/exhibitions/locations/")[1];
