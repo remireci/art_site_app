@@ -1,4 +1,4 @@
-import { getExhibitionsByDomain } from "@/app/db/mongo";
+import { getExhibitionsByDomain, getLocations } from "@/app/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Modal from "../../../../components/LocationModal";
@@ -24,6 +24,10 @@ export async function generateMetadata({ params }: { params: { locale: string; l
     const originalDomain = params.location.replace(/-/g, ".");
 
     const data = await getExhibitionsByDomain(originalDomain);
+    const locations = await getLocations();
+
+    const locationsLocation = locations.find((l) => l.domain === originalDomain);
+    const city = locationsLocation?.city;
 
     // 3. Handle empty data case
     if (data.length === 0) {
@@ -45,7 +49,7 @@ export async function generateMetadata({ params }: { params: { locale: string; l
     const locationName = location.charAt(0).toUpperCase() + location.slice(1);
 
     return {
-        title: `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'} in ${data[0].city}`,
+        title: `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'} in ${city}`,
         description: `${messages['meta-description'] || 'Explore art exhibitions'} at ${data[0].location}.`,
         keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`
     };
