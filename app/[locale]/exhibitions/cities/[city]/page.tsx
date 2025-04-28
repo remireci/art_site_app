@@ -1,5 +1,4 @@
 import { getLocations_by_city, getExhibitionsByDomain } from "@/app/db/mongo";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Metadata } from 'next';
 
@@ -18,11 +17,17 @@ export async function generateMetadata({ params }: { params: { locale: string; c
 
     // Capitalize city name for display
     const cityName = city.charAt(0).toUpperCase() + city.slice(1);
+    const citySlug = city.toLowerCase();
+    const baseUrl = 'https://www.artnowdatabase.eu';
+
 
     return {
         title: `${cityName} ${messages['meta-title'] || 'Art Exhibitions'}`,
         description: `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`,
         keywords: `${cityName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`,
+        alternates: {
+            canonical: `${baseUrl}/${locale}/${citySlug}/exhibitions`,
+        },
     };
 }
 
@@ -32,7 +37,25 @@ export default async function CityPage({ params }: { params: { city: string } })
     const data = await getLocations_by_city(city);
 
     if (!data || data.length === 0) {
-        return notFound();
+
+        <main className="flex flex-col items-center p-4 min-h-screen">
+            <div className="mt-20">
+                <h1 className="text-gray-500">{`We couldn't find any exhibitions in ${city}.`}</h1>
+            </div>
+            <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
+                <form action="/" method="GET">
+                    <input type="hidden" name="city" value={city} />
+                    <button type="submit" className="text-xl w-auto uppercase hover:text-gray-600">
+                        Show on map
+                    </button>
+                </form>
+                {/* <a href={`/?city=${city}`}>
+                <p className="text-xl w-auto uppercase hover:text-gray-600">
+                    See the Map
+                </p>
+            </a> */}
+            </div>
+        </main>
     }
 
     // Now we need to get the domain from each location and use it to get exhibitions
@@ -61,6 +84,8 @@ export default async function CityPage({ params }: { params: { city: string } })
         exhibition.city && !validCities.includes(exhibition.city)
     )?.city;
 
+    console.log("number of exhibitions", exhibitions.length);
+
 
     const formatDate = (dateStr: string) => {
         if (!dateStr || typeof dateStr !== "string" || !dateStr.includes('-')) {
@@ -86,7 +111,7 @@ export default async function CityPage({ params }: { params: { city: string } })
                         )}
                     </h1>
                 ) : (
-                    <p className="text-gray-500">No data available</p>
+                    <h1 className="text-gray-500">{`We couldn't find any exhibitions in ${city}.`}</h1>
                 )}
             </div>
             <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
@@ -104,9 +129,17 @@ export default async function CityPage({ params }: { params: { city: string } })
             </div>
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2 space-y-1">
                 {exhibitions.map((exhibition: any, index: number) => {
-                    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
-                    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+                    let optimizedUrl = '';
+
+                    if (exhibition.image_reference[0]) {
+                        const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+                    } else {
+                        optimizedUrl = 'https://img.artnowdatabase.eu/byArtNowDatabase_placeholder.png';
+
+                    }
 
                     return (
                         <li key={exhibition._id}

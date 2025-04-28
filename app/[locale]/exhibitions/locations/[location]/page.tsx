@@ -20,14 +20,22 @@ export async function generateMetadata({ params }: { params: { locale: string; l
         messages = (await import(`../../../../../locales/en/location.json`)).default;
     }
 
+    const convertToDomain = (urlPart: string): string => {
+        const lastHyphenIndex = urlPart.lastIndexOf('-');
+        if (lastHyphenIndex === -1) return urlPart; // No hyphens found
 
-    const originalDomain = params.location.replace(/-/g, ".");
+        return urlPart.slice(0, lastHyphenIndex) + '.' + urlPart.slice(lastHyphenIndex + 1);
+    };
+
+    // Usage:
+    const originalDomain = convertToDomain(params.location);
 
     const data = await getExhibitionsByDomain(originalDomain);
     const locations = await getLocations();
 
     const locationsLocation = locations.find((l) => l.domain === originalDomain);
     const city = locationsLocation?.city;
+    console.log("the city", originalDomain);
 
     // 3. Handle empty data case
     if (data.length === 0) {
@@ -50,7 +58,7 @@ export async function generateMetadata({ params }: { params: { locale: string; l
 
     return {
         title: `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'} in ${city}`,
-        description: `${messages['meta-description'] || 'Explore art exhibitions'} at ${data[0].location}.`,
+        description: `${messages['meta-description'] || 'Explore art exhibitions'} ${data[0].location}.`,
         keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`
     };
 }
