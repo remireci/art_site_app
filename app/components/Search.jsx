@@ -440,6 +440,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
             </div>
 
             <div className="flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
+
                 {/* <div className='bg-amber-100 md-w-full h-40 w-4/5 border-t-4'></div>
                 <div className='bg-green-300 w-full h-40 md-w-1/2 border-t-4'></div>
                 <div className='bg-indigo-500 w-full h-40 md-w-1/2 border-t-4'></div>

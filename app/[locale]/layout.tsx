@@ -122,17 +122,19 @@ export default async function LocaleLayout({
       </head>
       {measurementId && <GoogleAnalytics GA_MEASUREMENT_ID={measurementId} />}
       <body className={roboto.className}>
-        <div className="main-container min-h-screen">
+        <div className="flex flex-col min-h-screen">
           <NextIntlClientProvider
             locale={locale}
             messages={messages}
             timeZone="Europe/Brussels"
           >
             <Header />
-            <LocationProvider>
-              {children}
-            </LocationProvider>
-            <CookieBanner />
+            <main className="flex-1">
+              <LocationProvider>
+                {children}
+              </LocationProvider>
+              <CookieBanner />
+            </main>
             <Footer />
           </NextIntlClientProvider>
         </div>
