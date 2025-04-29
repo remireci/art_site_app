@@ -13,7 +13,7 @@ export async function GET() {
         // Fetch exhibitions that have at least one image and match the date conditions
         const exhibitions = await getAgendaItems(
             {
-                image_reference: { $exists: true, $ne: [] },
+                // image_reference: { $exists: true, $ne: [] },
                 show: true,
                 date_end_st: { $gt: currentDateString }, // Compare string dates
                 $or: [

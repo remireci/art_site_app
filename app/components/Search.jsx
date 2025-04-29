@@ -100,7 +100,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
         setInitialLoad(false)
         try {
             setLoading(true);
-            console.log(query);
+            // console.log(query);
             const response = await fetch(`/api/search?terms=${query}`);
             const responseData = await response.json();
 

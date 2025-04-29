@@ -38,9 +38,9 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
     //     }
     // }, [imagePath, width, height]);
 
-    if (!imagePath || imagePath === "" || imagePath[0] === undefined) {
-        return <p className='w-full h-full bg-gray-100 flex items-center justify-center text-sm text-gray-400'>No image...</p>;  // You can customize this part to show a loading spinner, etc.
-    }
+    // if (!imagePath || imagePath === "" || imagePath[0] === undefined) {
+    //     return <p className='w-full h-full bg-gray-100 flex items-center justify-center text-sm text-gray-400'>No image...</p>;  // You can customize this part to show a loading spinner, etc.
+    // }
 
     // const imageName = imagePath.split('?')[0].split('/').pop();;
 
@@ -49,10 +49,17 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
     // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURIComponent(imageName)}`;
 
     // Get the full path after 'agenda/', and remove any query parameters
-    const imageName = imagePath.split('?')[0].split('agenda/')[1];
 
-    // Construct the Cloudflare optimized URL
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=200,fit=cover,format=auto/agenda/${encodeURI(imageName)}`;
+    let optimizedUrl = '';
+
+    if (imagePath[0]) {
+        const imageName = imagePath.split('?')[0].split('agenda/')[1];
+
+        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName)}`;
+    } else {
+        optimizedUrl = 'https://img.artnowdatabase.eu/byArtNowDatabase_placeholder.png';
+
+    }
 
     return (
         <div className={`relative w-full aspect-[1]`}>

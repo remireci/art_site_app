@@ -102,9 +102,22 @@ export default async function LocationPage({ params }: { params: { location: str
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
                 {data.map((exhibition: any, index: number) => {
 
-                    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+                    // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
-                    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+                    // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+
+                    let optimizedUrl = '';
+
+                    if (exhibition.image_reference[0]) {
+                        const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+
+                    } else {
+
+                        optimizedUrl = 'https://img.artnowdatabase.eu/byArtNowDatabase_placeholder.png';
+
+                    }
 
                     return (
                         <li key={exhibition._id}
