@@ -1,6 +1,5 @@
-// components/Search.js
 "use client"
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { formatDate } from '../utils/formatDate';
 import SearchList from './SearchList';
 import SearchMap from './SearchMap';
@@ -10,34 +9,38 @@ import dynamic from 'next/dynamic';
 // import MosaicTab from './MosaicTab';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from "react";
+import { useTranslations } from "next-intl";
 
 
 const DynamicMap = dynamic(() => import('./showmap/MapTest'), {
     ssr: false
 });
 
+const MosaicTab = dynamic(() => import("./MosaicTab"), {
+    ssr: false,
+    loading: () => <div className="text-center py-10 text-gray-500">Loading Mosaic...</div>,
+});
 
-const Search = ({ initialLocations, exhibitions, tab }) => {
+
+const Search = ({ initialData = [] }) => {
+    const t = useTranslations();
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState([]);
+    const [results, setResults] = useState(initialData);
     const [initialLoad, setInitialLoad] = useState(true);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('list');
     const [showClearButton, setShowClearButton] = useState(false);
-    const [locations, setLocations] = useState(initialLocations);
+    // const [locations, setLocations] = useState(initialLocations);
     const searchParams = useSearchParams();
     const city = searchParams.get("city");
+    const numberOfLoads = useRef(0);
 
-    const MosaicTab = dynamic(() => import("./MosaicTab"), {
-        ssr: false,
-        loading: () => <div className="text-center py-10 text-gray-500">Loading Mosaic...</div>,
-    });
 
-    const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal', 'dessin'];
-    // const initialSearchTerms = ["dessin"];
-    const number = initialSearchTerms.length;
-    const indexInitialSearch = Math.floor(Math.random(number) * number);
-    const initialSearchTerm = initialSearchTerms[indexInitialSearch];
+
+    useEffect(() => {
+        numberOfLoads.current += 1;
+        console.log("Initial data loaded via SSR. Number of loads:", numberOfLoads.current);
+    }, []);
 
     const handleInputChange = (e) => {
         const inputValue = e.target.value;
@@ -50,14 +53,15 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
         setShowClearButton(false); // Hide clear button after clearing the field
     };
 
-    // Get unique locations using a Set
-    const uniqueLocations = new Set(exhibitions.map(exhibition => exhibition.location));
 
-    const locationNames = initialLocations.map(locationObj => locationObj.domain);
+    // // Get unique locations using a Set
+    // const uniqueLocations = new Set(exhibitions.map(exhibition => exhibition.location));
+
+    // const locationNames = initialLocations.map(locationObj => locationObj.domain);
 
     // console.log(`locations: ${locationNames}`);
 
-    const missingLocations = [...uniqueLocations].filter(location => !locationNames.includes(location));
+    // const missingLocations = [...uniqueLocations].filter(location => !locationNames.includes(location));
 
     // // Log the count of unique locations
     // console.log(`Number of unique locations: ${missingLocations}`);
@@ -76,25 +80,23 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
     //     }
     // });
 
+    // useEffect(() => {
 
+    //     const initialSearch = async () => {
+    //         const response = await fetch(`/api/search?terms=${initialSearchTerm}`);
+    //         const responseData = await response.json();
 
+    //         const data = responseData.data || [];
 
-    useEffect(() => {
-        const initialSearch = async () => {
-            const response = await fetch(`/api/search?terms=${initialSearchTerm}`);
-            const responseData = await response.json();
+    //         const randomized = shuffleArray(data);
 
-            // Assuming the backend response is an object with a 'data' property containing an array
-            const data = responseData.data || [];
-
-            // Assuming the backend response is an object with a 'urls' property            
-            setResults(data);
-            setLoading(false);
-            setShowClearButton(true);
-        }
-        setLoading(true);
-        initialSearch()
-    }, [])
+    //         setResults(randomized);
+    //         setLoading(false);
+    //         setShowClearButton(true);
+    //     }
+    //     setLoading(true);
+    //     initialSearch()
+    // }, [])
 
     const handleSearch = useCallback(async () => {
         setInitialLoad(false)
@@ -178,7 +180,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                 )
                 }
                 {activeTab === 'map' && (
-                    <SearchMap query={query} setQuery={setQuery} onSearch={handleSearch} />
+                    <SearchMap query={query} setQuery={setQuery} onSearch={handleSearch} onClear={handleClear} />
                 )
                 }
                 {/* <div className='input-container flex flex-row items-end justify-between w-full h-2/3'>
@@ -218,9 +220,9 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
 
             <div className="w-full px-1 mb-8 mt-2 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
                 <div className='flex justify-center space-x-10'>
-                    <button className={`text-sm h-6 px-2 sm:mt-2  rounded ${activeTab === 'list' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('list')}>List</button>
-                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'map' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('map')}>Map</button>
-                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>Mosaic</button>
+                    <button className={`text-sm h-6 px-2 sm:mt-2  rounded ${activeTab === 'list' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('list')}>{t("homepage.list")}</button>
+                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'map' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('map')}>{t("homepage.map")}</button>
+                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>{t("homepage.mosaic")}</button>
                 </div>
 
                 <div className='results-container flex-grow overflow-x-auto overflow-y-auto sm:mt-4' id="results-container" style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
@@ -245,7 +247,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                 </ul>
                             )} */}
                             {/* Show text or agenda results based on activeTab */}
-                            {activeTab === 'map' && (
+                            {/* {activeTab === 'map' && (
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
                                     <div className='flex flex-col items-center mt-8 space-y-6'>
                                         <div className='w-20 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100'>
@@ -254,31 +256,61 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                         <div>
                                             <DynamicMap
                                                 searchQuery={query}
-                                                locations={locations}
-                                                groupedExhibitions={exhibitions}
+                                            // locations={locations}
+                                            // groupedExhibitions={exhibitions}
                                             />
                                         </div>
                                     </div>
                                 </ul>
-                            )}
+                            )} */}
 
-                            {activeTab === 'mosaic' && (
+                            <div className={activeTab === 'map' ? '' : 'hidden'}>
+
+                                <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
+                                    <div className='flex flex-col items-center mt-8 space-y-6'>
+                                        <div className='w-30 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100'>
+                                            <GetLocation />
+                                        </div>
+                                        <div>
+                                            <DynamicMap
+                                                searchQuery={query}
+                                            // locations={locations}
+                                            // groupedExhibitions={exhibitions}
+                                            />
+                                        </div>
+                                    </div>
+                                </ul>
+                            </div>
+
+                            {/* {activeTab === 'mosaic' && (
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
                                     <div
                                     // className='flex flex-col items-center mt-8 space-y-6'
                                     >
                                         <Suspense fallback={null}>
                                             <MosaicTab
-                                                activeTab={activeTab}
-                                                exhibitions={exhibitions}
+                                            // activeTab={activeTab}
+                                            // exhibitions={exhibitions}
 
                                             />
                                         </Suspense>
                                     </div>
                                 </ul>
-                            )}
+                            )} */}
 
-                            {activeTab === 'list' && results.filter(result => result.source === 'agenda').length > 0 && (
+                            <div className={activeTab === 'mosaic' ? '' : 'hidden'}>
+                                <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
+                                    <div
+                                    // className='flex flex-col items-center mt-8 space-y-6'
+                                    >
+                                        <Suspense fallback={null}>
+                                            <MosaicTab />
+                                        </Suspense>
+                                    </div>
+                                </ul>
+                            </div>
+
+                            {activeTab === 'list' && results && results.filter(result => result.source === 'agenda').length > 0 && (
 
                                 <ul className='w-full bg-slate-50 z-5 p-4 rounded text-xs'>
                                     <div>
@@ -431,7 +463,7 @@ const Search = ({ initialLocations, exhibitions, tab }) => {
                                 </ul>
                             )}
                             {/* Show message if no results */}
-                            {results.length === 0 && !initialLoad && (
+                            {results && results.length === 0 && !initialLoad && (
                                 <p className='mx-4 mt-8'>No results found.</p>
                             )}
                         </>

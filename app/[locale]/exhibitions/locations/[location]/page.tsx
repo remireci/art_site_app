@@ -115,7 +115,7 @@ export default async function LocationPage({ params }: { params: { location: str
 
                     } else {
 
-                        optimizedUrl = 'https://img.artnowdatabase.eu/byArtNowDatabase_placeholder.png';
+                        optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
 
                     }
 

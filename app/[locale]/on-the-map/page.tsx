@@ -1,8 +1,12 @@
 // components/Search.js
 "use client"
+import { useTranslations } from "next-intl";
 
 
 const Disclaimer = () => {
+
+    const t = useTranslations();
+
     return (
         <div className="main-container flex flex-wrap min-h-screen overflow-auto">
             {/* <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block h-14 lg:h-40"></div>
@@ -17,27 +21,30 @@ const Disclaimer = () => {
 
             </div>
 
-            <div className="w-full px-1 mb-8 mt-2 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
-                <div className='flex flex-col justify-center mx-6 space-y-16 mt-20'>
-                    <h2 className="text-2xl font-bold text-center text-gray-900">On the Map</h2>
+            <div className="flex flex-wrap justify-center w-full text-slate-800 px-1 mb-8 mt-2 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
+                <div className='flex flex-col w-2/3 mx-6 mt-20 text-sm'>
+                    <h2 className="uppercase mt-8">
+                        {t("on-the-map.title")}
+                    </h2>
 
-                    <p className="text-lg text-center mt-4">
-                        In the near future, you will be able to upload your exhibition data directly on this page.
+                    <p className="mt-4">
+                        {t("on-the-map.future")}
                     </p>
 
-                    <p className="mt-6">
-                        <strong className="text-gray-900">Art Now Database</strong> follows a non-hierarchical approach to presenting exhibitions.
-                        On the map, every institution is treated equally—just as in the mosaic, our <em>random picture show</em>.
+                    <p>
+                        {t("on-the-map.contact")}
+                        <strong><a href="mailto:info@artnowdatabase.eu">info@artnowdatabase.eu</a></strong>
+                    </p>
+
+                    <p className="mt-8">
+                        <strong className="semi-bold">Art Now Database</strong> {t("on-the-map.description")} <em>{t("on-the-map.show")}</em>.
                     </p>
 
                     <p className="mt-4">
-                        We believe that art should be accessible to everyone.
-                        That&apos;s why it only costs <span className="font-semibold text-gray-900">€50 per year</span> to present your exhibitions in the Art Exhibitions Calendar.
-
-                        Meanwhile, you can contact us at: <strong><a href="mailto:info@artnowdatabase.eu">info@artnowdatabase.eu</a></strong>.
+                        {t("on-the-map.believe")}<span className="font-semibold">&nbsp;€&nbsp;{t("on-the-map.euro")}</span> {t("on-the-map.present")}
                     </p>
-                    <p className="text-center mt-6 font-semibold text-lg text-gray-900">
-                        Join us in making art more visible and inclusive!
+                    <p className="text-right mt-6 font-semibold">
+                        {t("on-the-map.join")}
                     </p>
 
                 </div>

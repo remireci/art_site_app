@@ -1,7 +1,27 @@
 {
     "homepage": 
     {
-        "title": "Expo beeldende kunst"
+        "title": "Expo beeldende kunst",
+        "list": "Lijst",
+        "map": "Kaart",
+        "mosaic": "Mozaïek",
+        "on-the-map": "Op de kaart",
+        "advertising": "Adverteren",
+        "localisation": "Mijn locatie",
+        "privacy": "Jouw privacy",
+        "disclaimer": "Disclaimer"
+    },
+    "on-the-map": 
+    {
+    "title": "Op de kaart",
+    "future": "Binnenkort kun je je tentoonstellingsgegevens rechtstreeks via deze pagina uploaden.",
+    "description": "hanteert een niet-hiërarchische aanpak voor het tonen van tentoonstellingen. Op de kaart wordt elke instelling gelijk behandeld — net als in de mozaïek, onze",
+    "show": "random picture show",
+    "believe": "Wij geloven dat kunst voor iedereen toegankelijk moet zijn. Daarom kost het slechts",
+    "euro": "50 per jaar ",
+    "present": "om je tentoonstellingen in de Tentoonstellingsagenda te laten opnemen.",
+    "contact": " Voor opname van je gegevens kan je mailen naar: ",
+    "join": "Doe mee en maak kunst zichtbaar en inclusief!"
     }
 
 }

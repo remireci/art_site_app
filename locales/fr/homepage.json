@@ -1,7 +1,27 @@
 {
     "homepage": 
     {
-        "title": "Expositions d'art"
+        "title": "Expositions d'art",
+        "list": "Liste",
+        "map": "Carte",
+        "mosaic": "Mosaïque",
+        "on-the-map": "Sur la carte",
+        "advertising": "Publicité",
+        "localisation": "Ma localisation",
+        "privacy": "Ta vie privée",
+        "disclaimer": "Avertissement"
+    },
+    "on-the-map": 
+    {
+    "title": "Sur la carte",
+    "future": "Dans un avenir proche, vous pourrez télécharger directement vos données d’exposition sur cette page.",
+    "description": "adopte une approche non hiérarchique pour présenter les expositions. Sur la carte, chaque institution est traitée de manière égale—tout comme dans notre mosaïque, notre",
+    "show": "random picture show",
+    "believe": "Nous croyons que l’art doit être accessible à tous. C’est pourquoi il ne coûte que",
+    "euro": "50 par an ",
+    "present": "pour présenter vos expositions dans le Calendrier.",
+    "contact": " En attendant, vous pouvez nous contacter à: ",
+    "join": "Rejoignez-nous pour rendre l’art plus visible et inclusif !"
     }
 
 }

@@ -1,5 +1,6 @@
 'use client'
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useProcessedData } from '@/app/hooks/useProcessedData';
 import L, { LatLngTuple, LeafletEvent, LeafletMouseEvent } from 'leaflet';
 import MarkerIcon from '../../../node_modules/leaflet/dist/images/marker-icon.png'
 import MarkerShadow from '../../../node_modules/leaflet/dist/images/marker-shadow.png'
@@ -14,6 +15,7 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import 'leaflet-control-geocoder';
 import ExhibitionCarousel from './ExhibitionCarousel/ExhibitionCarousel';
 import "../../styles/globals.css";
+import { Exhibition, Location, ProcessedData } from "../../types";
 
 
 interface MapProps {
@@ -27,30 +29,10 @@ interface MapProps {
     }>;
 }
 
-type Exhibition = {
-    _id: string;
-    title: string;
-    date_end: string;
-    location: string;
-    url: string;
-    exh_url?: string;
-    artists?: string;
-    date_end_st: string;
-    image_reference: string[];
-    exhibition_url: string;
-}
-
 type LocationMarker = {
     lat: number;
     lon: number;
     address: string;
-}
-
-interface Location {
-    latitude: number;
-    longitude: number;
-    domain: string;
-    name: string;
 }
 
 type LocationWithMarker = LocationMarker & {
@@ -62,7 +44,7 @@ type LocationWithMarker = LocationMarker & {
 };
 
 
-const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapProps) => {
+const MapTest = React.memo(({ searchQuery }: MapProps) => {
 
     const possibleStartLocations: LatLngTuple[] = [
         [50.8503, 4.3517], // Brussels, Belgium
@@ -95,6 +77,24 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
     const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
     const [filteredLocations, setFilteredLocations] = useState<LocationWithMarker[]>([]);
     const [shouldCenter, setShouldCenter] = useState(false);
+
+
+    const processedData = useProcessedData("map");
+    const processedLocations = useMemo(
+        () => processedData?.processedLocations ?? [],
+        [processedData]
+    );
+    const groupedExhibitions = useMemo(
+        () => processedData?.groupedExhibitions ?? [],
+        [processedData]
+    );
+
+
+    useEffect(() => {
+        if (!processedData) return;
+
+        // effect using processedData
+    }, [processedData]);
 
 
     // console.log("Map re-rendering", userLocation);
@@ -157,11 +157,11 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
     };
 
     useEffect(() => {
-        if (!mapBounds || !locations) return; // Ensure mapBounds and locations are defined
+        if (!mapBounds || !processedLocations) return; // Ensure mapBounds and locations are defined
 
         const excludedLocations: LocationWithMarker[] = [];
 
-        locations.forEach(location => {
+        processedLocations.forEach(location => {
             const lat = Number(location.latitude);
             const lon = Number(location.longitude);
             const isInsideBounds = mapBounds.contains(L.latLng(lat, lon));
@@ -177,7 +177,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
             }
         });
 
-        const newFilteredLocations: LocationWithMarker[] = locations
+        const newFilteredLocations: LocationWithMarker[] = processedLocations
             .filter(location => {
                 // Ensure latitude and longitude are valid before checking bounds
                 const lat = Number(location.latitude);
@@ -200,7 +200,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
             }
             return prevLocations;
         });
-    }, [mapBounds, locations]);
+    }, [mapBounds, processedLocations]);
 
 
     useEffect(() => {
@@ -247,6 +247,11 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
 
         fetchLocation();
     }, [searchQuery]);
+
+
+    if (!processedData) {
+        return <div>Loading...</div>;
+    }
 
 
     return (

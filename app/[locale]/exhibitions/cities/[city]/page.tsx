@@ -137,7 +137,7 @@ export default async function CityPage({ params }: { params: { city: string } })
 
                         optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
                     } else {
-                        optimizedUrl = 'https://img.artnowdatabase.eu/byArtNowDatabase_placeholder.png';
+                        optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
 
                     }
 

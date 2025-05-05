@@ -1,7 +1,26 @@
 { 
     "homepage": 
     {
-        "title": "Art Exhibitions"
+        "title": "Art Exhibitions",
+        "list": "List",
+        "map": "Map",
+        "mosaic": "Mosaic",
+        "on-the-map": "On the map",
+        "advertising": "Advertising",
+        "localisation": "My Location",
+        "privacy": "Your Privacy",
+        "disclaimer": "Disclaimer"
+    },
+    "on-the-map": 
+    {
+    "title": "On The Map",
+    "future": "In the near future, you will be able to upload your exhibition data directly on this page.",
+    "description": "follows a non-hierarchical approach to presenting exhibitions. On the map, every institution is treated equally—just as in the mosaic, our",
+    "show": "random picture show",
+    "believe": "We believe that art should be accessible to everyone. That's why it only costs",
+    "euro": "50 per year ",
+    "present": "to present your exhibitions in the Art Exhibitions Calendar.",
+    "contact": " Meanwhile, you can contact us at:",
+    "join": "Join us in making art more visible and inclusive!"
     }
-
 }

@@ -1,5 +1,6 @@
 "use client"
 import { useState } from 'react';
+import { Search } from "lucide-react";
 
 const SearchList = ({ query, setQuery, onSearch, onClear }) => {
     const [localQuery, setLocalQuery] = useState(query || "");
@@ -29,22 +30,25 @@ const SearchList = ({ query, setQuery, onSearch, onClear }) => {
                 />
                 {localQuery && (
                     <button
-                        className="clear-button absolute right-8 top-1"
+                        className="clear-button absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 transition-colors"
                         onClick={() => {
                             setLocalQuery("");
                             if (setQuery) setQuery("");
                             onClear();
                         }}
+                        aria-label="Clear"
                     >
                         x
                     </button>
                 )}
             </div>
             <button
-                className="w-1/5 h-8 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 mx-1 rounded flex items-center justify-center"
+                className="w-14 h-8 bg-[#87bdd8] hover:bg-blue-700 text-slate-100 mx-1 rounded-xl flex items-center justify-center"
                 onClick={() => onSearch(localQuery)}
+                aria-label="Search"
+
             >
-                Search
+                <Search size={22} strokeWidth={2} />
             </button>
         </div>
     );

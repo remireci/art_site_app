@@ -59,16 +59,16 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                 </div>
 
                 {/* <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden"> */}
-                <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden">
+                {/* <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden"> */}
+                <div className={`relative w-full aspect-[1]`}>
                     <Image
                         unoptimized
                         src={optimizedUrl}
                         alt={exhibition.title}
-                        layout="fill"
-                        objectFit="contain"
+                        fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         loading="lazy"
-                        className="transition-transform duration-700 ease-in-out group-hover:scale-[2] group-hover:z-10"
+                        className="object-contain transition-transform duration-700 ease-in-out group-hover:scale-[2] group-hover:z-10"
                     />
                 </div>
 
@@ -78,10 +78,9 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                         src={optimizedUrl}
                         alt={exhibition.title}
                         layout="fill"
-                        objectFit="contain"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         loading="lazy"
-                        className="transition-transform duration-700 ease-in-out group-hover:scale-[2.5] group-hover:z-10"
+                        className="object-contain transition-transform duration-700 ease-in-out group-hover:scale-[2.5] group-hover:z-10"
                     />
                 </div> */}
 
