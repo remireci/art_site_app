@@ -11,6 +11,11 @@ export interface Exhibition {
   exhibition_url: string;
 }
 
+export type ExhibitionSummary = Pick<
+  Exhibition,
+  "title" | "location" | "url" | "image_reference" | "exhibition_url"
+>;
+
 export interface Location {
   latitude: number;
   longitude: number;

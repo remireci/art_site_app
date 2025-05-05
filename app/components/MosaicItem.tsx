@@ -58,9 +58,9 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                     <p>{exhibition.location}</p>
                 </div>
 
-                {/* <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden"> */}
-                {/* <div className="w-full h-full object-cover rounded-md shadow-md overflow-hidden"> */}
-                <div className={`relative w-full aspect-[1]`}>
+
+                <div className="w-full h-full relative object-cover rounded-md shadow-md overflow-hidden">
+                    {/* <div className={`relative w-full aspect-[1]`}> */}
                     <Image
                         unoptimized
                         src={optimizedUrl}

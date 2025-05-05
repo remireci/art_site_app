@@ -52,9 +52,7 @@ export const useProcessedData = (activeTab: string) => {
       }
     };
 
-    if (activeTab === "map" || activeTab === "mosaic") {
-      fetchData();
-    }
+    fetchData();
   }, [activeTab]);
 
   return processedData;

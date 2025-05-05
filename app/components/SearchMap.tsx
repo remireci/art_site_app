@@ -1,21 +1,21 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search } from "lucide-react";
 
 interface SearchMapProps {
     query: string;
     setQuery: (query: string) => void;
     onSearch: (query: string) => void;
-    onClear: () => void;
 }
 
-const SearchMap: React.FC<SearchMapProps> = React.memo(({ query, setQuery, onClear }) => {
+const SearchMap: React.FC<SearchMapProps> = React.memo(({ query, setQuery }) => {
     const [localQuery, setLocalQuery] = useState(query);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setQuery(localQuery); // Only update the main query when searching        
+        setQuery(localQuery); // triggers onSearch indirectly
     };
+
 
     return (
         <form className="input-container flex flex-row items-end justify-between w-full h-2/3" onSubmit={handleSubmit}>
@@ -27,19 +27,6 @@ const SearchMap: React.FC<SearchMapProps> = React.memo(({ query, setQuery, onCle
                     value={localQuery}
                     onChange={(e) => setLocalQuery(e.target.value)}
                 />
-                {localQuery && (
-                    <button
-                        className="clear-button absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 transition-colors"
-                        onClick={() => {
-                            setLocalQuery("");
-                            if (setQuery) setQuery("");
-                            onClear();
-                        }}
-                        aria-label="Clear"
-                    >
-                        x
-                    </button>
-                )}
             </div>
             <button
                 type="submit"

@@ -5,6 +5,7 @@ import SearchList from './SearchList';
 import SearchMap from './SearchMap';
 import ImageDisplay from './ImageDisplay';
 import GetLocation from './GetLocation';
+import { shuffleArray } from '../utils/shuffleArray';
 import dynamic from 'next/dynamic';
 // import MosaicTab from './MosaicTab';
 import { useSearchParams } from 'next/navigation';
@@ -22,18 +23,23 @@ const MosaicTab = dynamic(() => import("./MosaicTab"), {
 });
 
 
-const Search = ({ initialData = [] }) => {
+const Search = ({ initialList, initialLocations, exhibitions }) => {
     const t = useTranslations();
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState(initialData);
+    const [results, setResults] = useState(initialList);
     const [initialLoad, setInitialLoad] = useState(true);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('list');
     const [showClearButton, setShowClearButton] = useState(false);
-    // const [locations, setLocations] = useState(initialLocations);
+    const [locations, setLocations] = useState(initialLocations);
     const searchParams = useSearchParams();
     const city = searchParams.get("city");
     const numberOfLoads = useRef(0);
+
+    // const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal', 'dessin'];
+    // const number = initialSearchTerms.length;
+    // const indexInitialSearch = Math.floor(Math.random(number) * number);
+    // const initialSearchTerm = initialSearchTerms[indexInitialSearch];
 
 
 
@@ -144,6 +150,13 @@ const Search = ({ initialData = [] }) => {
         }
     }, [city]);
 
+
+    useEffect(() => {
+        if (query.trim()) {
+            handleSearch(query); // react to query update
+        }
+    }, [query]);
+
     // Function to highlight the query text within the snippet and limit the length of the snippet
     const highlightQuery = (snippet, query) => {
         if (!query) return snippet; // Return the snippet as is if the query is empty
@@ -180,7 +193,7 @@ const Search = ({ initialData = [] }) => {
                 )
                 }
                 {activeTab === 'map' && (
-                    <SearchMap query={query} setQuery={setQuery} onSearch={handleSearch} onClear={handleClear} />
+                    <SearchMap query={query} setQuery={setQuery} onSearch={handleSearch} />
                 )
                 }
                 {/* <div className='input-container flex flex-row items-end justify-between w-full h-2/3'>
@@ -247,23 +260,23 @@ const Search = ({ initialData = [] }) => {
                                 </ul>
                             )} */}
                             {/* Show text or agenda results based on activeTab */}
-                            {/* {activeTab === 'map' && (
+                            {activeTab === 'map' && (
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
                                     <div className='flex flex-col items-center mt-8 space-y-6'>
-                                        <div className='w-20 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100'>
+                                        <div className='w-35 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100'>
                                             <GetLocation />
                                         </div>
                                         <div>
                                             <DynamicMap
                                                 searchQuery={query}
-                                            // locations={locations}
-                                            // groupedExhibitions={exhibitions}
+                                                locations={locations}
+                                                groupedExhibitions={exhibitions}
                                             />
                                         </div>
                                     </div>
                                 </ul>
-                            )} */}
-
+                            )}
+                            {/* 
                             <div className={activeTab === 'map' ? '' : 'hidden'}>
 
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
@@ -274,31 +287,30 @@ const Search = ({ initialData = [] }) => {
                                         <div>
                                             <DynamicMap
                                                 searchQuery={query}
-                                            // locations={locations}
-                                            // groupedExhibitions={exhibitions}
+                                                locations={locations}
+                                                groupedExhibitions={exhibitions}
                                             />
                                         </div>
                                     </div>
                                 </ul>
-                            </div>
+                            </div> */}
 
-                            {/* {activeTab === 'mosaic' && (
+                            {activeTab === 'mosaic' && (
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
                                     <div
                                     // className='flex flex-col items-center mt-8 space-y-6'
                                     >
                                         <Suspense fallback={null}>
                                             <MosaicTab
-                                            // activeTab={activeTab}
-                                            // exhibitions={exhibitions}
-
+                                                activeTab={activeTab}
+                                                exhibitions={exhibitions}
                                             />
                                         </Suspense>
                                     </div>
                                 </ul>
-                            )} */}
+                            )}
 
-                            <div className={activeTab === 'mosaic' ? '' : 'hidden'}>
+                            {/* <div className={activeTab === 'mosaic' ? '' : 'hidden'}>
                                 <ul className='w-full bg-slate-200 z-5 p-4 rounded text-xs'>
                                     <div
                                     // className='flex flex-col items-center mt-8 space-y-6'
@@ -308,7 +320,7 @@ const Search = ({ initialData = [] }) => {
                                         </Suspense>
                                     </div>
                                 </ul>
-                            </div>
+                            </div> */}
 
                             {activeTab === 'list' && results && results.filter(result => result.source === 'agenda').length > 0 && (
 

@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef, useMemo } from "react";
-import { useProcessedData } from '@/app/hooks/useProcessedData';
 import { motion } from "framer-motion";
 import MosaicItem from "./MosaicItem";
 import { shuffleArray } from "../utils/shuffleArray";
+import { ExhibitionSummary } from "../types";
 
 // Define the Exhibition type
 interface Exhibition {
@@ -16,12 +16,11 @@ interface Exhibition {
 // Define the DomainExhibitions type that wraps the exhibitions in each domain
 interface DomainExhibitions {
     domain: string;
-    exhibitions: Exhibition[];
+    exhibitions: ExhibitionSummary[];
 }
 
 
-
-export default function MosaicTab() {
+export default function MosaicTab({ exhibitions }: { exhibitions: DomainExhibitions[] }) {
     const [showExhibitions, setShowExhibitions] = useState<Exhibition[]>([]);
     const [visibleExhibitions, setVisibleExhibitions] = useState<Exhibition[]>([]);
     const [loading, setLoading] = useState(true);
@@ -29,21 +28,13 @@ export default function MosaicTab() {
     const loadingRef = useRef(false);
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-
-    const processedData = useProcessedData("map");
-
-    const groupedExhibitions = useMemo(
-        () => processedData?.groupedExhibitions ?? [],
-        [processedData]
-    );
-
     // console.log("these are the exhibitions", exhibitions);
 
     useEffect(() => {
         async function fetchExhibitions() {
             // const res = await fetch(`/api/exhibitions`);
             // const data: Exhibition[] = await res.json();
-            const flattenedExhibitions = groupedExhibitions.flatMap(domain => domain.exhibitions);
+            const flattenedExhibitions = exhibitions.flatMap(domain => domain.exhibitions);
             // Filter exhibitions that have an image reference
             const filtered = flattenedExhibitions.filter(
                 ex => Array.isArray(ex.image_reference) && ex.image_reference.length > 0
@@ -56,7 +47,7 @@ export default function MosaicTab() {
             setLoading(false)
         }
         fetchExhibitions();
-    }, [groupedExhibitions]);
+    }, [exhibitions]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
