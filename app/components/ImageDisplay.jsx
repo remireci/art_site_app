@@ -55,7 +55,7 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
     if (imagePath[0]) {
         const imageName = imagePath.split('?')[0].split('agenda/')[1];
 
-        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName)}`;
+        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(imageName)}`;
     } else {
         optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
 
