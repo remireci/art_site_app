@@ -50,7 +50,7 @@ export default async function LocationsListPage({ params }: LocationsListPagePro
                         const safeDomain = location.domain.replace(/\./g, "-");
 
                         return (
-                            < li key={location.domain && location._id} className="bg-slate-100" >
+                            < li key={`${location._id}-${location.domain}-${location.location}-${location.coordinates}`} className="bg-slate-100" >
                                 <Link href={`/${locale}/exhibitions/locations/${safeDomain}`}>{location.name}</Link>
                             </li>
                         );

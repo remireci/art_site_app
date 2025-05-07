@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: { locale: string; c
         description: `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`,
         keywords: `${cityName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`,
         alternates: {
-            canonical: `${baseUrl}/${locale}/${citySlug}/exhibitions`,
+            canonical: `${baseUrl}/${locale}/exhibitions/cities/${citySlug}`,
         },
     };
 }

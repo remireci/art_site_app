@@ -67,10 +67,11 @@ async function sitemap() {
 
             const routes = [
                 "",
-                "/exhibitions",
-                "/locations",
+                "/exhibitions/cities",
+                "/exhibitions/locations",
                 "/advertising",
-                "/artist_without_exhibition",
+                "/on-the-map",
+                // "/artist_without_exhibition",
             ].flatMap((route) => {
                 return {
                     url: `${URL}/${lang}${route}`,

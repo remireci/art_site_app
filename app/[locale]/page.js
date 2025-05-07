@@ -2,7 +2,7 @@ import Search from "../components/Search";
 import { extractDomain } from "../utils/extractDomain";
 import { shuffleArray } from "../utils/shuffleArray";
 
-export const runtime = 'edge';
+// export const runtime = 'edge';
 
 export default async function HomePage() {
 
