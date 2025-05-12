@@ -1,5 +1,6 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Search } from "lucide-react";
 
 interface SearchMapProps {
     query: string;
@@ -12,8 +13,9 @@ const SearchMap: React.FC<SearchMapProps> = React.memo(({ query, setQuery }) => 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setQuery(localQuery); // Only update the main query when searching        
+        setQuery(localQuery); // triggers onSearch indirectly
     };
+
 
     return (
         <form className="input-container flex flex-row items-end justify-between w-full h-2/3" onSubmit={handleSubmit}>
@@ -28,9 +30,10 @@ const SearchMap: React.FC<SearchMapProps> = React.memo(({ query, setQuery }) => 
             </div>
             <button
                 type="submit"
-                className="w-1/5 h-8 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 mx-1 rounded flex items-center justify-center"
+                className="w-14 h-8 bg-[#87bdd8] hover:bg-blue-700 text-slate-100 mx-1 rounded-xl flex items-center justify-center"
+                aria-label="Search"
             >
-                Search
+                <Search size={16} />
             </button>
         </form>
     );

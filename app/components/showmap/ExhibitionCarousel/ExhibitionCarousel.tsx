@@ -46,9 +46,20 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
         <div className="w-[200px] min-h-[280px]">
             {exhibitionsInLocation.map((exhibition, index) => {
 
-                const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+                let optimizedUrl = '';
 
-                const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+                if (exhibition.image_reference[0]) {
+                    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                    optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+                } else {
+                    optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
+
+                }
+
+                // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
 
                 return (
                     <div

@@ -38,9 +38,9 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
     //     }
     // }, [imagePath, width, height]);
 
-    if (!imagePath || imagePath === "" || imagePath[0] === undefined) {
-        return <p className='w-full h-full bg-gray-100 flex items-center justify-center text-sm text-gray-400'>No image...</p>;  // You can customize this part to show a loading spinner, etc.
-    }
+    // if (!imagePath || imagePath === "" || imagePath[0] === undefined) {
+    //     return <p className='w-full h-full bg-gray-100 flex items-center justify-center text-sm text-gray-400'>No image...</p>;  // You can customize this part to show a loading spinner, etc.
+    // }
 
     // const imageName = imagePath.split('?')[0].split('/').pop();;
 
@@ -49,10 +49,17 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
     // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURIComponent(imageName)}`;
 
     // Get the full path after 'agenda/', and remove any query parameters
-    const imageName = imagePath.split('?')[0].split('agenda/')[1];
 
-    // Construct the Cloudflare optimized URL
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=200,fit=cover,format=auto/agenda/${encodeURI(imageName)}`;
+    let optimizedUrl = '';
+
+    if (imagePath[0]) {
+        const imageName = imagePath.split('?')[0].split('agenda/')[1];
+
+        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(imageName)}`;
+    } else {
+        optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
+
+    }
 
     return (
         <div className={`relative w-full aspect-[1]`}>
@@ -62,12 +69,11 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
                 priority={priority}
                 src={optimizedUrl}
                 alt={title}
-                layout="fill" // This ensures the image fills the container
-                objectFit="contain" // Ensures the image fits within the dimensions
+                fill
                 placeholder='blur'
                 blurDataURL='"/placeholder.png'
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimize based on screen size
-                className="transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-contain transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
             />
             {/* </div> */}
         </div>

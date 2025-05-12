@@ -20,14 +20,22 @@ export async function generateMetadata({ params }: { params: { locale: string; l
         messages = (await import(`../../../../../locales/en/location.json`)).default;
     }
 
+    const convertToDomain = (urlPart: string): string => {
+        const lastHyphenIndex = urlPart.lastIndexOf('-');
+        if (lastHyphenIndex === -1) return urlPart; // No hyphens found
 
-    const originalDomain = params.location.replace(/-/g, ".");
+        return urlPart.slice(0, lastHyphenIndex) + '.' + urlPart.slice(lastHyphenIndex + 1);
+    };
+
+    // Usage:
+    const originalDomain = convertToDomain(params.location);
 
     const data = await getExhibitionsByDomain(originalDomain);
     const locations = await getLocations();
 
     const locationsLocation = locations.find((l) => l.domain === originalDomain);
     const city = locationsLocation?.city;
+    console.log("the city", originalDomain);
 
     // 3. Handle empty data case
     if (data.length === 0) {
@@ -50,7 +58,7 @@ export async function generateMetadata({ params }: { params: { locale: string; l
 
     return {
         title: `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'} in ${city}`,
-        description: `${messages['meta-description'] || 'Explore art exhibitions'} at ${data[0].location}.`,
+        description: `${messages['meta-description'] || 'Explore art exhibitions'} ${data[0].location}.`,
         keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`
     };
 }
@@ -94,9 +102,22 @@ export default async function LocationPage({ params }: { params: { location: str
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
                 {data.map((exhibition: any, index: number) => {
 
-                    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+                    // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
-                    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+                    // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+
+                    let optimizedUrl = '';
+
+                    if (exhibition.image_reference[0]) {
+                        const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+
+                    } else {
+
+                        optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
+
+                    }
 
                     return (
                         <li key={exhibition._id}

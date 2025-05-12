@@ -1,7 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 
 const Footer = () => {
+    const t = useTranslations();
+    const locale = useLocale();
+
     return (
         <footer className="bottom-0 w-full bg-slate-500 px-4 py-3 text-slate-100 font-extralight shadow-md">
             <div className="container mx-auto flex flex-wrap items-center justify-between gap-4 text-center sm:text-left">
@@ -19,12 +23,15 @@ const Footer = () => {
 
                 {/* Center Section - Links stay in a row even on small screens */}
                 <div className="flex flex-wrap justify-center sm:justify-end gap-4">
-                    <Link href="/privacy" className="text-xs hover:text-gray-400">
-                        Your Privacy
+                    <Link
+                        href={`/${locale}/privacy`}
+                        className="text-xs hover:text-gray-400"
+                    >
+                        {t("homepage.privacy")}
                     </Link>
 
-                    <Link href="/disclaimer" className="text-xs hover:text-gray-400">
-                        Disclaimer
+                    <Link href={`/${locale}/disclaimer`} className="text-xs hover:text-gray-400">
+                        {t("homepage.disclaimer")}
                     </Link>
                     {/* <Link href="/locations" className="text-xs text-slate-600">
                         Locations

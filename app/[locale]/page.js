@@ -1,6 +1,8 @@
 import Search from "../components/Search";
+import { extractDomain } from "../utils/extractDomain";
+import { shuffleArray } from "../utils/shuffleArray";
 
-export const runtime = 'edge';
+// export const runtime = 'edge';
 
 export default async function HomePage() {
 
@@ -8,6 +10,11 @@ export default async function HomePage() {
     process.env.NODE_ENV === "production"
       ? "https://www.artnowdatabase.eu"
       : "http://localhost:3000";
+
+  const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal', 'dessin'];
+  const number = initialSearchTerms.length;
+  const indexInitialSearch = Math.floor(Math.random(number) * number);
+  const initialSearchTerm = initialSearchTerms[indexInitialSearch];
 
   try {
     const cacheOption =
@@ -17,6 +24,12 @@ export default async function HomePage() {
 
     const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
     const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
+
+    const response = await fetch(`${URL}/api/search?terms=${initialSearchTerm}`, { cache: "no-store" });
+    const responseData = await response.json();
+    const data = responseData.data || [];
+    const randomized = shuffleArray(data);
+
 
     if (!locationsResponse.ok || !exhibitionsResponse.ok) {
       throw new Error("Failed to fetch data");
@@ -33,12 +46,6 @@ export default async function HomePage() {
         .split(/\s+/) // Split by whitespace
         .filter((word) => word.length >= 4); // Keep words with at least 4 characters
 
-    // Extract domain from URL
-    function extractDomain(url) {
-      // Remove protocol (http:// or https://) and www.
-      const domain = url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
-      return domain;
-    }
 
     const filteredLocations = locations.filter((location) =>
       exhibitions.some((exhibition) => extractDomain(exhibition.url) === location.domain)
@@ -108,7 +115,7 @@ export default async function HomePage() {
 
     return (
       <div>
-        <Search initialLocations={filteredLocations} exhibitions={uniqueGroups} />
+        <Search initialList={randomized} initialLocations={filteredLocations} exhibitions={uniqueGroups} />
       </div>
     );
   } catch (error) {

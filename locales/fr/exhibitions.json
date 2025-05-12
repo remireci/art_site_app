@@ -1,11 +1,11 @@
 {
     "cities": {
-        "metaTitle": "Expositions d'Art à {city} | ArtNow",
+        "metaTitle": "Expositions d'Art | ArtNowDatabase",
         "metaDescription": "Expositions d'art actuelles à {city}. Art contemporain et moderne.",
         "heading": "Expositions par Ville",
         "noResults": "Aucune exposition en cours"
       },
-    "meta-title": "Expositions d'art",
+    "meta-title": "Expositions d'art  - artguide | ArtNowDatabase",
     "meta-description": "Découvrez les expositions d'art moderne et contemporain à venir à",
     "meta-keywords": "expositions d'art, art contemporain, art moderne, Belgique, France, Pays-Bas, Allemagne, Suisse, Royaume-Uni"
   }

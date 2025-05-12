@@ -325,6 +325,7 @@ export async function getLocations() {
 
 
     return locations.map(loc => ({
+      _id: loc._id,
       domain: loc.domain, // Cleaned domain
       name: loc.location || loc.originalUrl, // Use original URL if name is missing
       city: loc.city,
