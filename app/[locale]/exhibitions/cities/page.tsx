@@ -49,7 +49,7 @@ export default async function CityList({ params }: LocationsListPageProps) {
                 <ul className="">
                     {cities.map(city => (
                         <li key={city.id}>
-                            <a href={`/${locale}/exhibitions/cities/${encodeURIComponent(city.city)}`}>{city.city}</a>
+                            <a href={`/${locale}/exhibitions/cities/${encodeURIComponent(city.slug)}`}>{city.city}</a>
                         </li>
                     ))}
                 </ul>

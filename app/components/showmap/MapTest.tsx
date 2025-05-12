@@ -95,6 +95,15 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
     const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
     const [filteredLocations, setFilteredLocations] = useState<LocationWithMarker[]>([]);
     const [shouldCenter, setShouldCenter] = useState(false);
+    const [isMapReady, setIsMapReady] = useState(false);
+
+
+    useEffect(() => {
+        if (!searchQuery) {
+            setCoord(getRandomLocation());
+            setIsMapReady(true);
+        }
+    }, [searchQuery]);
 
 
     // console.log("Map re-rendering", userLocation);
@@ -206,7 +215,8 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
     useEffect(() => {
         if (userLocation) {
             setCoord(userLocation);
-            setShouldCenter(true); // Ensure the map recenters
+            setShouldCenter(true);
+            setIsMapReady(true);
         }
     }, [userLocation]);
 
@@ -239,6 +249,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
                     const { center } = results[0];
                     setCoord([center.lat, center.lng]);
                     setShouldCenter(true);
+                    setIsMapReady(true);
                 }
             } catch (error) {
                 console.error("Geocoder error:", error);
@@ -251,7 +262,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
 
     return (
         <div>
-            <MapContainer
+            {isMapReady && (<MapContainer
                 className="h-[60vh] w-[80vw] md:w-[60vw] lg:w-[65vw] xl:w-[38vw]"
                 center={coord}
                 zoom={13}
@@ -382,7 +393,8 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
                         )
                     })}
                 </>
-            </MapContainer>
+            </MapContainer>)}
+
         </div>
     );
 });

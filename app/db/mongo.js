@@ -348,7 +348,7 @@ export const getUniqueCities = async () => {
 };
 
 
-export async function getLocations_by_city(city) {
+export async function getLocations_by_city(slug) {
   const client = new MongoClient(uri);
 
   try {
@@ -358,8 +358,8 @@ export async function getLocations_by_city(city) {
 
     // Query to fetch locations where the city matches and project only _id, domain, and city fields
     const locationsCursor = collection_locations.find(
-      { city: city }, // Filter by the city
-      { projection: { _id: 1, domain: 1, city: 1 } } // Project only the fields you need
+      { slug: slug }, // Filter by the city
+      { projection: { _id: 1, domain: 1, city: 1, slug: 1 } } // Project only the fields you need
     );
 
     // Convert cursor to array
@@ -384,7 +384,7 @@ export async function getCities() {
     const collection_cities = database.collection(collectionCities);
 
     // Query to fetch all documents and project only the `city` field
-    const citiesCursor = collection_cities.find({}, { projection: { city: 1, _id: 1, alternatives: 1 } });
+    const citiesCursor = collection_cities.find({}, { projection: { city: 1, _id: 1, alternatives: 1, slug: 1 } });
 
     // Convert the cursor to an array of cities
     const cities = await citiesCursor.toArray();
@@ -395,6 +395,7 @@ export async function getCities() {
         id: doc._id,  // Use the MongoDB `_id` field as the id
         city: doc.city,
         alternatives: doc.alternatives,
+        slug: doc.slug,
       }))
       .sort((a, b) => a.city.localeCompare(b.city));
 

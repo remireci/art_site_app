@@ -4,7 +4,11 @@ import { Metadata } from 'next';
 
 
 export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
-    const { locale, city } = params;
+    const { locale, city: slug } = params;
+
+    const data = await getLocations_by_city(slug);
+
+    const cityName = data[0]?.city;
 
     // Load locale-specific messages
     let messages;
@@ -15,26 +19,25 @@ export async function generateMetadata({ params }: { params: { locale: string; c
         messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
     }
 
-    // Capitalize city name for display
-    const cityName = city.charAt(0).toUpperCase() + city.slice(1);
-    const citySlug = city.toLowerCase();
     const baseUrl = 'https://www.artnowdatabase.eu';
 
 
     return {
-        title: `${cityName} ${messages['meta-title'] || 'Art Exhibitions'}`,
+        title: `${messages['meta-title_a']} ${cityName} ${messages['meta-title_b']}`,
         description: `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`,
-        keywords: `${cityName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`,
+        keywords: `${messages['meta-keywords']} ${cityName}`,
         alternates: {
-            canonical: `${baseUrl}/${locale}/exhibitions/cities/${citySlug}`,
+            canonical: `${baseUrl}/${locale}/exhibitions/cities/${slug}`,
         },
     };
 }
 
-export default async function CityPage({ params }: { params: { city: string } }) {
-    const { city } = params;
+export default async function CityPage({ params }: { params: { locale: string; city: string } }) {
 
-    const data = await getLocations_by_city(city);
+    const { locale, city: slug } = params;
+    const messages = await import(`../../../../../locales/${locale}/exhibitions.json`).then(m => m.default);
+    const data = await getLocations_by_city(slug);
+    const city = data[0]?.city;
 
     if (!data || data.length === 0) {
 
@@ -84,8 +87,6 @@ export default async function CityPage({ params }: { params: { city: string } })
         exhibition.city && !validCities.includes(exhibition.city)
     )?.city;
 
-    console.log("number of exhibitions", exhibitions.length);
-
 
     const formatDate = (dateStr: string) => {
         if (!dateStr || typeof dateStr !== "string" || !dateStr.includes('-')) {
@@ -100,27 +101,47 @@ export default async function CityPage({ params }: { params: { city: string } })
         <main className="flex flex-col items-center p-4 min-h-screen">
             <div className="mt-20">
                 {exhibitions.length > 0 ? (
-                    <h1>
-                        {/* <Modal url={data[0].url} location={data[0].location} /> */}
-                        {/* Display city only if it's valid */}
-                        {validCity && (
-                            <span className="text-xl md:text-3xl text-gray-600 uppercase">
-                                Exhibitions in{" - "}
-                                {validCity.charAt(0).toUpperCase() + validCity.slice(1).toLowerCase()}
-                            </span>
-                        )}
+                    <div>
+                        <h1>
+                            {/* <Modal url={data[0].url} location={data[0].location} /> */}
+                            {/* Display city only if it's valid */}
+                            {validCity && (
+                                <span className="text-xl md:text-3xl text-gray-600 uppercase">
+                                    {`${messages.page_title} ${city}`}
+                                </span>
+                            )}
+                        </h1>
+                        <p className="max-w-3xl mt-4 text-gray-700 text-sm md:text-base">
+                            {`${messages.page_description.replace(/{{city}}/g, validCity || city)}`}
+                        </p>
+                    </div>
+                ) : (<div>
+                    <h1 className="text-2xl text-gray-700 font-semibold mb-4">
+                        {`${messages.noExhibitions}`} {city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1)}
                     </h1>
-                ) : (
-                    <h1 className="text-gray-500">{`We couldn't find any exhibitions in ${city}.`}</h1>
+                    <p className="max-w-2xl text-gray-600">
+                        While we couldn&apos;t find any exhibitions happening in {slug.slice(0, 1).toUpperCase() + slug.slice(1).toLocaleLowerCase()} right now, the art scene is always evolving. Check back soon or explore exhibitions in nearby cities. You can also use our interactive map to discover art events across Europe.
+                    </p>
+                </div>
+
                 )}
             </div>
             <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
-                <form action="/" method="GET">
+                <a
+                    href={`/${locale}?city=${city}`}
+                    className="text-sm"
+                >
+                    {exhibitions.length > 0
+                        ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
+                        : messages.exploreExhibitions.replace("{{city}}", city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1))}
+                </a>
+
+                {/* <form action="/" method="GET">
                     <input type="hidden" name="city" value={city} />
                     <button type="submit" className="text-xl w-auto uppercase hover:text-gray-600">
                         Show on map
                     </button>
-                </form>
+                </form> */}
                 {/* <a href={`/?city=${city}`}>
                     <p className="text-xl w-auto uppercase hover:text-gray-600">
                         See the Map
