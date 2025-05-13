@@ -201,6 +201,7 @@ export async function GET(req, res) {
               { subtitle: new RegExp(term.replace(/"/g, ""), "i") },
               { text: new RegExp(term.replace(/"/g, ""), "i") },
               { url: new RegExp(term.replace(/"/g, ""), "i") },
+              { city: new RegExp(term.replace(/"/g, ""), "i") },
             ]
           }
           : {
