@@ -35,29 +35,37 @@ export default async function LocationsListPage({ params }: LocationsListPagePro
     const { locale } = params;
 
     return (
-        <main className="flex flex-col items-center p-4 min-h-screen text-slate-600">
-            <div>
-                <h1>Locations</h1>
-                <div className="p-1 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm  rounded flex items-center justify-center">
-                    <Link href="/">
-                        <h1 className="text-xl w-auto uppercase hover:text-gray-600">
-                            Search exhibitions
-                        </h1>
+        <div className="p-4 min-h-screen text-slate-600">
+            <div className="flex flex-col items-center">
+                <h1 className="mt-20 text-xl font-semibold">Art Exhibitions by Location</h1>
+                <div className="p-1 h-8 w-80 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
+                    <Link href="/" className="text-xl uppercase hover:text-gray-300">
+                        Search exhibitions
                     </Link>
                 </div>
-                <ul className="">
+                <ul className="space-y-2">
                     {filteredLocations.map(location => {
                         const safeDomain = location.domain.replace(/\./g, "-");
 
                         return (
-                            < li key={`${location._id}-${location.domain}-${location.location}-${location.coordinates}`} className="bg-slate-100" >
-                                <Link href={`/${locale}/exhibitions/locations/${safeDomain}`}>{location.name}</Link>
+                            < li
+                                key={`${location._id}-${location.domain}-${location.location}-${location.coordinates}`}
+                            // className="bg-slate-100"
+                            >
+                                <h2 className="text-lg">
+                                    <Link
+                                        href={`/${locale}/exhibitions/locations/${safeDomain}`}
+                                        className="hover:underline"
+                                    >
+                                        {location.name}
+                                    </Link>
+                                </h2>
                             </li>
                         );
                     })}
                 </ul>
             </div>
-        </main >
+        </div >
     );
 }
 

@@ -25,17 +25,6 @@ const roboto = Roboto({
   display: 'swap',
 })
 
-// export const metadata: Metadata = {
-//   alternates: {
-//     canonical: 'https://www.artnowdatabase.eu',
-//   },
-//   title: "Art Exhibitions Calendar | Discover Contemporary Art in Europe",
-//   description: "Discover upcoming art exhibitions in Western Europe. Explore museums, galleries, and cultural spaces showcasing modern and contemporary art. Search by country, city, venue, or artist!",
-//   keywords: "art exhibitions, contemporary art, modern art, European art events, art museums, art galleries, art calendar, art openings, art fairs, art shows, artist exhibitions, art spaces in Europe",
-//   icons: {
-//     icon: '/favicon.ico',
-//   },
-// };
 
 const translations: Record<"en" | "fr" | "nl", { home: { "meta-title": string; "meta-description": string; "meta-keywords": string } }> = {
   en: enCommon,
@@ -45,8 +34,8 @@ const translations: Record<"en" | "fr" | "nl", { home: { "meta-title": string; "
 
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const locale = (params.locale as "en" | "fr" | "nl") || "en"; // Default to English if missing
-  const t = translations[locale]?.home || translations.en.home; // Fallback to English
+  const locale = (params.locale as "en" | "fr" | "nl") || "en";
+  const t = translations[locale]?.home || translations.en.home;
 
   return {
     title: t["meta-title"],

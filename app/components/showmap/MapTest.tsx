@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot, faRoute } from '@fortawesome/free-solid-svg-icons';
 import 'leaflet/dist/leaflet.css'
 import { MapContainer, TileLayer, Marker, Popup, useMap, Tooltip } from 'react-leaflet'
-import { useLocation } from '@/app/context/LocationContext';
+import { useLocation } from '@/context/LocationContext';
 import GetLocation from '../GetLocation';
 import debounce from '../../utils/debounce';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';

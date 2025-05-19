@@ -1,4 +1,4 @@
-import { getLocations_by_city, getExhibitionsByDomain } from "@/app/db/mongo";
+import { getLocations_by_city, getExhibitionsByDomain } from "@/db/mongo";
 import Image from "next/image";
 import { Metadata } from 'next';
 
@@ -74,12 +74,19 @@ export default async function CityPage({ params }: { params: { locale: string; c
         };
     }));
 
+    exhibitionsWithDomains.forEach((item, index) => {
+        console.log(`Item ${index + 1}: domain=${item.domain}, city=${item.city}, exhibitions=${item.exhibitions.length}`);
+    });
+
     const exhibitions = exhibitionsWithDomains.flatMap(item =>
         item.exhibitions.map(exhibition => ({
             ...exhibition,
             city: item.city,
         }))
     );
+
+
+    console.log("thelength", exhibitions.length);
 
     const validCities = ["N/A", "null", "", "-", "Unknown"];
 

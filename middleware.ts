@@ -47,6 +47,22 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  const localeMatch = pathname.match(
+    /^\/(en|fr|nl)\/exhibitions\/cities\/([^/]+)/
+  );
+  if (localeMatch) {
+    const locale = localeMatch[1];
+    const city = localeMatch[2];
+
+    if (city !== city.toLowerCase()) {
+      const newUrl = new URL(
+        `/${locale}/exhibitions/cities/${city.toLowerCase()}`,
+        request.url
+      );
+      return NextResponse.redirect(newUrl);
+    }
+  }
+
   return intlMiddleware(request);
 }
 

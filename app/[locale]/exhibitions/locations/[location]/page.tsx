@@ -1,4 +1,4 @@
-import { getExhibitionsByDomain, getLocations } from "@/app/db/mongo";
+import { getExhibitionsByDomain, getLocations } from "@/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Modal from "../../../../components/LocationModal";

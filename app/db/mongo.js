@@ -1,3 +1,4 @@
+import { verifyCode } from '@/lib/codeUtils';
 import { MongoClient, ObjectId } from 'mongodb';
 import { cache } from 'react';
 
@@ -14,6 +15,11 @@ const dbNameAgenda = 'Agenda';
 const collectionNameAgenda = 'Agenda_AI';
 const collectionNameLocations = 'Locations';
 const collectionCities = 'city_mapping';
+
+const dbNameUsers = 'usersDb';
+const collectionNameUsers = 'users';
+const collectionNameLoginCodes = 'loginCodes';
+const collectionNameAuthLogs = 'authLogs';
 
 // Function to connect to MongoDB and retrieve documents from the "texts" collection
 export async function getDocuments(query, skip, pageSize) {
@@ -248,6 +254,45 @@ export async function getExhibitionsByCity(city) {
 //     return list(exhibitions)
 
 
+export async function getLocationByDomain(domain) {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const database = client.db(dbNameAgenda);
+    const collection_locations = database.collection(collectionNameLocations);
+
+    const findDomain = domain.domain;
+
+    // console.log("find the domain", findDomain);
+
+    return await collection_locations.findOne({ domain: findDomain });
+  } catch (error) {
+    console.error(`Error fetching location for domain ${domain}:`, error);
+    return null;
+  } finally {
+    await client.close();
+  }
+}
+
+
+export async function getLocationById(id) {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const database = client.db(dbNameAgenda);
+    const collection_locations = database.collection(collectionNameLocations);
+
+    const id = id.id;
+
+    return await collection_locations.findOne({ _id: id });
+  } catch (error) {
+    console.error(`Error fetching location for domain ${domain}:`, error);
+    return null;
+  } finally {
+    await client.close();
+  }
+}
+
 
 export async function getLocations() {
   const client = new MongoClient(uri);
@@ -358,7 +403,7 @@ export async function getLocations_by_city(slug) {
 
     // Query to fetch locations where the city matches and project only _id, domain, and city fields
     const locationsCursor = collection_locations.find(
-      { slug: slug }, // Filter by the city
+      { slug: slug },
       { projection: { _id: 1, domain: 1, city: 1, slug: 1 } } // Project only the fields you need
     );
 
@@ -409,6 +454,123 @@ export async function getCities() {
 }
 
 
+export async function createUser(email, locationId) {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const database = client.db(dbNameUsers);
+    const users = database.collection(collectionNameUsers);
+    let user = await users.findOne({ email });
+
+
+    const newUser = {
+      email,
+      locationId,
+      createdAt: newDate(),
+      role: "user",
+      verified: "false",
+    }
+
+    const result = await users.insertOne(newUser);
+    return result.insertedId
+  } catch (error) {
+    console.error(`Error finding user with email ${email}:`, error);
+    return null;
+  } finally {
+    await client.close();
+  }
+}
+
+
+export async function findUser(email) {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const database = client.db(dbNameUsers);
+    const users = database.collection(collectionNameUsers);
+
+    // Query to fetch all documents and project only the `city` field
+    const user = await users.findOne({ email });
+
+    return user;  // Return the array of cities
+  } catch (error) {
+    console.error(`Error finding user with email ${email}:`, error);
+    return null;
+  } finally {
+    await client.close();
+  }
+}
+
+
+export async function saveLoginCode(email, code, expires) {
+  const client = new MongoClient(uri);
+
+  await client.connect();
+  const database = client.db(dbNameUsers);
+  const loginCodes = database.collection(collectionNameLoginCodes);
+
+  await loginCodes.updateOne(
+    { email },
+    { $set: { code, expires } },
+    { upsert: true }
+  );
+
+  await client.close();
+}
+
+
+export async function checkLoginCode(email, code) {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const database = client.db(dbNameUsers);
+    const loginCodes = database.collection(collectionNameLoginCodes);
+
+    const login = await loginCodes.findOne({ email });
+
+    if (!login) {
+      return { valid: false, reason: "No login code found for this email." };
+    }
+
+    const isValid = verifyCode(code, login.code);
+
+    if (!isValid) {
+      return { valid: false, reason: "Invalid code. Please check your code and try again." };
+    }
+
+    const now = new Date();
+    if (login.expires && login.expires < now) {
+      return { valid: false, reason: "Code has expired." };
+    }
+
+    return { valid: true };
+  } catch (error) {
+    console.error("Error checking login code:", error);
+    return { valid: false, reason: "Internal error." };
+  } finally {
+    await client.close();
+  }
+}
+
+
+export async function createAuthLog(log) {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const database = client.db(dbNameUsers);
+    const authLogs = database.collection(collectionNameAuthLogs);
+
+    await authLogs.insertOne(log);
+
+  } catch (error) {
+    console.error("Error inserting auth log:", error);
+    return { valid: false, reason: "Internal error." };
+  } finally {
+    await client.close();
+  }
+}
 
 // export async function getLocations() {
 //   const client = new MongoClient(uri);

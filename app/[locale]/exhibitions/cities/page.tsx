@@ -1,5 +1,6 @@
 import { getCities } from "../../../db/mongo.js";
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 interface LocationsListPageProps {
     params: {
@@ -36,24 +37,29 @@ export default async function CityList({ params }: LocationsListPageProps) {
     const cities: Array<any> = await getCities();
 
     return (
-        <main className="flex flex-col items-center p-4 min-h-screen text-slate-500">
-            <div>
-                <h1>Cities</h1>
+        <div className="p-4 min-h-screen text-slate-500">
+            <div className="flex flex-col items-center">
+                <h1 className="mt-20 text-xl font-semibold">Art Exhibitions by City</h1>
                 <div className="p-1 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
-                    <a href="/">
-                        <h1 className="text-xl w-auto uppercase hover:text-gray-600 ">
-                            Search exhibitions
-                        </h1>
-                    </a>
+                    <Link href="/" className="text-xl uppercase hover:text-gray-300">
+                        Search exhibitions
+                    </Link>
                 </div>
-                <ul className="">
+                <ul className="space-y-2">
                     {cities.map(city => (
                         <li key={city.id}>
-                            <a href={`/${locale}/exhibitions/cities/${encodeURIComponent(city.slug)}`}>{city.city}</a>
+                            <h2 className="text-lg">
+                                <Link
+                                    href={`/${locale}/exhibitions/cities/${encodeURIComponent(city.slug)}`}
+                                    className="hover:underline"
+                                >
+                                    {city.city}
+                                </Link>
+                            </h2>
                         </li>
                     ))}
                 </ul>
             </div>
-        </main>
+        </div>
     );
 }
