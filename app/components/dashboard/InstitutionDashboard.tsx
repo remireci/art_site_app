@@ -8,7 +8,26 @@ import { Textarea } from "@/components/ui/textarea";
 import InstitutionTab from "./InstitutionTab";
 import ExhibitionsTab from "./ExhibitionsTab";
 
-export default function InstitutionDashboard({ data }) {
+type Exhibition = {
+    _id: string;
+    title?: string;
+    date_end?: string;
+    location?: string;
+    city?: string;
+    description?: string;
+    url?: string;
+    exh_url?: string;
+    artists?: string;
+    date_end_st: string;
+    image_reference: string[];
+    exhibition_url: string;
+}
+
+interface Props {
+    data: Exhibition[];
+}
+
+export default function InstitutionDashboard({ data }: Props) {
     return (
         <div className="p-4 md:p-8">
             <h1 className="text-slate-600 text-lg text-center font-semibold mb-12 lg:text-xl">Dashboard</h1>
@@ -77,8 +96,8 @@ export default function InstitutionDashboard({ data }) {
                         <CardContent className="space-y-2 py-4">
                             <h2 className="text-xl font-semibold">Past Exhibitions</h2>
                             <ul className="list-disc pl-5 text-sm text-muted-foreground">
-                                <li>"Exhibition Title A" – Jan–Mar 2023</li>
-                                <li>"Exhibition Title B" – Sep–Nov 2022</li>
+                                <li>&quot;Exhibition Title A&quot; - Jan-Mar 2023</li>
+                                <li>&quot;Exhibition Title B&quot; - Sep-Nov 2022</li>
                             </ul>
                         </CardContent>
                     </Card>
