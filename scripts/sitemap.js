@@ -138,8 +138,11 @@ function generateSitemapIndexXml(sitemaps) {
 </sitemapindex>`;
 }
 
+module.exports = { sitemap };
+
+
 // Run the script directly
-sitemap();
+// sitemap();
 
 // import { getLocations, getCities } from "../app/db/mongo";
 // import fs from 'fs';
