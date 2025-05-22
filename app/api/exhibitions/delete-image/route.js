@@ -6,7 +6,7 @@ import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 // Supabase client setup
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SERVICE_ROLE_KEY
+  process.env.NEXT_PUBLIC_SERVICE_API_KEY
 );
 
 // Cloudflare R2 setup
