@@ -16,89 +16,102 @@ export default function ExhibitionsTab({ data }: Props) {
 
     console.log("the data", data);
 
-
-
     if (!data) {
         return notFound();
     }
 
-
     return (
-        <main className="flex flex-col items-center p-4 min-h-screen">
-            {data.length > 0 && data[0]?.url && data[0]?.location ? (
-                <h1>
-                    <Modal url={data[0].url} location={data[0].location} />
-                    {/* Display city only if it's valid */}
-                    {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
-                        <span className="text-sm text-gray-600">
-                            {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
-                        </span>
-                    )}
-                </h1>
-            ) : (
-                <p className="text-gray-500">No data available</p>
-            )}
-            <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] text-sm text-slate-100 rounded flex items-center justify-center">
-                <p className="text-xl w-auto uppercase hover:text-gray-600">
-                    Your actual exhibitions
-                </p>
-            </div>
+        //     <div className="p-6 lg:max-w-3xl mx-auto text-slate-600">
+        // <div className="flex flex-col justify-center">
+        //     {/* <h1 className="text-lg font-semibold">Dashboard</h1> */}
+        //     <p className="text-sm text-slate-500 mt-1 mb-8">
+        //         Please review and update your institution&apos;s details below. <br />
+        //         Accurate and complete information ensures your events are correctly displayed and discoverable on ArtNowDatabase.
+        //     </p>
 
-
-
-            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
-                {data.map((exhibition: any, index: number) => {
-
-                    // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
-
-                    // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
-
-                    let optimizedUrl = '';
-
-                    if (exhibition.image_reference[0]) {
-                        const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
-
-                        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
-
-                    } else {
-
-                        optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
-
-                    }
-
-                    return (
-                        <li key={exhibition._id}
-                            className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
-                            <h2 className="text-sm">{exhibition.title}</h2>
-                            <p className="text-xs">{exhibition.date_end_st}</p>
-
-                            {exhibition.image_reference && (
-                                <Image
-                                    priority={index === 0}
-                                    loading={index === 0 ? "eager" : "lazy"}
-                                    unoptimized
-                                    src={optimizedUrl}
-                                    alt={exhibition.title}
-                                    width={150}
-                                    height={100}
-                                    className="rounded-lg"
-                                />
+        <div className="p-6 lg:max-w-3xl mx-auto text-slate-600">
+            <div className="flex flex-col justify-center">
+                {data.length > 0 && data[0]?.url && data[0]?.location ? (
+                    <p className="text-lg">
+                        <p>
+                            {data[0].location}
+                            {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
+                                <span className="text-sm">
+                                    {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
+                                </span>
                             )}
-                        </li>
-                    )
-                })}
-            </ul>
+                        </p>
+                        <p>
+                            {data[0].url}
+                        </p>
+
+                        {/* Display city only if it's valid */}
+                    </p>
+                ) : (
+                    <p className="text-gray-500">No data available</p>
+                )}
+                <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] text-sm text-slate-100 rounded flex items-center justify-center">
+                    <p className="text-xl w-auto uppercase hover:text-gray-600">
+                        Your actual exhibitions
+                    </p>
+                </div>
 
 
-            <div className="md:w-2/3 lg:w-1/3 text-slate-200 min-h-screen flex flex-col justify-end">
-                {/* <div>
+
+                <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
+                    {data.map((exhibition: any, index: number) => {
+
+                        // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                        // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+
+                        let optimizedUrl = '';
+
+                        if (exhibition.image_reference[0]) {
+                            const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
+
+                            optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+
+                        } else {
+
+                            optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
+
+                        }
+
+                        return (
+                            <li key={exhibition._id}
+                                className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
+                                <h2 className="text-sm">{exhibition.title}</h2>
+                                <p className="text-xs">{exhibition.date_end_st}</p>
+
+                                {exhibition.image_reference && (
+                                    <Image
+                                        priority={index === 0}
+                                        loading={index === 0 ? "eager" : "lazy"}
+                                        unoptimized
+                                        src={optimizedUrl}
+                                        alt={exhibition.title}
+                                        width={150}
+                                        height={100}
+                                        className="rounded-lg"
+                                    />
+                                )}
+                            </li>
+                        )
+                    })}
+                </ul>
+
+
+                <div className="md:w-2/3 lg:w-1/3 text-slate-200 min-h-screen flex flex-col justify-end">
+                    {/* <div>
                     {data.length > 0 &&
                         <p className="mt-4">{data[0].description}
                         </p>}
 
                 </div> */}
+                </div>
             </div>
-        </main>
+        </div>
     );
 }
 
