@@ -51,6 +51,7 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
                 : exhibition.url
             }
                 target="_blank"
+                rel="noopener noreferrer"
             >
 
                 <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-[8px] px-1 truncate opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 z-20">

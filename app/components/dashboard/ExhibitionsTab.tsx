@@ -32,20 +32,16 @@ export default function ExhibitionsTab({ data }: Props) {
         <div className="p-6 lg:max-w-3xl mx-auto text-slate-600">
             <div className="flex flex-col justify-center">
                 {data.length > 0 && data[0]?.url && data[0]?.location ? (
-                    <p className="text-lg">
-                        <p>
+                    <p className="text-md">
+                        <a href={data[0].url} target="_blank" rel="noopener noreferrer">
                             {data[0].location}
                             {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
                                 <span className="text-sm">
                                     {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
                                 </span>
                             )}
-                        </p>
-                        <p>
-                            {data[0].url}
-                        </p>
+                        </a>
 
-                        {/* Display city only if it's valid */}
                     </p>
                 ) : (
                     <p className="text-gray-500">No data available</p>
@@ -111,7 +107,7 @@ export default function ExhibitionsTab({ data }: Props) {
                 </div> */}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
