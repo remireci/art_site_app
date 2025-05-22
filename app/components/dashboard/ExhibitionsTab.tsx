@@ -46,8 +46,8 @@ export default function ExhibitionsTab({ data }: Props) {
                 ) : (
                     <p className="text-gray-500">No data available</p>
                 )}
-                <div className="p-1 h-8 my-20 bg-slate-300 text-sm text-slate-100 rounded flex items-center justify-center">
-                    <p className="text-xl w-auto uppercase hover:text-gray-600">
+                <div className="w-1/2 p-1 h-8 my-20 bg-slate-200 text-sm text-slate-100 rounded flex items-center justify-center">
+                    <p className="text-md uppercase text-gray-600">
                         Your actual exhibitions
                     </p>
                 </div>

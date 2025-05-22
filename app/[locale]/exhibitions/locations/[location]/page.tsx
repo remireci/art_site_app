@@ -1,4 +1,4 @@
-import { getExhibitionsByDomain, getLocations } from "@/db/mongo";
+import { getExhibitionsByDomain, getLocationBySlug } from "@/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Modal from "../../../../components/LocationModal";
@@ -22,19 +22,12 @@ export async function generateMetadata({ params }: { params: { locale: string; l
         messages = (await import(`../../../../../locales/en/location.json`)).default;
     }
 
+    const institution = await getLocationBySlug(location);
+    const domain = institution?.domain;
+    const city = institution?.city;
 
-
-    // Usage:
-    // const originalDomain = params.location.replace(/-/g, ".");;
-
-    const originalDomain = convertToDomain(params.location);
-
-    const data = await getExhibitionsByDomain(originalDomain);
-    const locations = await getLocations();
-
-    const locationsLocation = locations.find((l) => l.domain === originalDomain);
-    const city = locationsLocation?.city;
-    console.log("the city", originalDomain);
+    const data = await getExhibitionsByDomain(domain);
+    console.log("the city", domain);
 
     // 3. Handle empty data case
     if (data.length === 0) {
@@ -64,15 +57,15 @@ export async function generateMetadata({ params }: { params: { locale: string; l
 
 
 export default async function LocationPage({ params }: { params: { location: string } }) {
-    // const { location } = params;
-    const originalDomain = convertToDomain(params.location);
-    console.log("location", originalDomain);
-    const data = await getExhibitionsByDomain(originalDomain);
+    const { location } = params;
+    const institution = await getLocationBySlug(location);
+    const domain = institution?.domain;
+    console.log("this is the domain", domain);
+    const data = await getExhibitionsByDomain(domain);
 
     if (!data) {
         return notFound();
     }
-
 
     return (
         <main className="flex flex-col items-center p-4 min-h-screen">

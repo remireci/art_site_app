@@ -271,6 +271,24 @@ export async function getLocationByDomain(domain) {
 }
 
 
+export async function getLocationBySlug(slug) {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const database = client.db(dbNameAgenda);
+    const collection_locations = database.collection(collectionNameLocations);
+
+    const location = await collection_locations.findOne({ domain_slug: slug })
+
+    return location;
+  } catch (error) {
+    console.error(`Error fetching location for domain ${domain}:`, error);
+    return null;
+  } finally {
+    await client.close();
+  }
+}
+
 export async function getLocationById(id) {
   const client = new MongoClient(uri);
   try {
