@@ -1,14 +1,18 @@
 export interface Exhibition {
   _id: string;
   title: string;
-  date_end: string;
+  date_begin_st?: string;
+  date_end_st: string;
   location: string;
   url: string;
-  exh_url?: string;
+  domain: string;
   artists?: string;
-  date_end_st: string;
   image_reference: string[];
-  exhibition_url: string;
+  exhibition_url?: string;
+  origin?: string;
+  city?: string;
+  missing_date_searched?: boolean;
+  show: boolean;
 }
 
 export type ExhibitionSummary = Pick<

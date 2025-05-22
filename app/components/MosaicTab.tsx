@@ -2,16 +2,9 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import MosaicItem from "./MosaicItem";
 import { shuffleArray } from "../utils/shuffleArray";
-import { ExhibitionSummary } from "../types";
+import { ExhibitionSummary, Exhibition } from "../types";
 
-// Define the Exhibition type
-interface Exhibition {
-    title: string;
-    location: string;
-    url: string;
-    image_reference: string[];
-    exhibition_url: string;
-}
+
 
 // Define the DomainExhibitions type that wraps the exhibitions in each domain
 interface DomainExhibitions {
@@ -21,8 +14,8 @@ interface DomainExhibitions {
 
 
 export default function MosaicTab({ exhibitions }: { exhibitions: DomainExhibitions[] }) {
-    const [showExhibitions, setShowExhibitions] = useState<Exhibition[]>([]);
-    const [visibleExhibitions, setVisibleExhibitions] = useState<Exhibition[]>([]);
+    const [showExhibitions, setShowExhibitions] = useState<ExhibitionSummary[]>([]);
+    const [visibleExhibitions, setVisibleExhibitions] = useState<ExhibitionSummary[]>([]);
     const [loading, setLoading] = useState(true);
     const page = useRef(0);
     const loadingRef = useRef(false);
@@ -37,13 +30,21 @@ export default function MosaicTab({ exhibitions }: { exhibitions: DomainExhibiti
             const flattenedExhibitions = exhibitions.flatMap(domain => domain.exhibitions);
             // Filter exhibitions that have an image reference
             const filtered = flattenedExhibitions.filter(
-                ex => Array.isArray(ex.image_reference) && ex.image_reference.length > 0
+                (ex): ex is ExhibitionSummary => Array.isArray(ex.image_reference) && ex.image_reference.length > 0
             );
             // console.log("the filtered", filtered);
             const shuffled = shuffleArray(filtered);
 
-            setShowExhibitions(shuffled);
-            setVisibleExhibitions(shuffled.slice(0, 100));
+            const exhibitionsStrict = shuffled.map(ex => ({
+                title: ex.title,
+                location: ex.location,
+                url: ex.url,
+                image_reference: ex.image_reference,
+                exhibition_url: ex.exhibition_url as string,
+            }));
+
+            setShowExhibitions(exhibitionsStrict);
+            setVisibleExhibitions(exhibitionsStrict.slice(0, 100));
             setLoading(false)
         }
         fetchExhibitions();
@@ -79,6 +80,11 @@ export default function MosaicTab({ exhibitions }: { exhibitions: DomainExhibiti
             }
         };
     }, [showExhibitions]);
+
+    useEffect(() => {
+        const withoutUrlCount = visibleExhibitions.filter(ex => !ex.exhibition_url).length;
+        console.log(`Number of exhibitions without exhibition_url: ${withoutUrlCount}`);
+    }, [visibleExhibitions]);
 
     const gradientVariants = {
         initial: {

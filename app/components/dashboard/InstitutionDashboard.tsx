@@ -7,21 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import InstitutionTab from "./InstitutionTab";
 import ExhibitionsTab from "./ExhibitionsTab";
-
-type Exhibition = {
-    _id: string;
-    title?: string;
-    date_end?: string;
-    location?: string;
-    city?: string;
-    description?: string;
-    url?: string;
-    exh_url?: string;
-    artists?: string;
-    date_end_st: string;
-    image_reference: string[];
-    exhibition_url: string;
-}
+import { Exhibition } from "@/types";
 
 interface Props {
     data: Exhibition[];

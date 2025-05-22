@@ -9,7 +9,7 @@ interface MosaicItemProps {
         location: string;
         url: string;
         image_reference: string[];
-        exhibition_url: string;
+        exhibition_url?: string;
     };
 }
 

@@ -5,22 +5,7 @@ import EditableCheckbox from "./EditableCheckbox";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Modal from "@/components/LocationModal";
-
-
-type Exhibition = {
-    _id: string;
-    title?: string;
-    date_end?: string;
-    location?: string;
-    city?: string;
-    description?: string;
-    url?: string;
-    exh_url?: string;
-    artists?: string;
-    date_end_st: string;
-    image_reference: string[];
-    exhibition_url: string;
-}
+import { Exhibition } from "@/types";
 
 interface Props {
     data: Exhibition[];
@@ -106,12 +91,12 @@ export default function ExhibitionsTab({ data }: Props) {
 
 
             <div className="md:w-2/3 lg:w-1/3 text-slate-200 min-h-screen flex flex-col justify-end">
-                <div>
+                {/* <div>
                     {data.length > 0 &&
                         <p className="mt-4">{data[0].description}
                         </p>}
 
-                </div>
+                </div> */}
             </div>
         </main>
     );
