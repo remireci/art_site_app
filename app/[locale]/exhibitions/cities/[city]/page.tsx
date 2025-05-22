@@ -63,7 +63,18 @@ export default async function CityPage({ params }: { params: { locale: string; c
 
     // Now we need to get the domain from each location and use it to get exhibitions
     const exhibitionsWithDomains = await Promise.all(data.map(async (location) => {
-        const { domain, city: locationCity, _id } = location;  // Destructure to get domain and city
+        const { domain, city: locationCity, _id } = location;
+        const isValidDomain = domain && typeof domain === "string" && domain.includes(".") && !domain.startsWith("http");
+        if (!isValidDomain) {
+            console.warn(`⚠️ Skipping invalid domain: '${domain}' for city: ${locationCity}`);
+            return {
+                domain,
+                exhibitions: [],
+                city: locationCity,
+                locationId: _id,
+            };
+        }
+
         // Fetch exhibitions for the specific location (you can implement this function)
         const exhibitions = await getExhibitionsByDomain(domain);
         return {
@@ -74,9 +85,11 @@ export default async function CityPage({ params }: { params: { locale: string; c
         };
     }));
 
-    exhibitionsWithDomains.forEach((item, index) => {
-        console.log(`Item ${index + 1}: domain=${item.domain}, city=${item.city}, exhibitions=${item.exhibitions.length}`);
-    });
+    // exhibitionsWithDomains.forEach((item, index) => {
+    //     console.log(`Item ${index + 1}: domain=${item.domain}, city=${item.city}, exhibitions=${item.exhibitions.length}`);
+    // });
+
+
 
     const exhibitions = exhibitionsWithDomains.flatMap(item =>
         item.exhibitions.map(exhibition => ({
@@ -84,9 +97,6 @@ export default async function CityPage({ params }: { params: { locale: string; c
             city: item.city,
         }))
     );
-
-
-    console.log("thelength", exhibitions.length);
 
     const validCities = ["N/A", "null", "", "-", "Unknown"];
 

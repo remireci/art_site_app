@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
   const domain = email.split("@")[1];
 
-  const location = await getLocationByDomain({ domain });
+  const location = await getLocationByDomain(domain);
 
   if (!location) {
     await logAuthEvent({

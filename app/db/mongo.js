@@ -127,7 +127,7 @@ export async function getAgendaItems(query) {
   }
 }
 
-export const getExhibitionsByDomain = cache(async (domain) => {
+export const getExhibitionsByDomain = async (domain) => {
   console.log("🌀 MongoDB query executing for domain:", domain);
   const client = new MongoClient(uri);
   try {
@@ -138,11 +138,11 @@ export const getExhibitionsByDomain = cache(async (domain) => {
     const todayISO = new Date().toISOString(); // Get today's date in ISO format
 
     // Normalize input domain (strip http, https, www)
-    const domainPattern = domain.replace(/^(https?:\/\/)?(www\.)?/, "");
+    // const domainPattern = domain.replace(/^(https?:\/\/)?(www\.)?/, "");
 
     // Construct MongoDB query
     const query = {
-      url: { $regex: new RegExp(`(https?:\\/\\/)?(www\\.)?${domainPattern}`, "i") }, // Match domain variations
+      domain,
       date_end_st: { $gte: todayISO }, // End date must be in the future
       $or: [
         { date_begin_st: { $lte: todayISO } }, // If begin date exists, it must be in the past
@@ -161,7 +161,7 @@ export const getExhibitionsByDomain = cache(async (domain) => {
     await client.close();
     console.log("Disconnected from MongoDB");
   }
-});
+};
 
 function normalizeCity(city) {
   if (typeof city !== "string" || city.trim() === "") {
@@ -261,11 +261,7 @@ export async function getLocationByDomain(domain) {
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
 
-    const findDomain = domain.domain;
-
-    // console.log("find the domain", findDomain);
-
-    return await collection_locations.findOne({ domain: findDomain });
+    return await collection_locations.findOne({ domain });
   } catch (error) {
     console.error(`Error fetching location for domain ${domain}:`, error);
     return null;
@@ -281,8 +277,7 @@ export async function getLocationById(id) {
     await client.connect();
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
-
-    const id = id.id;
+    console.log("the ID", id);
 
     return await collection_locations.findOne({ _id: id });
   } catch (error) {
@@ -461,19 +456,24 @@ export async function createUser(email, locationId) {
     await client.connect();
     const database = client.db(dbNameUsers);
     const users = database.collection(collectionNameUsers);
-    let user = await users.findOne({ email });
-
 
     const newUser = {
       email,
       locationId,
-      createdAt: newDate(),
+      createdAt: new Date(),
       role: "user",
       verified: "false",
     }
 
     const result = await users.insertOne(newUser);
-    return result.insertedId
+    if (result.insertedId) {
+      return {
+        _id: result.insertedId,
+        ...newUser,
+      };
+    }
+
+    return null;
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
     return null;
@@ -491,16 +491,52 @@ export async function findUser(email) {
     const database = client.db(dbNameUsers);
     const users = database.collection(collectionNameUsers);
 
-    // Query to fetch all documents and project only the `city` field
     const user = await users.findOne({ email });
 
-    return user;  // Return the array of cities
+    return user;
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
     return null;
   } finally {
     await client.close();
   }
+}
+
+
+export async function updateUserField(email, field, value) {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const database = client.db(dbNameUsers);
+    const users = database.collection(collectionNameUsers);
+
+    console.log("the email", email);
+
+    const user = await users.updateOne({ email }, { $set: { [field]: value } });
+
+    // return user;
+  } catch (error) {
+    console.error(`Error finding user with email ${email}:`, error);
+    return null;
+  } finally {
+    await client.close();
+  }
+}
+
+
+export async function updateLocationField(locationId, field, value) {
+
+  const client = new MongoClient(uri);
+  await client.connect();
+  const database = client.db(dbNameAgenda);
+  const collection = database.collection(collectionNameLocations);
+  // const database = client.db(dbNameLocations);
+  await collection.updateOne(
+    { _id: new ObjectId(locationId) },
+    { $set: { [field]: value } }
+  );
+  await client.close();
 }
 
 
@@ -571,6 +607,84 @@ export async function createAuthLog(log) {
     await client.close();
   }
 }
+
+
+export async function updateImageReference(exhibitionId, imageUrl) {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const database = client.db(dbNameAgenda);
+    const collection = database.collection(collectionNameAgenda);
+
+    const objectId = ObjectId.createFromHexString(exhibitionId);
+
+    const result = await collection.updateOne(
+      { _id: objectId },
+      { $push: { image_reference: imageUrl } }
+    );
+
+    console.log("MongoDB update result:", result);
+    return result;
+  } catch (error) {
+    console.error("Error updating MongoDB:", error);
+    throw error;
+  } finally {
+    await client.close();
+  }
+}
+
+
+export async function deleteImageReference(exhibitionId, imagePath) {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const database = client.db(dbNameAgenda);
+    const collection = database.collection(collectionNameAgenda);
+
+    // Convert exhibitionId to ObjectId before querying MongoDB
+    const objectId = ObjectId.createFromHexString(exhibitionId);
+
+    // Remove the image path from the `image_reference` array
+    const result = await collection.updateOne(
+      { _id: objectId },
+      { $pull: { image_reference: imagePath } }
+    );
+
+    // Log the result of the operation
+    console.log('MongoDB update result:', result);
+
+    if (result.modifiedCount === 0) {
+
+      console.log('Adding a question mark after the extension.')
+
+      const cleanImagePath = addQuestionMarkIfNeeded(imagePath);
+
+      console.log("from mongo function", cleanImagePath);
+
+      const result = await collection.updateOne(
+        { _id: objectId },
+        { $pull: { image_reference: cleanImagePath } }
+      );
+
+      // Log the result of the operation
+      console.log('MongoDB update result:', result);
+
+      if (result.matchedCount === 0) {
+        console.error('No document found with the given exhibitionId.');
+      }
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error removing image reference from MongoDB:', error);
+    throw error;
+  } finally {
+    await client.close();
+  }
+}
+
+
 
 // export async function getLocations() {
 //   const client = new MongoClient(uri);

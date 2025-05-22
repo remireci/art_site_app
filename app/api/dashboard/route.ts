@@ -1,10 +1,8 @@
-// app/api/dashboard/route.ts
-
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import User from "@/models/User";
 import Location from "@/models/Location";
-import { findUser } from "@/db/mongo";
+import { findUser, getLocationByDomain, createUser } from "@/db/mongo";
 
 export async function GET() {
   try {
@@ -16,14 +14,28 @@ export async function GET() {
     }
 
     const parsed = JSON.parse(token.value);
-    const email = parsed.email;
+    // const email = parsed.email;
+    const email = "dirk_mertens@fastmail.fm";
+    const domain = email.split("@")[1];
 
-    const user = await findUser({ email });
+    let user = await findUser(email);
+
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      const location = await getLocationByDomain(domain);
+
+      //   console.log("this is the location", location);
+      user = await createUser(email, location?._id || null);
+
+      return NextResponse.json({
+        user: {
+          email: user?.email,
+          role: user?.role || "user",
+        },
+        location,
+      });
     }
 
-    const location = await Location.findById(user.locationId);
+    const location = user.locationId ? await getLocationByDomain(domain) : null;
 
     return NextResponse.json({
       user: {

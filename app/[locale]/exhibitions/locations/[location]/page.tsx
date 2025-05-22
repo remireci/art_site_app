@@ -3,12 +3,14 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Modal from "../../../../components/LocationModal";
 import { Metadata } from 'next';
+import { convertToDomain } from "@/utils/convertToDomain";
 
 // app/[locale]/exhibitions/locations/[location]/page.tsx
 
-
 export async function generateMetadata({ params }: { params: { locale: string; location: string } }): Promise<Metadata> {
     const { locale, location } = params;
+
+    console.log("the location from the generatedata funcion", location);
 
     // Load locale-specific messages
     let messages;
@@ -20,14 +22,11 @@ export async function generateMetadata({ params }: { params: { locale: string; l
         messages = (await import(`../../../../../locales/en/location.json`)).default;
     }
 
-    const convertToDomain = (urlPart: string): string => {
-        const lastHyphenIndex = urlPart.lastIndexOf('-');
-        if (lastHyphenIndex === -1) return urlPart; // No hyphens found
 
-        return urlPart.slice(0, lastHyphenIndex) + '.' + urlPart.slice(lastHyphenIndex + 1);
-    };
 
     // Usage:
+    // const originalDomain = params.location.replace(/-/g, ".");;
+
     const originalDomain = convertToDomain(params.location);
 
     const data = await getExhibitionsByDomain(originalDomain);
@@ -66,7 +65,7 @@ export async function generateMetadata({ params }: { params: { locale: string; l
 
 export default async function LocationPage({ params }: { params: { location: string } }) {
     // const { location } = params;
-    const originalDomain = params.location.replace(/-/g, ".");
+    const originalDomain = convertToDomain(params.location);
     console.log("location", originalDomain);
     const data = await getExhibitionsByDomain(originalDomain);
 
@@ -90,7 +89,7 @@ export default async function LocationPage({ params }: { params: { location: str
                     <Modal url={data[0].url} location={data[0].location} />
                     {/* Display city only if it's valid */}
                     {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
-                        <span className="text-sm text-gray-600 lowercase">
+                        <span className="text-sm text-gray-600">
                             {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
                         </span>
                     )}
