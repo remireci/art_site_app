@@ -29,14 +29,12 @@ function getR2Config(): R2Config {
       accessKeyId,
       secretAccessKey,
     },
-    forcePathStyle: true, // Recommended for R2
+    forcePathStyle: true,
   };
 }
 
-// Initialize client
-const r2Client = new S3Client(getR2Config());
-
 export async function POST(req: Request) {
+  const r2Client = new S3Client(getR2Config());
   const { imageUrl, exhibitionId } = await req.json();
 
   if (!imageUrl || !exhibitionId) {

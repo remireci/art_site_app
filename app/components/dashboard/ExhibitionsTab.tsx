@@ -30,9 +30,9 @@ export default function ExhibitionsTab({ data }: Props) {
         //     </p>
 
         <div className="p-6 lg:max-w-3xl mx-auto text-slate-600">
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center mt-8">
                 {data.length > 0 && data[0]?.url && data[0]?.location ? (
-                    <p className="text-md">
+                    <p className="text-md hover:text-blue-800">
                         <a href={data[0].url} target="_blank" rel="noopener noreferrer">
                             {data[0].location}
                             {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
@@ -46,7 +46,7 @@ export default function ExhibitionsTab({ data }: Props) {
                 ) : (
                     <p className="text-gray-500">No data available</p>
                 )}
-                <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] text-sm text-slate-100 rounded flex items-center justify-center">
+                <div className="p-1 h-8 my-20 bg-slate-300 text-sm text-slate-100 rounded flex items-center justify-center">
                     <p className="text-xl w-auto uppercase hover:text-gray-600">
                         Your actual exhibitions
                     </p>
