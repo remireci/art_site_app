@@ -1,9 +1,5 @@
 export const runtime = "edge";
 
-export const config = {
-  schedule: "0 0 * * *", // Every day at midnight UTC
-};
-
 import { NextResponse } from "next/server";
 import { sitemap } from "../../../scripts/sitemap";
 
