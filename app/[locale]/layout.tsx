@@ -96,7 +96,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
-        <script defer src="https://umami-loopbaantest-bitter-flower-1931.fly.dev/script.js" data-website-id="7d9c2893-798c-4079-aa37-be2ddd334e96"></script>
+        <script defer src="https://umami-loopbaantest-bitter-flower-1931.fly.dev/script.js" data-website-id="3619ca21-8cc6-4766-97a3-0266e8e0d441"></script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={addJsonLd()}
@@ -115,7 +115,7 @@ export default async function LocaleLayout({
               <LocationProvider>
                 {children}
               </LocationProvider>
-              <CookieBanner />
+              {/* <CookieBanner /> */}
             </main>
             <Footer />
           </NextIntlClientProvider>
