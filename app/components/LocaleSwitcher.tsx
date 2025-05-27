@@ -15,16 +15,22 @@ export default function LocaleSwitcher() {
         router.push(localizedPath);
     };
 
-
     return (
-        <select
-            onChange={(e) => switchLocale(e.target.value as "en" | "nl" | "fr")}
-            defaultValue={pathname.split("/")[1]}
-            className="px-1 py-1 rounded cursor-pointer font-light text-xs"
-        >
-            <option value="nl">NL</option>
-            <option value="fr">FR</option>
-            <option value="en">EN</option>
-        </select>
+        <>
+            <label htmlFor="locale-switcher" className="sr-only">
+                Select language
+            </label>
+            <select
+                id="locale-switcher"
+                name="locale"
+                onChange={(e) => switchLocale(e.target.value as "en" | "nl" | "fr")}
+                defaultValue={pathname.split("/")[1]}
+                className="px-1 py-1 rounded cursor-pointer font-light text-xs"
+            >
+                <option value="nl">NL</option>
+                <option value="fr">FR</option>
+                <option value="en">EN</option>
+            </select>
+        </>
     );
 }

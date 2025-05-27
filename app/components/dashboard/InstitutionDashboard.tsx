@@ -10,10 +10,14 @@ import ExhibitionsTab from "./ExhibitionsTab";
 import { Exhibition } from "@/types";
 
 interface Props {
-    data: Exhibition[];
+    exhibitionsData: Exhibition[];
+    locationData: any;
 }
 
-export default function InstitutionDashboard({ data }: Props) {
+export default function InstitutionDashboard({ exhibitionsData, locationData }: Props) {
+
+
+
     return (
         <div className="p-4 md:p-8">
             <h1 className="text-slate-600 text-lg text-center font-semibold mb-12 lg:text-xl">Dashboard</h1>
@@ -25,38 +29,18 @@ export default function InstitutionDashboard({ data }: Props) {
                     <TabsTrigger value="history">History</TabsTrigger>
                 </TabsList>
 
-                {/* Institution Info Tab */}
-                {/* <TabsContent value="info">
-                    <Card>
-                        <CardContent className="space-y-4 py-4">
-                            <Input placeholder="Institution Name" />
-                            <Input placeholder="City" />
-                            <Input placeholder="Website" />
-                            <Textarea placeholder="Short Description" />
-                            <Button>Save Changes</Button>
-                        </CardContent>
-                    </Card>
-                </TabsContent> */}
 
                 <TabsContent value="info">
-                    <InstitutionTab />
+                    <InstitutionTab
+                        locationData={locationData}
+                    />
                 </TabsContent>
 
                 {/* Exhibitions Tab */}
                 <TabsContent value="exhibitions">
-                    {/* <Card> */}
-                    {/* <CardContent className="space-y-4 py-4">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-semibold">Current Exhibitions</h2>
-                                <Button>Add Exhibition</Button>
-                            </div> */}
-                    {/* Exhibition entries would go here */}
-                    {/* <p className="text-muted-foreground">No exhibitions yet.</p> */}
-                    {/* </CardContent> */}
-                    {/* <ExhibitionsTab /> */}
-                    {/* </Card> */}
                     <ExhibitionsTab
-                        data={data}
+                        exhibitionsData={exhibitionsData}
+                        locationData={locationData}
                     />
                 </TabsContent>
 

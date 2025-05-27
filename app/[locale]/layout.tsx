@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
 import { Roboto } from 'next/font/google';
-import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import Header from "../components/Header.jsx";
 import { LocationProvider } from "../context/LocationContext";
 import CookieBanner from "../components/CookieBanner";
 import Footer from "../components/Footer";
-import GoogleAnalytics from '../components/GoogleAnalytics';
 // import CookieConsentPopup from './components/CookieConsentPopup';
-import { GoogleTagManager } from '@next/third-parties/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
-
-// const inter = Inter({ subsets: ["latin"] });
 
 import enCommon from "../../locales/en/common.json";
 import frCommon from "../../locales/fr/common.json";
@@ -100,16 +95,13 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      {/* <GoogleAnalytics /> */}
       <head>
-        <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER || 'default-gtm-id'} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={addJsonLd()}
           key="product-jsonld"
         />
       </head>
-      {measurementId && <GoogleAnalytics GA_MEASUREMENT_ID={measurementId} />}
       <body className={roboto.className}>
         <div className="flex flex-col min-h-screen">
           <NextIntlClientProvider
@@ -127,7 +119,6 @@ export default async function LocaleLayout({
             <Footer />
           </NextIntlClientProvider>
         </div>
-        <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER || 'default-gtm-id'} />
       </body>
     </html>
   );

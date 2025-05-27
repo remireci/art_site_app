@@ -19,7 +19,7 @@ const Privacy = () => {
                 <div className='flex flex-col justify-center space-x-10 space-y-16 mt-20'>
                     <div className="max-w-3xl mx-auto p-6 text-gray-800">
                         <h1 className="text-2xl font-bold mb-4">Privacy Policy </h1>
-                        <p className="italic mb-4">Last updated: 2025-02-20</p>
+                        <p className="italic mb-4">Last updated: 2025-05-27</p>
 
                         <h2 className="text-xl font-semibold mt-6">1. Who is responsible for processing your data?</h2>
                         <p><strong>Art Now Database</strong></p>
@@ -27,19 +27,28 @@ const Privacy = () => {
                         <p>If you have any questions about how we handle your data, or if you want to exercise your rights, please contact us.</p>
 
                         <h2 className="text-xl font-semibold mt-6">2. Use of Cookies</h2>
-                        <h3 className="text-lg font-medium mt-4">2.1. Why do we use cookies?</h3>
-                        <p>We use cookies to improve your experience on our website, gather usage statistics, and optimize our content.</p>
 
-                        <h3 className="text-lg font-medium mt-4">2.2. Analytical Cookies</h3>
-                        <p>We use <strong>Google Analytics 4 (GA4)</strong> to track website usage. This helps us understand how many people visit, which pages are most popular, and how visitors navigate the site.</p>
-                        <p>Google Analytics anonymizes IP addresses to protect your identity. Our cookies are used for:</p>
+                        <h3 className="text-lg font-medium mt-4">2.1. Why do we use cookies?</h3>
+                        <p>We use cookies only where necessary — primarily to support essential website functionality like user authentication. For general website visitors, no cookies are placed unless they log in or perform an action requiring authentication.</p>
+
+                        <h3 className="text-lg font-medium mt-4">2.2. Functional Cookies</h3>
+                        <p>If you log in to access member-only areas of the site, a functional cookie will be placed in your browser to maintain your authenticated session. These cookies are essential for the service and cannot be disabled.</p>
+
+                        <h3 className="text-lg font-medium mt-4">2.3. Analytics Without Cookies</h3>
+                        <p>We use <strong>Umami</strong>, a privacy-focused analytics platform, to understand how visitors use our website.</p>
+                        <p>Umami does not use cookies and does not collect personally identifiable information.</p>
+                        <p>It tracks basic, anonymized usage data such as:</p>
                         <ul className="list-disc pl-6">
-                            <li>Counting visitors and page views</li>
-                            <li>Measuring time spent on each page</li>
-                            <li>Tracking the sequence of pages visited</li>
-                            <li>Identifying areas for website improvement</li>
-                            <li>Optimizing overall site performance</li>
+                            <li>Pages visited</li>
+                            <li>Device and browser type</li>
+                            <li>Referring website</li>
+                            <li>General location (based on IP, anonymized)</li>
                         </ul>
+                        <p>All analytics data is anonymized and stored on servers we control in the European Union. It is never shared with third parties.</p>
+
+                        <h3 className="text-lg font-medium mt-4">2.4. Cookie Banner</h3>
+                        <p>Because we do not use tracking or advertising cookies, we do not require consent banners for analytics. However, when logging in, users are informed that a session cookie will be stored to support secure access. This is a necessary, functional cookie that does not require consent under GDPR.</p>
+
 
                         <h2 className="text-xl font-semibold mt-6">3. Location Data</h2>
                         <p>We only access your location if you explicitly click a button to find exhibitions near you. Your location is used solely for this feature and is never stored or shared with third parties.</p>

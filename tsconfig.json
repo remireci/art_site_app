@@ -32,7 +32,8 @@
     ".next/types/**/*.ts",
     "middleware.js",
     "middleware.js",
-    "middleware.js"
+    "middleware.js",
+    "app/api/exhibitions/delete-image/route.js"
   ],
   "exclude": ["node_modules"]
 }

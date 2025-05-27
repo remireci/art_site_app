@@ -61,7 +61,13 @@ export default async function LocationPage({ params }: { params: { location: str
     const institution = await getLocationBySlug(location);
     const domain = institution?.domain;
     console.log("this is the domain", domain);
-    const data = await getExhibitionsByDomain(domain);
+    // const data = await getExhibitionsByDomain(domain);
+    const data = await getExhibitionsByDomain(domain, {
+        includeHidden: true,
+        includePast: false,
+        includeFuture: true,
+    });
+
 
     if (!data) {
         return notFound();

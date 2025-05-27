@@ -1,5 +1,5 @@
 export interface Exhibition {
-  _id: string;
+  _id?: string;
   title: string;
   date_begin_st?: string;
   date_end_st: string;

@@ -26,8 +26,6 @@ export default function CookieBanner() {
         setAnalyticsConsent(analytics);
         localStorage.setItem("analyticsConsent", analytics.toString());
 
-        // Update Google Analytics consent
-        window.gtag?.("consent", "update", { analytics_storage: analytics ? "granted" : "denied" });
 
         setShowBanner(false);
         setShowSettings(false);
@@ -42,8 +40,7 @@ export default function CookieBanner() {
                     <>
                         {/* Main Cookie Banner */}
                         <p className="text-center text-sm">
-                            This site uses cookies for analytics and to improve user experience.
-                            We currently use Google Analytics to track website traffic and performance.
+                            By logging in, a necessary session cookie will be stored in your browser to keep you authenticated during your visit. This is required for secure access and is not used for tracking.
                             <p className="text-sky-800 hover:text-sky-400 ml-1">
                                 Check our Privacy Policy.
                             </p>
@@ -92,62 +89,44 @@ export default function CookieBanner() {
 }
 
 
+// @TODO: implement simplified version below for users that login.
 
 // 'use client';
-// import React, { useEffect, useState } from 'react';
-// import Link from 'next/link';
-// import { getLocalStorage, setLocalStorage } from '../lib/storageHelper';
 
-// const CookieBanner = () => {
-//     const [cookieConsent, setCookieConsent] = useState<boolean | null>(null);
-//     const [isBannerVisible, setBannerVisible] = useState(false);
+// import { usePathname } from 'next/navigation';
+// import { useState, useEffect } from 'react';
 
-//     useEffect(() => {
-//         const storedCookieConsent = getLocalStorage("cookie_consent", null);
+// const pathsRequiringBanner = ['/login', '/register'];
 
-//         if (storedCookieConsent !== null) {
-//             setCookieConsent(storedCookieConsent);
-//             setBannerVisible(false);
-//         } else {
-//             setBannerVisible(true);
-//         }
-//     }, []);
+// export default function CookieBanner() {
+//   const pathname = usePathname();
+//   const [visible, setVisible] = useState(false);
 
-//     useEffect(() => {
-//         if (cookieConsent !== null) {
-//             const newValue = cookieConsent ? 'granted' : 'denied';
+//   useEffect(() => {
+//     const hasDismissed = localStorage.getItem('cookie-banner-dismissed');
+//     if (!hasDismissed && pathsRequiringBanner.includes(pathname)) {
+//       setVisible(true);
+//     }
+//   }, [pathname]);
 
-//             window.gtag && window.gtag("consent", 'update', {
-//                 'analytics_storage': newValue
-//             });
+//   const handleClose = () => {
+//     localStorage.setItem('cookie-banner-dismissed', 'true');
+//     setVisible(false);
+//   };
 
-//             setLocalStorage("cookie_consent", cookieConsent);
+//   if (!visible) return null;
 
-//             // Hide the banner if consent is given or denied
-//             setBannerVisible(false);
-
-//         }
-//     }, [cookieConsent]);
-
-//     if (!isBannerVisible) return null;
-
-
-//     return (
-//         <div className="flex flex-row items-center">
-//             <div className="banner-slide-in fixed bottom-0 flex flex-col md:flex-row w-full lg:w-2/5 h-10 justify-between items-center bg-gray-800 px-8 rounded-md z-50">
-//                 <div className='text-center text-sm text-slate-400 py-6'>
-//                     <p>Deze site gebruikt analytische cookies voor statistieken.
-//                         <Link className="text-sky-800 hover:text-sky-400" rel="noopener noreferrer" target="_blank" href="/privacy#privacy"> Meer uitleg
-//                         </Link>
-//                     </p>
-//                 </div>
-//                 <div className='flex gap-2'>
-//                     <button className='px-5 py-2 text-gray-500 rounded-md border-gray-900' onClick={() => setCookieConsent(false)}>Weigeren</button>
-//                     <button className='bg-gray-900 px-5 py-2 text-white rounded-lg' onClick={() => setCookieConsent(true)}>Toestaan</button>
-//                 </div>
-//             </div>
-//         </div>
-//     )
+//   return (
+//     <div className="fixed bottom-0 left-0 right-0 bg-gray-800 text-white text-sm p-4 flex items-center justify-between z-50">
+//       <p>
+//         We use a functional cookie to support login. This cookie is essential and does not track you.
+//       </p>
+//       <button
+//         className="ml-4 px-3 py-1 bg-gray-700 rounded hover:bg-gray-600"
+//         onClick={handleClose}
+//       >
+//         Close
+//       </button>
+//     </div>
+//   );
 // }
-
-// export default CookieBanner;

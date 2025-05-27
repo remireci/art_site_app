@@ -104,7 +104,7 @@ export async function getDocumentById(id) {
 // }
 
 // Function to connect to MongoDB and retrieve Agenda items
-export async function getAgendaItems(query) {
+export async function getAgendaItems(query, projection = {}) {
 
   const client = new MongoClient(uri);
 
@@ -127,7 +127,12 @@ export async function getAgendaItems(query) {
   }
 }
 
-export const getExhibitionsByDomain = async (domain) => {
+export const getExhibitionsByDomain = async (domain, options = {}) => {
+  const {
+    includeHidden = false,
+    includePast = false,
+    includeFuture = false, } = options;
+
   console.log("🌀 MongoDB query executing for domain:", domain);
   const client = new MongoClient(uri);
   try {
@@ -137,19 +142,36 @@ export const getExhibitionsByDomain = async (domain) => {
 
     const todayISO = new Date().toISOString(); // Get today's date in ISO format
 
-    // Normalize input domain (strip http, https, www)
-    // const domainPattern = domain.replace(/^(https?:\/\/)?(www\.)?/, "");
-
-    // Construct MongoDB query
     const query = {
       domain,
-      date_end_st: { $gte: todayISO }, // End date must be in the future
-      $or: [
-        { date_begin_st: { $lte: todayISO } }, // If begin date exists, it must be in the past
-        { date_begin_st: null }, // Or begin date can be missing
-      ],
-      show: { $ne: false }, // Exclude hidden documents
     };
+
+    // Handle visibility
+    if (!includeHidden) {
+      query.show = { $ne: false };
+    }
+
+    // Handle date filtering
+    const dateConditions = [];
+
+    if (!includePast) {
+      // Only include exhibitions ending in the future
+      query.date_end_st = { $gte: todayISO };
+    }
+
+    if (!includeFuture) {
+      // Only include exhibitions that already started
+      dateConditions.push({ date_begin_st: { $lte: todayISO } });
+      dateConditions.push({ date_begin_st: null });
+    } else {
+      // Include future ones, or those without a start date
+      dateConditions.push({ date_begin_st: { $lte: todayISO } });
+      dateConditions.push({ date_begin_st: null });
+    }
+
+    if (dateConditions.length > 0) {
+      query.$or = dateConditions;
+    }
 
     const exhibitions = await collection.find(query).toArray();
 
@@ -252,6 +274,25 @@ export async function getExhibitionsByCity(city) {
 //     exhibitions = collection_Exhibitions.find({"location_id": {"$in": location_ids}})
 
 //     return list(exhibitions)
+
+
+export async function addExhibition(exhibition) {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const database = client.db(dbNameAgenda);
+    const collection = database.collection(collectionNameAgenda);
+
+    const result = await collection.insertOne(exhibition);
+    return { ...exhibition, _id: result.insertedId.toString() };
+  } catch (error) {
+    console.error(`Error inserting exhibition for location  ${exhibition.location}:`, error);
+    return null;
+  } finally {
+    await client.close();
+  }
+}
 
 
 export async function getLocationByDomain(domain) {

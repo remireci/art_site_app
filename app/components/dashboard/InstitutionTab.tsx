@@ -2,9 +2,14 @@
 import { useEffect, useState } from "react";
 import EditableField from "./EditableField";
 import EditableCheckbox from "./EditableCheckbox";
+import { Exhibition } from "@/types";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 
-export default function InstitutionTab() {
+interface Props {
+    locationData: any
+}
+
+export default function InstitutionTab({ locationData }: Props) {
     const [data, setData] = useState<null | {
         user: { email: string; name?: string; role?: string };
         location: any;
@@ -22,6 +27,7 @@ export default function InstitutionTab() {
                 setLoading(false);
             });
     }, []);
+
 
     const handleFieldChange = (
         section: "user" | "location",
