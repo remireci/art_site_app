@@ -428,6 +428,7 @@ export async function getLocations() {
       domain: loc.domain, // Cleaned domain
       name: loc.location || loc.originalUrl, // Use original URL if name is missing
       city: loc.city,
+      domain_slug: loc.domain_slug,
       latitude: loc.coordinates?.latitude ?? null, // Ensure correct path
       longitude: loc.coordinates?.longitude ?? null,
       hasMultipleLocations: loc.hasMultipleLocations ?? false,// Ensure it matches LocationContextType

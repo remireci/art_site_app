@@ -17,23 +17,15 @@ export default function EditExhibitionForm({
     onSave,
     onCancel,
 }: EditExhibitionFormProps) {
-    const isEditing = Boolean(initialData._id);
+    const isExhibitionEditing = Boolean(initialData._id);
     const [formData, setFormData] = useState<Exhibition>({
         ...initialData,
-        image_reference: Array.isArray(initialData.image_reference)
-            ? initialData.image_reference
-            : initialData.image_reference
-                ? [initialData.image_reference]
-                : [],
     });
     const [showUploadPopup, setShowUploadPopup] = useState(false);
     const [imageUrl, setImageUrl] = useState("");
-    const [imageIsUploading, setImageIsUploading] = useState(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const origin = "USER";
 
-
-    console.log("there is of course an id", formData.image_reference);
 
     const handleSubmit = async () => {
 
@@ -41,16 +33,15 @@ export default function EditExhibitionForm({
 
         if (!formData.title?.trim()) newErrors.title = "Title is required.";
         if (!formData.date_end_st?.trim()) newErrors.date_end_st = "End date is required.";
-        if (!imageUrl?.trim()) newErrors.image = "Image is required.";
 
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) {
-            // alert("Please fill in the required fields:\n" + errors.join("\n"));
+            // onSave(formData);
             return;
         }
 
-        const payload = { ...formData, imageUrl, origin };
+        const payload = { ...formData, origin };
 
         try {
             if (!formData._id) {
@@ -86,7 +77,6 @@ export default function EditExhibitionForm({
     const handleUpload = async () => {
 
         if (!imageUrl) return;
-        setImageIsUploading(true);
 
         const response = await fetch("/api/exhibitions/upload-image", {
             method: "POST",
@@ -102,45 +92,8 @@ export default function EditExhibitionForm({
                 image_reference: [...prev.image_reference, data.imageUrl],
             }));
         }
-        setImageIsUploading(true);
         setShowUploadPopup(false);
         setImageUrl("");
-    };
-
-    const handleRemoveImage = async () => {
-
-        const updatedImages = [...formData.image_reference];
-        updatedImages.splice(0, 1);
-        const imagePath = formData.image_reference[0];
-
-        try {
-            const response = await fetch('/api/exhibitions/delete-image', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    exhibitionId: formData._id, // Assuming `_id` identifies the exhibition
-                    imagePath,
-                }),
-            });
-
-            setFormData((prev) => ({
-                ...prev,
-                image_reference: updatedImages,
-            }));
-
-            setImageIsUploading(false);
-
-            if (!response.ok) {
-                throw new Error('Failed to remove image from server');
-            }
-
-            // Optionally, show a success message to the user here
-        } catch (error) {
-            console.error('Error removing image:', error);
-            // Optionally, show an error message to the user
-        }
     };
 
     const toggleShow = async () => {
@@ -173,14 +126,13 @@ export default function EditExhibitionForm({
         <div
             className="flex flex-col gap-2 p-4 border rounded shadow w-full max-w-[370px] bg-white">
             <div className="flex flex-col items-center mx-2 uppercase text-sm">
-                {isEditing ? (<p>
+                {isExhibitionEditing ? (<p>
                     Edit Exhibition
                 </p>) : (
                     <p>
                         Add Exhibition
                     </p>
                 )
-
                 }
             </div>
 
@@ -283,59 +235,8 @@ export default function EditExhibitionForm({
             </div> */}
 
             {/* </form> */}
-            {/* --- Image Section --- */}
-            {(formData.image_reference.length > 0 && formData.image_reference[0] !== "") && (
-                <div className="space-y-2">
-                    <p className="text-xs font-medium">Image</p>
-                    <div className="flex flex-col items-center space-y-2">
-                        <img
-                            src={formData.image_reference[0]}
-                            className="w-30 h-20 object-cover rounded"
-                            alt="Exhibition image"
-                        />
-                        <button
-                            onClick={handleRemoveImage}
-                            className="bg-red-500 text-white text-xs px-1 rounded"
-                        >
-                            Remove
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* --- Upload Popup --- */}
-            {(formData.image_reference[0] === "" || formData.image_reference.length === 0 || !formData.image_reference) && (
-                <div className="space-y-2">
-                    <p className="text-xs font-medium">Upload Image</p>
-                    <div className="flex space-x-2 bg-blue-100 p-1 rounded items-center mt-4">
-                        <input
-                            value={imageUrl}
-                            onChange={(e) => setImageUrl(e.target.value)}
-                            className="flex-1 bg-slate-50 mr-2 p-1 placeholder:text-slate-300 placeholder:text-sm placeholder:font-light rounded border border-slate-300 focus:border-orange-400 focus:outline-none focus:ring-0 focus:shadow-[0_0_1px_1px_#f97316]"
-                            placeholder="Paste image URL..."
-                        />
-                        {isEditing && (
-                            <button
-                                disabled={imageIsUploading}
-                                onClick={handleUpload}
-                                className={cn(
-                                    "shrink-0 text-sm h-6 px-2 rounded bg-gray-200 text-gray-800 border-2 border-blue-200 hover:bg-blue-800 flex items-center justify-center",
-                                    imageIsUploading && "cursor-not-allowed opacity-70"
-                                )}
-                            >
-                                {imageIsUploading ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    "Upload"
-                                )}
-                            </button>
-                        )}
-                    </div>
-                </div>
-            )}
-            {errors.image && <span className="text-red-500 text-xs">{errors.image}</span>}
             {/* --- Visibility Toggle --- */}
-            {isEditing && (
+            {isExhibitionEditing && (
                 <label className="flex flex-row items-center space-x-2 mt-4">
 
                     <EditableCheckbox

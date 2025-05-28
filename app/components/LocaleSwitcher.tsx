@@ -25,7 +25,7 @@ export default function LocaleSwitcher() {
                 name="locale"
                 onChange={(e) => switchLocale(e.target.value as "en" | "nl" | "fr")}
                 defaultValue={pathname.split("/")[1]}
-                className="px-1 py-1 rounded cursor-pointer font-light text-xs"
+                className="px-1 py-1 rounded cursor-pointer bg-stone-50 font-light text-xs"
             >
                 <option value="nl">NL</option>
                 <option value="fr">FR</option>

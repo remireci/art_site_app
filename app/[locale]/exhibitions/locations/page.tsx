@@ -45,7 +45,7 @@ export default async function LocationsListPage({ params }: LocationsListPagePro
                 </div>
                 <ul className="space-y-2">
                     {filteredLocations.map(location => {
-                        const safeDomain = location.domain.replace(/\./g, "-");
+                        // const safeDomain = location.domain.replace(/\./g, "-");
 
                         return (
                             < li
@@ -54,7 +54,7 @@ export default async function LocationsListPage({ params }: LocationsListPagePro
                             >
                                 <h2 className="text-lg">
                                     <Link
-                                        href={`/${locale}/exhibitions/locations/${safeDomain}`}
+                                        href={`/${locale}/exhibitions/locations/${location.domain_slug}`}
                                         className="hover:underline"
                                     >
                                         {location.name}

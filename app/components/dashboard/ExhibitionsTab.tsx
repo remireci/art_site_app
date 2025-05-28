@@ -18,7 +18,7 @@ export default function ExhibitionsTab({ exhibitionsData, locationData }: Props)
         if (exhibitionsData && exhibitionsData.length > 0) {
             setExhibitions(exhibitionsData);
         }
-    }, [exhibitionsData]);
+    }, [exhibitionsData, exhibitionsData[0].image_reference[0]]);
 
     if (!exhibitionsData) {
         return notFound();
@@ -55,7 +55,6 @@ export default function ExhibitionsTab({ exhibitionsData, locationData }: Props)
                         location={locationData.location}
                         domain={locationData.domain}
                         url={locationData.url}
-
                     />
                 </div>
 
@@ -75,8 +74,6 @@ export default function ExhibitionsTab({ exhibitionsData, locationData }: Props)
                         />
                     ))}
                 </ul>
-
-
                 <div className="md:w-2/3 lg:w-1/3 text-slate-200 min-h-screen flex flex-col justify-end">
                 </div>
             </div>
