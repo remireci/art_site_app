@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 
 export default async function CityList({ params }: LocationsListPageProps) {
     const { locale } = params;
-    const cities: Array<any> = await getCities();
+    const cities: Array<any> = await getCities({ onlyWithExhibitions: true });
 
     return (
         <div className="p-4 min-h-screen text-slate-500">

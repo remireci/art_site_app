@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 }
 
 export default async function LocationsListPage({ params }: LocationsListPageProps) {
-    const locations: Array<any> = await getLocations();
+    const locations: Array<any> = await getLocations({ onlyWithExhibitions: true });
     const filteredLocations = locations.filter(location => location.name !== "N/A");
     const { locale } = params;
 

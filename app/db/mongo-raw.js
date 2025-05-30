@@ -17,6 +17,7 @@ const collectionNameLocations = 'Locations';
 const collectionCities = 'city_mapping';
 
 
+
 async function getLocations() {
     const client = new MongoClient(uri);
     try {
@@ -25,19 +26,24 @@ async function getLocations() {
         const collection_agenda = database.collection(collectionNameAgenda);
         const collection_locations = database.collection(collectionNameLocations);
 
-        const today = new Date().toISOString().split("T")[0]; // Get today's date in "yyyy-mm-dd" format
+        const today = new Date().toISOString().split("T")[0];
 
-        const locations = await collection_locations
-            .find({ show: { $ne: false } }) // Only select locations where show is not false
-            .toArray();
+        const query = {
+            show: { $ne: false },
+            hasExhibitions: true,
+        };
+
+        const locations = await collection_locations.find(query).toArray();
 
         return locations.map(loc => ({
-            domain: loc.domain, // Cleaned domain
-            name: loc.location || loc.originalUrl, // Use original URL if name is missing
+            _id: loc._id,
+            domain: loc.domain,
+            name: loc.location || loc.originalUrl,
             city: loc.city,
-            latitude: loc.coordinates?.latitude ?? null, // Ensure correct path
+            domain_slug: loc.domain_slug,
+            latitude: loc.coordinates?.latitude ?? null,
             longitude: loc.coordinates?.longitude ?? null,
-            hasMultipleLocations: loc.hasMultipleLocations ?? false,// Ensure it matches LocationContextType
+            hasMultipleLocations: loc.hasMultipleLocations ?? false,
         }));
     } catch (error) {
         console.error("Error fetching locations:", error);
@@ -55,8 +61,11 @@ async function getCities() {
         const database = client.db(dbNameAgenda);
         const collection_cities = database.collection(collectionCities);
 
-        // Query to fetch all documents and project only the `city` field
-        const citiesCursor = collection_cities.find({}, { projection: { city: 1, _id: 1, alternatives: 1 } });
+        const query = { hasExhibitions: true };
+
+        const citiesCursor = collection_cities.find(query, {
+            projection: { city: 1, _id: 1, alternatives: 1, slug: 1 },
+        });
 
         // Convert the cursor to an array of cities
         const cities = await citiesCursor.toArray();

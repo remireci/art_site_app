@@ -1,9 +1,10 @@
 import { verifyCode } from '@/lib/codeUtils';
 import { MongoClient, ObjectId } from 'mongodb';
 import { cache } from 'react';
+import clientPromise from "@/lib/mongoClient";
 
 // Connection URI, replace with your actual MongoDB connection string
-const uri = process.env.MONGODB_URI || 'your-connection-string';
+const uri = process.env.MONGODB_URI;
 
 if (!uri) throw new Error("MongoDB uri is not defined");
 
@@ -23,11 +24,10 @@ const collectionNameAuthLogs = 'authLogs';
 
 // Function to connect to MongoDB and retrieve documents from the "texts" collection
 export async function getDocuments(query, skip, pageSize) {
-  const client = new MongoClient(uri);
 
   try {
-    await client.connect();
-    console.log('Connected to MongoDB');
+    const client = await clientPromise;
+
 
     const database = client.db(dbNameTexts);
     const collection = database.collection(collectionNameTexts);
@@ -43,19 +43,14 @@ export async function getDocuments(query, skip, pageSize) {
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
     throw error;
-  } finally {
-    await client.close();
-    console.log('Disconnected from MongoDB');
   }
 }
 
 
 export async function getDocumentById(id) {
-  const client = new MongoClient(uri);
 
   try {
-    await client.connect();
-    console.log('Connected to MongoDB');
+    const client = await clientPromise;
 
     const database = client.db(dbNameTexts);
     const collection = database.collection(collectionNameTexts);
@@ -72,9 +67,6 @@ export async function getDocumentById(id) {
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
     throw error;
-  } finally {
-    await client.close();
-    console.log('Disconnected from MongoDB');
   }
 }
 
@@ -106,10 +98,8 @@ export async function getDocumentById(id) {
 // Function to connect to MongoDB and retrieve Agenda items
 export async function getAgendaItems(query, projection = {}) {
 
-  const client = new MongoClient(uri);
-
   try {
-    await client.connect();
+    const client = await clientPromise;
 
     const database = client.db(dbNameAgenda);
     const collection = database.collection(collectionNameAgenda);
@@ -121,9 +111,6 @@ export async function getAgendaItems(query, projection = {}) {
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
     throw error;
-  } finally {
-    await client.close();
-    console.log('Disconnected from MongoDB');
   }
 }
 
@@ -134,9 +121,9 @@ export const getExhibitionsByDomain = async (domain, options = {}) => {
     includeFuture = false, } = options;
 
   console.log("🌀 MongoDB query executing for domain:", domain);
-  const client = new MongoClient(uri);
+  const client = await clientPromise;
   try {
-    await client.connect();
+    // await client.connect();
     const database = client.db(dbNameAgenda);
     const collection = database.collection(collectionNameAgenda);
 
@@ -179,9 +166,6 @@ export const getExhibitionsByDomain = async (domain, options = {}) => {
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     throw error;
-  } finally {
-    await client.close();
-    console.log("Disconnected from MongoDB");
   }
 };
 
@@ -210,9 +194,10 @@ function escapeRegExp(str) {
 
 
 export async function getExhibitionsByCity(city) {
-  const client = new MongoClient(uri);
+
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection = database.collection(collectionNameAgenda);
 
@@ -249,9 +234,6 @@ export async function getExhibitionsByCity(city) {
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     throw error;
-  } finally {
-    await client.close();
-    console.log("Disconnected from MongoDB");
   }
 }
 
@@ -277,10 +259,10 @@ export async function getExhibitionsByCity(city) {
 
 
 export async function addExhibition(exhibition) {
-  const client = new MongoClient(uri);
 
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection = database.collection(collectionNameAgenda);
 
@@ -289,16 +271,15 @@ export async function addExhibition(exhibition) {
   } catch (error) {
     console.error(`Error inserting exhibition for location  ${exhibition.location}:`, error);
     return null;
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function getLocationByDomain(domain) {
-  const client = new MongoClient(uri);
+
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
 
@@ -306,16 +287,15 @@ export async function getLocationByDomain(domain) {
   } catch (error) {
     console.error(`Error fetching location for domain ${domain}:`, error);
     return null;
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function getLocationBySlug(slug) {
-  const client = new MongoClient(uri);
+
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
 
@@ -325,15 +305,14 @@ export async function getLocationBySlug(slug) {
   } catch (error) {
     console.error(`Error fetching location for domain ${domain}:`, error);
     return null;
-  } finally {
-    await client.close();
   }
 }
 
 export async function getLocationById(id) {
-  const client = new MongoClient(uri);
+
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
     console.log("the ID", id);
@@ -342,102 +321,36 @@ export async function getLocationById(id) {
   } catch (error) {
     console.error(`Error fetching location for domain ${domain}:`, error);
     return null;
-  } finally {
-    await client.close();
   }
 }
 
 
-export async function getLocations() {
-  const client = new MongoClient(uri);
+export async function getLocations({ onlyWithExhibitions = false } = {}) {
+  const client = await clientPromise;
   try {
-    await client.connect();
     const database = client.db(dbNameAgenda);
-    const collection_agenda = database.collection(collectionNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
 
-    const today = new Date().toISOString().split("T")[0]; // Get today's date in "yyyy-mm-dd" format
+    const query = {
+      show: { $ne: false },
+      ...(onlyWithExhibitions ? { hasExhibitions: true } : {}),
+    };
 
-    const locations = await collection_locations
-      .find({ show: { $ne: false } }) // Only select locations where show is not false
-      .toArray();
-
-    // const locations = await collection_agenda
-    //   .aggregate([
-    //     {
-    //       $match: {
-    //         url: { $ne: null }, // Ensure URL exists
-    //         date_end_st: { $gte: today }, // Only future events
-    //       },
-    //     },
-    //     {
-    //       $project: {
-    //         originalUrl: "$url",
-    //         cleanDomain: {
-    //           $replaceAll: {
-    //             input: {
-    //               $replaceAll: {
-    //                 input: { $replaceAll: { input: "$url", find: "https://", replacement: "" } },
-    //                 find: "http://",
-    //                 replacement: "",
-    //               },
-    //             },
-    //             find: "www.",
-    //             replacement: "",
-    //           },
-    //         },
-    //         name: "$location",
-
-    //       },
-    //     },
-    //     {
-    //       $lookup: {
-    //         from: collectionNameLocations,
-    //         localField: "cleanDomain",
-    //         foreignField: "domain",
-    //         as: "locationData",
-    //       },
-    //     },
-    //     {
-    //       $unwind: { path: "$locationData", preserveNullAndEmptyArrays: true },
-    //     },
-    //     {
-    //       $match: {
-    //         $or: [{ "locationData.show": { $ne: false } }, { locationData: { $exists: false } }],
-    //       },
-    //     },
-    //     {
-    //       $group: {
-    //         _id: "$cleanDomain", // Group by domain to ensure uniqueness
-    //         name: { $first: "$name" }, // Take the first occurrence
-    //         originalUrl: { $first: "$originalUrl" },
-    //         city: { $first: "$locationData.city" },
-    //         lat: { $first: { $ifNull: ["$locationData.coordinates.latitude", null] } }, // Default to null
-    //         lon: { $first: { $ifNull: ["$locationData.coordinates.longitude", null] } },
-    //       },
-    //     },
-    //     {
-    //       $sort: { name: 1 }, // Sort alphabetically
-    //     },
-    //   ])
-    //   .toArray();
-
+    const locations = await collection_locations.find(query).toArray();
 
     return locations.map(loc => ({
       _id: loc._id,
-      domain: loc.domain, // Cleaned domain
-      name: loc.location || loc.originalUrl, // Use original URL if name is missing
+      domain: loc.domain,
+      name: loc.location || loc.originalUrl,
       city: loc.city,
       domain_slug: loc.domain_slug,
-      latitude: loc.coordinates?.latitude ?? null, // Ensure correct path
+      latitude: loc.coordinates?.latitude ?? null,
       longitude: loc.coordinates?.longitude ?? null,
-      hasMultipleLocations: loc.hasMultipleLocations ?? false,// Ensure it matches LocationContextType
+      hasMultipleLocations: loc.hasMultipleLocations ?? false,
     }));
   } catch (error) {
     console.error("Error fetching locations:", error);
     return [];
-  } finally {
-    await client.close();
   }
 }
 
@@ -449,10 +362,11 @@ export const getUniqueCities = async () => {
 
 
 export async function getLocations_by_city(slug) {
-  const client = new MongoClient(uri);
+
 
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
 
@@ -469,22 +383,23 @@ export async function getLocations_by_city(slug) {
   } catch (error) {
     console.error("Error fetching locations by city:", error);
     return [];
-  } finally {
-    await client.close();
   }
 }
 
 
-export async function getCities() {
-  const client = new MongoClient(uri);
+export async function getCities({ onlyWithExhibitions = false } = {}) {
 
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection_cities = database.collection(collectionCities);
 
-    // Query to fetch all documents and project only the `city` field
-    const citiesCursor = collection_cities.find({}, { projection: { city: 1, _id: 1, alternatives: 1, slug: 1 } });
+    const query = onlyWithExhibitions ? { hasExhibitions: true } : {};
+
+    const citiesCursor = collection_cities.find(query, {
+      projection: { city: 1, _id: 1, alternatives: 1, slug: 1 },
+    });
 
     // Convert the cursor to an array of cities
     const cities = await citiesCursor.toArray();
@@ -503,17 +418,15 @@ export async function getCities() {
   } catch (error) {
     console.error('Error fetching cities:', error);
     return [];
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function createUser(email, locationId) {
-  const client = new MongoClient(uri);
 
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameUsers);
     const users = database.collection(collectionNameUsers);
 
@@ -537,17 +450,15 @@ export async function createUser(email, locationId) {
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
     return null;
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function findUser(email) {
-  const client = new MongoClient(uri);
 
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameUsers);
     const users = database.collection(collectionNameUsers);
 
@@ -557,17 +468,15 @@ export async function findUser(email) {
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
     return null;
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function updateUserField(email, field, value) {
-  const client = new MongoClient(uri);
 
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameUsers);
     const users = database.collection(collectionNameUsers);
 
@@ -579,16 +488,14 @@ export async function updateUserField(email, field, value) {
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
     return null;
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function updateLocationField(locationId, field, value) {
 
-  const client = new MongoClient(uri);
-  await client.connect();
+  const client = await clientPromise;
+
   const database = client.db(dbNameAgenda);
   const collection = database.collection(collectionNameLocations);
   // const database = client.db(dbNameLocations);
@@ -596,14 +503,12 @@ export async function updateLocationField(locationId, field, value) {
     { _id: new ObjectId(locationId) },
     { $set: { [field]: value } }
   );
-  await client.close();
 }
 
 
 export async function saveLoginCode(email, code, expires) {
-  const client = new MongoClient(uri);
+  const client = await clientPromise;
 
-  await client.connect();
   const database = client.db(dbNameUsers);
   const loginCodes = database.collection(collectionNameLoginCodes);
 
@@ -613,14 +518,14 @@ export async function saveLoginCode(email, code, expires) {
     { upsert: true }
   );
 
-  await client.close();
 }
 
 
 export async function checkLoginCode(email, code) {
-  const client = new MongoClient(uri);
+
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameUsers);
     const loginCodes = database.collection(collectionNameLoginCodes);
 
@@ -645,16 +550,15 @@ export async function checkLoginCode(email, code) {
   } catch (error) {
     console.error("Error checking login code:", error);
     return { valid: false, reason: "Internal error." };
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function createAuthLog(log) {
-  const client = new MongoClient(uri);
+
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameUsers);
     const authLogs = database.collection(collectionNameAuthLogs);
 
@@ -663,16 +567,15 @@ export async function createAuthLog(log) {
   } catch (error) {
     console.error("Error inserting auth log:", error);
     return { valid: false, reason: "Internal error." };
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function updateImageReference(exhibitionId, imageUrl) {
-  const client = new MongoClient(uri);
+
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection = database.collection(collectionNameAgenda);
 
@@ -688,17 +591,15 @@ export async function updateImageReference(exhibitionId, imageUrl) {
   } catch (error) {
     console.error("Error updating MongoDB:", error);
     throw error;
-  } finally {
-    await client.close();
   }
 }
 
 
 export async function deleteImageReference(exhibitionId, imagePath) {
-  const client = new MongoClient(uri);
 
   try {
-    await client.connect();
+    const client = await clientPromise;
+
     const database = client.db(dbNameAgenda);
     const collection = database.collection(collectionNameAgenda);
 
@@ -739,8 +640,6 @@ export async function deleteImageReference(exhibitionId, imagePath) {
   } catch (error) {
     console.error('Error removing image reference from MongoDB:', error);
     throw error;
-  } finally {
-    await client.close();
   }
 }
 
