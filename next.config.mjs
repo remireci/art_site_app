@@ -37,20 +37,6 @@ const nextConfig = {
     ],
   },
 
-  async headers() {
-    return [
-      {
-        source: '/:path*.xml',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'application/xml; charset=utf-8',
-          }
-        ],
-      },
-    ]
-  },
-
   async redirects() {
     return [
       {
@@ -59,7 +45,20 @@ const nextConfig = {
         permanent: true,
       },
     ]
-  }
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap',
+      },
+      {
+        source: '/sitemap-:lang.xml',
+        destination: '/api/sitemap/:lang',
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

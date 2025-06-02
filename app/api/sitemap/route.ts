@@ -1,25 +1,30 @@
-import { generateSitemap } from "../../../scripts/sitemap";
+import { NextRequest } from "next/server";
 
-export async function GET() {
-  const sitemapXml = await generateSitemap();
+const LANGUAGES = ["en", "nl", "fr"];
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://www.artnowdatabase.eu"
+    : "http://localhost:3000";
 
-  return new Response(sitemapXml, {
+type Params = { params: { lang: string } };
+
+export async function GET(req: NextRequest, { params }: Params) {
+  const lang = params.lang;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${LANGUAGES.map(
+    (lang) => `
+  <sitemap>
+    <loc>${BASE_URL}/sitemap-${lang}.xml</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+  </sitemap>
+  `
+  ).join("")}
+</sitemapindex>`;
+
+  return new Response(xml, {
     headers: {
       "Content-Type": "application/xml",
-      "Cache-Control": "public, max-age=86400",
     },
   });
 }
-
-// // app/api/sitemap/route.js or route.ts
-// import { NextResponse } from "next/server";
-// import { sitemap } from "../../../scripts/sitemap";
-
-// export async function GET() {
-//   try {
-//     await sitemap();
-//     return NextResponse.json({ success: true });
-//   } catch (err: any) {
-//     return NextResponse.json({ success: false, error: err.message });
-//   }
-// }
