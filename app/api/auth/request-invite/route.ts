@@ -37,8 +37,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        error:
-          "No matching institution found. If your institution is not yet listed, please contact us at info@artnowdatabase.eu to request inclusion.",
+        error: "Unrecognized institution",
       },
       { status: 403 }
     );

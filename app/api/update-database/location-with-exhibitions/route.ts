@@ -10,7 +10,7 @@ export async function GET() {
 
     const locations = await getLocations();
 
-    const limit = pLimit(5); // Control concurrency
+    const limit = pLimit(2); // Control concurrency
 
     const updatePromises = locations.map((location) =>
       limit(async () => {
@@ -57,7 +57,17 @@ export async function GET() {
     }));
 
     if (bulkOps.length > 0) {
-      await db.collection("Locations").bulkWrite(bulkOps);
+      // await db.collection("Locations").bulkWrite(bulkOps);
+      const chunkSize = 50;
+      for (let i = 0; i < bulkOps.length; i += chunkSize) {
+        const chunk = bulkOps.slice(i, i + chunkSize);
+        await db.collection("Locations").bulkWrite(chunk);
+        console.log(
+          `Processed chunk ${i / chunkSize + 1} of ${Math.ceil(
+            bulkOps.length / chunkSize
+          )}`
+        );
+      }
     }
 
     return NextResponse.json({

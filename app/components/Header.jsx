@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { FiMenu } from "react-icons/fi";
 import Menu from "./Menu";
@@ -11,16 +11,17 @@ const Header = () => {
     const toggleMenu = () => {
         setShowMenu((prev) => !prev);
     };
+    const menuRef = useRef(null);
 
     // Close menu when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (showMenu && !(event.target).closest("#mobile-menu")) {
+            if (showMenu && menuRef.current && !menuRef.current.contains(event.target)) {
                 setShowMenu(false);
             }
         };
-        document.addEventListener("click", handleClickOutside);
-        return () => document.removeEventListener("click", handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [showMenu]);
 
     // Reset menu on resize
@@ -80,8 +81,8 @@ const Header = () => {
                 {/* Navigation menu for small screens */}
                 {
                     showMenu && (
-                        <div id="mobile-menu" className="absolute top-12 left-0 w-full bg-slate-50 shadow-lg p-1 lg:hidden z-40">
-                            <nav className="flex flex-col space-y-4">
+                        <div ref={menuRef} className="absolute top-12 left-0 w-full bg-slate-50 shadow-lg p-1 lg:hidden z-40">
+                            <nav className="flex flex-col mx-4 space-y-4">
                                 <Menu />
                             </nav>
                         </div>

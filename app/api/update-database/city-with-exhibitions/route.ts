@@ -12,7 +12,7 @@ export async function GET() {
     const cities = await getCities();
     console.log("Loaded cities:", cities.length);
 
-    const limit = pLimit(5); // Control concurrency
+    const limit = pLimit(2); // Control concurrency
 
     const updatePromises = cities.map((cityDoc) =>
       limit(async () => {
@@ -58,8 +58,18 @@ export async function GET() {
 
     try {
       if (bulkOps.length > 0) {
-        const result = await db.collection("city_mapping").bulkWrite(bulkOps);
-        console.log("Bulk write result:", result);
+        // const result = await db.collection("city_mapping").bulkWrite(bulkOps);
+        // console.log("Bulk write result:", result);
+        const chunkSize = 50;
+        for (let i = 0; i < bulkOps.length; i += chunkSize) {
+          const chunk = bulkOps.slice(i, i + chunkSize);
+          await db.collection("city_mapping").bulkWrite(chunk);
+          console.log(
+            `Processed chunk ${i / chunkSize + 1} of ${Math.ceil(
+              bulkOps.length / chunkSize
+            )}`
+          );
+        }
       }
     } catch (err) {
       console.error("Bulk write failed:", err);

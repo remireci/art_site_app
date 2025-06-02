@@ -50,7 +50,7 @@ export default async function CityList({ params }: LocationsListPageProps) {
                         <li key={city.id}>
                             <h2 className="text-lg">
                                 <Link
-                                    href={`/${locale}/exhibitions/cities/${encodeURIComponent(city.slug)}`}
+                                    href={`/${locale}/exhibitions/cities/${(city.slug)}`}
                                     className="hover:underline"
                                 >
                                     {city.city}
