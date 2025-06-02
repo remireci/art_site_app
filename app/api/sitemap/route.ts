@@ -9,7 +9,7 @@ const BASE_URL =
 type Params = { params: { lang: string } };
 
 export async function GET(req: NextRequest, { params }: Params) {
-  const lang = params.lang;
+  // const lang = params.lang;
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${LANGUAGES.map(

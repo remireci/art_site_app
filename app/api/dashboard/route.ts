@@ -4,6 +4,8 @@ import User from "@/models/User";
 import Location from "@/models/Location";
 import { findUser, getLocationByDomain, createUser } from "@/db/mongo";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const cookieStore = cookies();

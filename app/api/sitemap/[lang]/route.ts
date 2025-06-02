@@ -51,7 +51,7 @@ export async function GET(
 
   try {
     const [locationsData, citiesData] = await Promise.all([
-      getLocations(),
+      getLocations({ onlyWithExhibitions: true }),
       getCities({ onlyWithExhibitions: true }),
     ]);
 
