@@ -84,7 +84,6 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
 
     // console.log("the exhibitions", groupedExhibitions);
 
-
     const getRandomLocation = (): LatLngTuple => {
         return possibleStartLocations[Math.floor(Math.random() * possibleStartLocations.length)];
     };

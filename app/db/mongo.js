@@ -283,7 +283,10 @@ export async function getLocationByDomain(domain) {
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
 
-    return await collection_locations.findOne({ domain });
+    const location = await collection_locations.findOne({ domain: { $eq: domain } })
+
+    return location;
+
   } catch (error) {
     console.error(`Error fetching location for domain ${domain}:`, error);
     return null;
