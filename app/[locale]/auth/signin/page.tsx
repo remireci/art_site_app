@@ -1,4 +1,4 @@
-import SigninForm from '@/components/auth/SigninForm';
+import SigninForm from '@/components/auth/signin/Signin';
 
 export default function SigninPage() {
     // Here you could add server-only logic if needed (auth checks, cookies, etc)
