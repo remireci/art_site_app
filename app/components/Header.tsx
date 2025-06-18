@@ -5,7 +5,11 @@ import { FiMenu } from "react-icons/fi";
 import Menu from "./Menu";
 import { useTranslations } from "next-intl";
 
-const Header = () => {
+type HeaderProps = {
+    isLoggedIn?: boolean;
+};
+
+const Header = ({ isLoggedIn }: HeaderProps) => {
     const t = useTranslations();
     const [showMenu, setShowMenu] = useState(false);
     const toggleMenu = () => {

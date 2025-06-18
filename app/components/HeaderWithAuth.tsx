@@ -6,7 +6,7 @@ export default async function HeaderWithAuth() {
     const cookieStore = cookies();
     const authToken = cookieStore.get('auth_token');
 
-    const isLoggedIn = !!authToken; // You can also verify the token here if needed
+    const isLoggedIn = !!authToken;
 
     return <Header isLoggedIn={isLoggedIn} />;
 }
