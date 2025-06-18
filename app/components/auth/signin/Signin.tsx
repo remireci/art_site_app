@@ -10,7 +10,7 @@ import { RequestAddDomainForm } from './RequestAddDomainForm';
 
 export default function SigninForm() {
     const searchParams = useSearchParams();
-    const reset = searchParams.get('reset');
+    const reset = searchParams?.get('reset');
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [status, setStatus] = useState<'idle' | 'institution-not-found' | 'user-not-found' | 'loading' | 'success' | 'error' | 'redirecting' | 'awaiting-code'>('idle');

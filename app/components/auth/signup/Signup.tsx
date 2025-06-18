@@ -23,7 +23,7 @@ export default function SignupForm() {
     });
 
     useEffect(() => {
-        if (searchParams.get('showInstitutionForm') === '1') {
+        if (searchParams?.get('showInstitutionForm') === '1') {
             setShowInstitutionForm(true);
         }
     }, [searchParams]);

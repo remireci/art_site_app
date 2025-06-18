@@ -16,6 +16,7 @@ export function middleware(request: NextRequest) {
 
   // Bypass static files and internal routes
   if (
+    pathname.startsWith("/pages") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||
     PUBLIC_FILE.test(pathname)

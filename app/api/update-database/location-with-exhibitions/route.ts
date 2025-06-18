@@ -3,6 +3,8 @@ import { getLocations, getExhibitionsByDomain } from "@/db/mongo";
 import pLimit from "p-limit";
 import clientPromise from "@/lib/mongoClient";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const client = await clientPromise;
