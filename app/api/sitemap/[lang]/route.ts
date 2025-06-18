@@ -3,12 +3,25 @@ import { getLocations, getCities } from "@/db/mongo";
 
 const LANGUAGES = ["en", "nl", "fr"];
 
-const URL =
+const BASE_URL =
   process.env.NODE_ENV === "production"
     ? "https://www.artnowdatabase.eu"
     : "http://localhost:3000";
 
-function generateSitemapXml(entries: any[]) {
+type AlternateUrl = {
+  hreflang: string;
+  loc: string;
+};
+
+type SitemapEntry = {
+  url: string;
+  lastModified: string;
+  changeFrequency: string;
+  priority: number;
+  alternates: AlternateUrl[];
+};
+
+function generateSitemapXml(entries: SitemapEntry[]) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -34,7 +47,7 @@ function generateSitemapXml(entries: any[]) {
 
 function generateLocalizedUrls(path: string) {
   return LANGUAGES.map((lang) => ({
-    loc: `${URL}/${lang}${path}`,
+    loc: `${BASE_URL}/${lang}${path}`,
     hreflang: lang,
   }));
 }
@@ -60,7 +73,7 @@ export async function GET(
     const locationEntries = locationsData.map((location: any) => {
       const basePath = `/exhibitions/locations/${location.domain_slug}`;
       return {
-        url: `${URL}/${lang}${basePath}`,
+        url: `${BASE_URL}/${lang}${basePath}`,
         lastModified: now,
         changeFrequency: "weekly",
         priority: 0.8,
@@ -72,7 +85,7 @@ export async function GET(
       const basePath = `/exhibitions/cities/${city.slug}`;
 
       return {
-        url: `${URL}/${lang}${basePath}`,
+        url: `${BASE_URL}/${lang}${basePath}`,
         lastModified: now,
         changeFrequency: "weekly",
         priority: 0.8,
@@ -89,7 +102,7 @@ export async function GET(
       "/texts",
     ].map((route) => {
       return {
-        url: `${URL}/${lang}${route}`,
+        url: `${BASE_URL}/${lang}${route}`,
         lastModified: now,
         changeFrequency: "weekly",
         priority: 1,
@@ -104,6 +117,7 @@ export async function GET(
     return new Response(xml, {
       headers: {
         "Content-Type": "application/xml",
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=60",
       },
     });
   } catch (error) {

@@ -8,7 +8,7 @@ type SendEmailResult =
   | { success: true; messageId: string }
   | { success: false; error: string };
 
-export async function sendTestEmail(
+export async function sendAndEmail(
   email: string | null
 ): Promise<SendEmailResult> {
   const transporter = nodemailer.createTransport({

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from 'next/font/google';
 import "../styles/globals.css";
-import Header from "../components/Header.jsx";
+import Header from "../components/Header";
 import { LocationProvider } from "../context/LocationContext";
 import CookieBanner from "../components/CookieBanner";
 import Footer from "../components/Footer";

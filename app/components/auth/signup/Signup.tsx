@@ -1,30 +1,50 @@
 'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { extractDomain } from '@/utils/extractDomain';
 
-type InstitutionField = 'name' | 'address' | 'city' | 'contactEmail' | 'url';
+type InstitutionField = 'location' | 'address' | 'city' | 'mail' | 'url' | 'domain';
 
 export default function SignupForm() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const [email, setEmail] = useState('');
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'not-in-database' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
     const [showInstitutionForm, setShowInstitutionForm] = useState(false);
 
     const [institution, setInstitution] = useState({
-        name: '',
+        location: '',
         address: '',
         city: '',
-        contactEmail: '',
-        url: ''
+        mail: '',
+        url: '',
+        domain: '',
     });
 
+    useEffect(() => {
+        if (searchParams.get('showInstitutionForm') === '1') {
+            setShowInstitutionForm(true);
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
+        if (status === 'not-in-database') {
+            const timer = setTimeout(() => {
+                router.push('/');
+            }, 10000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [status, router]);
+
     const institutionFields: { name: InstitutionField; placeholder: string }[] = [
-        { name: 'name', placeholder: 'Name of your institution' },
+        { name: 'location', placeholder: 'Name of your institution' },
         { name: 'address', placeholder: 'Address of your institution' },
         { name: 'city', placeholder: 'City' },
-        { name: 'contactEmail', placeholder: 'Email – your.name@yourdomain.com' },
+        { name: 'mail', placeholder: 'Email – your.name@yourdomain.com' },
         { name: 'url', placeholder: 'Website – https://www.yourdomain.com' },
+        { name: 'domain', placeholder: 'Domain – yourdomain.com' },
     ];
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -59,22 +79,26 @@ export default function SignupForm() {
         }
     };
 
+    const emailDomain = extractDomain(institution.mail);
+    const urlDomain = extractDomain(institution.url);
+    const domainsMatch = emailDomain && urlDomain && emailDomain === urlDomain;
+
     const handleInstitutionSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('loading');
 
         try {
-            const res = await fetch('/api/request-location', {
+            const res = await fetch('/api/auth/create-location', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...institution, email }),
+                body: JSON.stringify({ ...institution, domain: urlDomain }),
             });
 
             const data = await res.json();
 
             if (!res.ok) {
                 setStatus('error');
-                setMessage(data.error || 'Failed to submit request.');
+                setMessage(data.error || 'Failed to create location.');
                 return;
             }
 
@@ -87,9 +111,7 @@ export default function SignupForm() {
         }
     };
 
-    const emailDomain = extractDomain(institution.contactEmail);
-    const urlDomain = extractDomain(institution.url);
-    const domainsMatch = emailDomain && urlDomain && emailDomain === urlDomain;
+
 
     return (
         <main className="w-96 mx-auto text-slate-600 my-40 p-4 border rounded shadow">

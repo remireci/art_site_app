@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { saveLoginCode } from "@/db/mongo";
+import { saveLoginCode, findUser, getLocationByDomain } from "@/db/mongo";
 import { sendCodeEmail } from "@/lib/email/sendCodeEmail";
 import { hashCode } from "@/lib/codeUtils";
 import { logAuthEvent } from "@/lib/auth/logAuthEvent";
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   }
 
   const code = Math.floor(100000 + Math.random() * 900000).toString();
-  const expires = Date.now() + 10 * 60 * 1000;
+  const expires = Date.now() + 10 * 60 * 100000;
   const userCodeHash = hashCode(code);
 
   const forwardedFor = req.headers.get("x-forwarded-for") || "";

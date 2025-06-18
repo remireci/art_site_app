@@ -16,12 +16,13 @@ export async function GET() {
     }
 
     const parsed = JSON.parse(token.value);
-    // const email = parsed.email;
-    const email = "dirk_mertens@fastmail.fm";
+    const email = parsed.email;
+    // const email = "dirk_mertens@fastmail.fm";
     const domain = email.split("@")[1];
 
     let user = await findUser(email);
 
+    // if token but not yet a user, the user should be created
     if (!user) {
       const location = await getLocationByDomain(domain);
 

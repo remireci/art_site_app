@@ -38,7 +38,9 @@ export default async function HomePage() {
     const locations = await locationsResponse.json();
     const exhibitions = await exhibitionsResponse.json();
 
-    // console.log("Sample locations data:", exhibitions.slice(0, 10));
+    // console.log("Sample locations data:", locations.slice(0, 10));
+    console.log("Total number of displayed exhibitions:", exhibitions.length);
+    console.log("Total number of displayed locations:", locations.length);
 
     const extractWords = (title) =>
       title

@@ -11,12 +11,12 @@ const Header = () => {
     const toggleMenu = () => {
         setShowMenu((prev) => !prev);
     };
-    const menuRef = useRef(null);
+    const menuRef = useRef<HTMLDivElement | null>(null);
 
     // Close menu when clicking outside
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (showMenu && menuRef.current && !menuRef.current.contains(event.target)) {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (showMenu && menuRef.current && !menuRef.current.contains(event.target as Node)) {
                 setShowMenu(false);
             }
         };
@@ -83,7 +83,8 @@ const Header = () => {
                     showMenu && (
                         <div ref={menuRef} className="absolute top-12 left-0 w-full bg-slate-50 shadow-lg p-1 lg:hidden z-40">
                             <nav className="flex flex-col mx-4 space-y-4">
-                                <Menu />
+                                <Menu
+                                />
                             </nav>
                         </div>
                     )

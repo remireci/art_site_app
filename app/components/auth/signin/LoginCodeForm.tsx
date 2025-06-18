@@ -8,7 +8,6 @@ type LoginCodeFormProps = {
 };
 
 
-
 export const LoginCodeForm = ({
     email,
     code,
@@ -17,8 +16,6 @@ export const LoginCodeForm = ({
     message,
     handleCodeSubmit,
 }: LoginCodeFormProps) => {
-
-
 
 
     return (

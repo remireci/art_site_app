@@ -6,10 +6,6 @@ import { Metadata } from 'next';
 export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
     const { locale, city: slug } = params;
 
-    const data = await getLocations_by_city(slug);
-
-    const cityName = data[0]?.city;
-
     // Load locale-specific messages
     let messages;
     try {
@@ -19,17 +15,69 @@ export async function generateMetadata({ params }: { params: { locale: string; c
         messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
     }
 
+    const data = await getLocations_by_city(slug);
+    const cityName = data[0]?.city;
+
+    // Get the first exhibition with an image in this city
+    const exhibitionWithImage = data.find((loc: any) => loc.image_reference);
+    let optimizedUrl = '';
+    let imageAlt = '';
+
+    if (exhibitionWithImage) {
+        const image = exhibitionWithImage.image_reference;
+        const imageName = image.split("?")[0].split("agenda/")[1];
+        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=1200/agenda/${encodeURI(imageName)}`;
+        imageAlt = `${exhibitionWithImage.title} at ${exhibitionWithImage.location} in ${cityName}`;
+    }
+
     const baseUrl = 'https://www.artnowdatabase.eu';
+    const canonicalUrl = `${baseUrl}/${locale}/exhibitions/cities/${slug}`;
+    const title = `${messages['meta-title_a']} ${cityName} ${messages['meta-title_b']}`;
+    const description = `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`;
 
-
-    return {
-        title: `${messages['meta-title_a']} ${cityName} ${messages['meta-title_b']}`,
-        description: `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`,
+    const metadata: Metadata = {
+        title: title,
+        description: description,
         keywords: `${messages['meta-keywords']} ${cityName}`,
         alternates: {
-            canonical: `${baseUrl}/${locale}/exhibitions/cities/${slug}`,
+            canonical: canonicalUrl,
         },
+        openGraph: {
+            title: title,
+            description: description,
+            url: canonicalUrl,
+            type: 'website',
+            siteName: 'Art Now Database',
+            ...(exhibitionWithImage && {
+                images: [{
+                    url: optimizedUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: imageAlt,
+                }]
+            })
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: title,
+            description: description,
+            ...(exhibitionWithImage && { images: [optimizedUrl] })
+        },
+        robots: {
+            index: true,
+            follow: true,
+        },
+        metadataBase: new URL(baseUrl),
     };
+
+    // Add image alt text if available
+    if (exhibitionWithImage) {
+        metadata.other = {
+            'image:alt': imageAlt,
+        };
+    }
+
+    return metadata;
 }
 
 export default async function CityPage({ params }: { params: { locale: string; city: string } }) {
@@ -191,7 +239,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
                                         loading={index === 0 ? "eager" : "lazy"}
                                         unoptimized
                                         src={optimizedUrl}
-                                        alt={exhibition.title}
+                                        alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
                                         width={100}
                                         height={50}
                                         className="rounded-lg"

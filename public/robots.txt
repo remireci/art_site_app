@@ -6,7 +6,7 @@ Allow: /
 Host: https://www.artnowdatabase.eu
 
 # Sitemaps
-Sitemap: https://www.artnowdatabase.eu/sitemap.xml
+Sitemap: https://www.artnowdatabase.eu/api/sitemap
 Sitemap: https://www.artnowdatabase.eu/sitemap-en.xml
 Sitemap: https://www.artnowdatabase.eu/sitemap-nl.xml
 Sitemap: https://www.artnowdatabase.eu/sitemap-fr.xml

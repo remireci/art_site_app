@@ -19,6 +19,7 @@ const UserMenuButton = () => {
         fetch('/api/auth/me')
             .then((res) => setIsLoggedIn(res.ok))
             .catch(() => setIsLoggedIn(false));
+
     }, []);
 
     const handleLogout = async () => {
@@ -48,17 +49,19 @@ const UserMenuButton = () => {
                 </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuContent align="end" className="text-center p-2 rounded-md">
                 {!isLoggedIn ? (
-                    <DropdownMenuItem onClick={() => router.push('/auth/signin')}>
+                    <DropdownMenuItem className="justify-center"
+                        onClick={() => router.push('/auth/signin?reset=1')}>
                         Log in
                     </DropdownMenuItem>
                 ) : (
                     <>
-                        <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                        <DropdownMenuItem className="hover:bg-gray-500 hover:text-white justify-center transition-colors duration-200 rounded-md"
+                            onClick={() => router.push('/dashboard')}>
                             Dashboard
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-gray-500 hover:text-white justify-center transition-colors duration-200 rounded-md" onClick={handleLogout}>Log out</DropdownMenuItem>
                     </>
                 )}
             </DropdownMenuContent>

@@ -6,7 +6,7 @@ export async function GET() {
   try {
     console.log("API map/locations called");
 
-    const locations = await getLocations();
+    const locations = await getLocations({ onlyWithExhibitions: true });
 
     if (!locations) {
       console.log("No locations found");

@@ -71,7 +71,7 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
                 alt={title}
                 fill
                 placeholder='blur'
-                blurDataURL='"/placeholder.png'
+                blurDataURL='/placeholder.png'
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-contain transition-transform duration-700 ease-in-out hover:scale-[1.4] hover:z-10"
             />

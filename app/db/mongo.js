@@ -495,6 +495,22 @@ export async function updateUserField(email, field, value) {
 }
 
 
+export async function createLocation(institutionData) {
+  const client = await clientPromise;
+  const database = client.db(dbNameAgenda);
+  const collection = database.collection(collectionNameLocations);
+
+  const newLocation = {
+    ...institutionData,
+    show: false,
+    createdAt: new Date(),
+  };
+
+  const result = await collection.insertOne(newLocation);
+  return result.insertedId;
+}
+
+
 export async function updateLocationField(locationId, field, value) {
 
   const client = await clientPromise;

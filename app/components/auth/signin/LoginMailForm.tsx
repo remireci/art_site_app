@@ -1,11 +1,10 @@
 type LoginMailFormProps = {
     email: string;
     message: string;
-    status: 'idle' | 'not-in-database' | 'loading' | 'success' | 'error' | 'redirecting' | 'awaiting-code';
+    status: 'idle' | 'institution-not-found' | 'user-not-found' | 'loading' | 'success' | 'error' | 'redirecting' | 'awaiting-code';
     setEmail: (email: string) => void;
     handleEmailSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 };
-
 
 export const LoginMailForm = ({
     email,
@@ -15,10 +14,9 @@ export const LoginMailForm = ({
     handleEmailSubmit
 }: LoginMailFormProps) => {
 
-
     return (
         <form onSubmit={handleEmailSubmit} className="flex flex-col items-center space-y-4">
-            <h1 className="text-lg text-center mb-2">Sign in</h1>
+            <h1 className="text-lg text-center mb-2">Sign in or create an account</h1>
             <input
                 type="email"
                 placeholder="Your email"
@@ -32,10 +30,13 @@ export const LoginMailForm = ({
                 className="w-30 h-8 bg-[#87bdd8] hover:bg-blue-700 text-white px-4 rounded-xl"
                 disabled={status === 'loading'}
             >
-                {status === 'loading' ? 'Sending…' : 'Send Login Code'}
+                {status === 'loading' ? 'Sending…' : 'Continue'}
             </button>
             {message && (
-                <p className={`mt-4 text-center ${status === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+                <p
+                    className={`mt-4 text-center ${status === 'error' ? 'text-red-600' : 'text-green-600'}`}
+                    style={{ whiteSpace: 'pre-line' }}
+                >
                     {message}
                 </p>
             )}

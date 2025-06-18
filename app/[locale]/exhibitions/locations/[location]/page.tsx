@@ -10,8 +10,6 @@ import { convertToDomain } from "@/utils/convertToDomain";
 export async function generateMetadata({ params }: { params: { locale: string; location: string } }): Promise<Metadata> {
     const { locale, location } = params;
 
-    console.log("the location from the generatedata funcion", location);
-
     // Load locale-specific messages
     let messages;
     try {
@@ -27,10 +25,9 @@ export async function generateMetadata({ params }: { params: { locale: string; l
     const city = institution?.city;
 
     const data = await getExhibitionsByDomain(domain);
-    console.log("the city", domain);
 
-    // 3. Handle empty data case
-    if (data.length === 0) {
+    // 1. Handle empty data case first
+    if (data.length === 0 || !data[0].image_reference) {
         return {
             title: "Location not found",
             description: "No exhibitions found for this location",
@@ -38,20 +35,56 @@ export async function generateMetadata({ params }: { params: { locale: string; l
                 canonical: `/${locale}/exhibitions/locations/${location}`,
             },
             robots: {
-                index: false, // Prevent indexing of empty pages
+                index: false,
                 follow: true,
             },
         };
     }
 
+    const image = data[0].image_reference[0];
+    const imageName = image.split("?")[0].split("agenda/")[1];
+    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(imageName)}`;
 
     // Capitalize location name for display
     const locationName = location.charAt(0).toUpperCase() + location.slice(1);
+    const title = `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'} in ${city}`;
+    const description = `${messages['meta-description'] || 'Explore art exhibitions'} ${data[0].location}.`;
 
     return {
-        title: `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'} in ${city}`,
-        description: `${messages['meta-description'] || 'Explore art exhibitions'} ${data[0].location}.`,
-        keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`
+        title: title,
+        description: description,
+        keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`,
+        alternates: {
+            canonical: `/${locale}/exhibitions/locations/${location}`,
+        },
+        openGraph: {
+            title: title,
+            description: description,
+            url: `/${locale}/exhibitions/locations/${location}`,
+            type: 'website',
+            images: [{
+                url: optimizedUrl,
+                width: 800,
+                height: 600,
+                alt: `${data[0].location} exhibition in ${city}`,
+            }],
+            siteName: 'Art Now Database',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: title,
+            description: description,
+            images: [optimizedUrl],
+        },
+        // Additional metadata for images
+        metadataBase: new URL('https://www.artnowdatabase.eu'),
+        other: {
+            'image:alt': `${data[0].location} exhibition in ${city} - Image courtesy of ${data[0].location}`,
+        },
+        robots: {
+            index: true,
+            follow: true,
+        }
     };
 }
 
@@ -129,7 +162,7 @@ export default async function LocationPage({ params }: { params: { location: str
                                     loading={index === 0 ? "eager" : "lazy"}
                                     unoptimized
                                     src={optimizedUrl}
-                                    alt={exhibition.title}
+                                    alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
                                     width={150}
                                     height={100}
                                     className="rounded-lg"

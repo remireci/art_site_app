@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LocaleSwitcher from "./LocaleSwitcher";
 import { useTranslations, useLocale } from "next-intl";
-import UserMenuButton from "./UserMenuButton";
+import UserMenuButtonWrapper from "./UserMenuButtonWrapper";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 
@@ -32,7 +32,8 @@ const Menu = () => {
                     </Link>
                 </Button> */}
 
-                <UserMenuButton />
+                <UserMenuButtonWrapper
+                />
                 {/* <Link href="/account?message=wishlist"> */}
                 <div className="relative hover:text-gray-600 cursor-pointer"
                 >

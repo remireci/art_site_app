@@ -16,7 +16,11 @@ export async function sendInviteEmail(to: string, token: string) {
   const html = `
     <p>Hello,</p>
     <p>You have been invited to manage your institution's exhibitions on ArtNowDatabase. Click the link below to create your account:</p>
-    <p><a href="${link}">${link}</a></p>
+    <p><a href="${link}">Click here to create your account</a></p>
+
+    <p>If the link above doesn't work, copy and paste the following URL into your browser:</p>
+    <p>${link}</p>
+
     <p>If you weren’t expecting this invitation, you can safely ignore this email.</p>
     <p>Best regards,  </p>
     <p>The ArtNow Team</p>
