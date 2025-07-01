@@ -34,6 +34,6 @@
     "middleware.js",
     "middleware.js",
     "app/api/exhibitions/delete-image/route.js"
-  ],
+, "scripts/sitemap.js"  ],
   "exclude": ["node_modules"]
 }

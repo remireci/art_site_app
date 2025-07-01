@@ -20,11 +20,14 @@ export default async function DashboardPage() {
   const domain = "petitpalais.paris.fr"
 
 
-  const rawExhibitionsData = await getExhibitionsByDomain(domain, { includeHidden: true });
+  const rawExhibitionsData = await getExhibitionsByDomain(domain, { includeHidden: true, includeFuture: true });
+
+  console.log("raw exhibitions data", rawExhibitionsData)
+
   const exhibitionsData: Exhibition[] = rawExhibitionsData.map(doc => ({
     _id: (doc as any)._id?.toString() || "",
     title: (doc as any).title || "",
-    date_begin_st: (doc as any).date_begin_st,
+    date_begin_st: (doc as any).date_begin_st || "",
     date_end_st: (doc as any).date_end_st || "",
     location: (doc as any).location || "",
     url: (doc as any).url || "",

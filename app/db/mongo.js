@@ -150,10 +150,6 @@ export const getExhibitionsByDomain = async (domain, options = {}) => {
       // Only include exhibitions that already started
       dateConditions.push({ date_begin_st: { $lte: todayISO } });
       dateConditions.push({ date_begin_st: null });
-    } else {
-      // Include future ones, or those without a start date
-      dateConditions.push({ date_begin_st: { $lte: todayISO } });
-      dateConditions.push({ date_begin_st: null });
     }
 
     if (dateConditions.length > 0) {
@@ -365,8 +361,6 @@ export const getUniqueCities = async () => {
 
 
 export async function getLocations_by_city(slug) {
-
-
   try {
     const client = await clientPromise;
 

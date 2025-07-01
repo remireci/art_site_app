@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { addExhibition } from "@/db/mongo"; // You'll need this
+import { updateImageReference } from "@/db/mongo";
 import { v4 as uuidv4 } from "uuid";
 
 interface R2Config {
@@ -35,28 +35,33 @@ function getR2Config(): R2Config {
 
 export async function POST(req: Request) {
   const r2Client = new S3Client(getR2Config());
-  const body = await req.json();
-  const { title, location, url, domain, imageUrl, ...rest } = body;
-
-  if (!imageUrl) {
-    return NextResponse.json({ error: "Image URL required" }, { status: 400 });
-  }
 
   try {
-    // 1. Fetch and upload the image to R2
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-    const buffer = Buffer.from(await blob.arrayBuffer());
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+    const exhibitionId = formData.get("exhibitionId")?.toString();
 
-    const newExhibitionId = uuidv4();
-    const fileName = `agenda/${newExhibitionId}/${uuidv4()}.jpg`;
+    if (!file) {
+      return NextResponse.json({ error: "Missing file" }, { status: 400 });
+    }
+
+    const usedExhibitionId = exhibitionId || uuidv4();
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Determine content type (optional: validate type here too)
+    const contentType = file.type || "application/octet-stream";
+
+    const extension = contentType.split("/")[1] || "jpg";
+    const fileName = `agenda/${usedExhibitionId}/${uuidv4()}.${extension}`;
 
     await r2Client.send(
       new PutObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME || "agenda",
         Key: fileName,
         Body: buffer,
-        ContentType: "image/jpeg",
+        ContentType: contentType,
       })
     );
 
@@ -64,25 +69,24 @@ export async function POST(req: Request) {
       process.env.R2_PUBLIC_URL || "pub-1070865a23b94011a35efcf0cf91803e.r2.dev"
     }/${fileName}`;
 
-    console.log("this is the public URL, --", publicUrl);
+    console.log("Uploaded file to:", publicUrl);
 
-    // 2. Create the exhibition in Mongo
-    const exhibitionData = {
-      ...rest,
-      title,
-      location,
-      url,
-      domain,
-      image_reference: [publicUrl],
-      show: true,
-    };
+    // database update is done in the [id] route
+    // if (exhibitionId) {
+    //   await updateImageReference(exhibitionId, publicUrl);
+    // }
 
-    const inserted = await addExhibition(exhibitionData); // save to Mongo
-    return NextResponse.json({ success: true, exhibition: inserted });
-  } catch (err) {
-    console.error("Create with image error", err);
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : "Unknown" },
+      { message: "Image uploaded successfully", imageUrl: publicUrl },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("R2 Upload Error:", error);
+    return NextResponse.json(
+      {
+        error: "Server error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

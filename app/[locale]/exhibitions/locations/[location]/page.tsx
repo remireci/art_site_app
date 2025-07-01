@@ -108,29 +108,35 @@ export default async function LocationPage({ params }: { params: { location: str
 
     return (
         <main className="flex flex-col items-center p-4 min-h-screen">
-            <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
-                <a href="/">
-                    <p className="text-xl w-auto uppercase hover:text-gray-600">
+            <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
+                <a
+                    href="/"
+                    className="w-full text-center"
+                >
+                    <p className="text-xl w-auto uppercase">
                         Search exhibitions
                     </p>
                 </a>
             </div>
 
             {data.length > 0 && data[0]?.url && data[0]?.location ? (
-                <h1>
-                    <Modal url={data[0].url} location={data[0].location} />
-                    {/* Display city only if it's valid */}
-                    {data[0].city && !["N/A", "null", "", "-", "Unknown"].includes(data[0].city) && (
-                        <span className="text-sm text-gray-600">
-                            {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
-                        </span>
-                    )}
-                </h1>
+                <a
+                    className="text-md font-light underline rounded hover:bg-gray-100 p-1 border border-transparent hover:border-orange-400 transition-colors"
+                    href={data[0].url}
+                >
+
+                    <h1 >
+                        {data[0].location}
+                        {data[0].city && (
+                            <span className="text-sm text-gray-600"> - {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}</span>
+                        )}
+                    </h1>
+                </a>
             ) : (
                 <p className="text-gray-500">No data available</p>
             )}
 
-            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2">
+            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 gap-6 w-1/2">
                 {data.map((exhibition: any, index: number) => {
 
                     // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];

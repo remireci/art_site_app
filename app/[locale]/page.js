@@ -4,7 +4,9 @@ import { shuffleArray } from "../utils/shuffleArray";
 
 // export const runtime = 'edge';
 
-export default async function HomePage() {
+export default async function HomePage({ params }) {
+
+  const { locale } = params;
 
   const URL =
     process.env.NODE_ENV === "production"
@@ -117,7 +119,25 @@ export default async function HomePage() {
 
     return (
       <div>
-        <Search initialList={randomized} initialLocations={filteredLocations} exhibitions={uniqueGroups} />
+        <div className="flex flex-1 relative hidden lg:block flex flex-col justify-center items-right">
+          <section className="absolute top-10 lg:right-0 xl:left-0 w-1/4 xl:w-1/5 text-xs text-slate-600 font-light lg:pl-10 lg:pr-0 lg:py-20 xl:pl-4 xl:pr-24 xl:py-10">
+            <h1>Welcome to the Exhibitions Calendar</h1>
+            <p>
+              Discover actual art exhibitions across Europe.
+            </p>
+            <p>
+              Interactive search & map - filter by city, artist, museum, gallery, theme.
+            </p>
+          </section>
+        </div>
+        <div className="relative z-10">
+          <Search
+            initialList={randomized}
+            initialLocations={filteredLocations}
+            exhibitions={uniqueGroups}
+            locale={locale}
+          />
+        </div>
       </div>
     );
   } catch (error) {

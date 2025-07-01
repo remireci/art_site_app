@@ -19,6 +19,8 @@ export default function ExhibitionCard({ exhibition, priority, onUpdate }: { exh
     const [isEditingImage, setIsEditingImage] = useState(false);
 
     const handleSave = (updated: Exhibition) => {
+
+        console.log("from the CARD, the updated", updated);
         setIsEditing(false);
         onUpdate(updated);
     };
@@ -30,7 +32,7 @@ export default function ExhibitionCard({ exhibition, priority, onUpdate }: { exh
 
     let optimizedUrl;
 
-    if (exhibition.image_reference[0]) {
+    if (exhibition.image_reference && exhibition.image_reference[0]) {
         const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
         optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
@@ -43,11 +45,11 @@ export default function ExhibitionCard({ exhibition, priority, onUpdate }: { exh
 
 
     return (
-        <li className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
-            <h2 className="text-sm">{exhibition.title}</h2>
+        <li className="flex flex-col justify-start items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
+            <h2 className="text-sm whitespace-nowrap overflow-hidden truncate w-full">{exhibition.title}</h2>
             <p className="text-xs">{exhibition.date_end_st}</p>
 
-            {!exhibition.image_reference[0] && (
+            {exhibition.image_reference && !exhibition.image_reference[0] && (
                 <TooltipProvider>
                     <div className="flex items-center gap-1 text-red-500 text-xs italic">
                         <span>No image</span>
@@ -68,14 +70,14 @@ export default function ExhibitionCard({ exhibition, priority, onUpdate }: { exh
                 loading={priority ? "eager" : "lazy"}
                 unoptimized
                 src={optimizedUrl}
-                alt={exhibition.title}
+                alt={exhibition.title || ""}
                 width={150}
                 height={100}
                 className="rounded-lg my-2"
             />
 
             {
-                (!exhibition.show && exhibition.image_reference[0]) && <p className="text-red-500 text-xs italic">
+                (!exhibition.show && exhibition.image_reference) && <p className="text-red-500 text-xs italic">
                     Hidden
                 </p>
             }
@@ -88,8 +90,8 @@ export default function ExhibitionCard({ exhibition, priority, onUpdate }: { exh
                 Edit
             </button>
 
-
-            {
+            {/* adding edit and add image buttons = overload */}
+            {/* {
                 !exhibition.image_reference[0] && (
                     <div>
                         <button
@@ -111,7 +113,7 @@ export default function ExhibitionCard({ exhibition, priority, onUpdate }: { exh
                         Edit Image
                     </button>
                 )
-            }
+            } */}
 
             {
                 isEditingImage && (

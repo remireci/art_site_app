@@ -42,7 +42,7 @@ const Header = ({ isLoggedIn }: HeaderProps) => {
     // Function to hide the menu on small screens
 
     return (
-        <header className="flex flex-wrap overflow-hidden h-26 md:h-20 bg-stone-50">
+        <header className="flex flex-wrap overflow-hidden h-24 md:h-20 bg-stone-50">
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block"></div>
             <div className="flex flex-wrap justify-center w-full px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
                 <div className="bg-orange-400 mb-16 md:mb-0 pt-4 pb-3 px-8 flex flex-col md:flex-row justify-between items-center">

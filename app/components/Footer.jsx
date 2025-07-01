@@ -7,7 +7,7 @@ const Footer = () => {
     const locale = useLocale();
 
     return (
-        <footer className="bottom-0 w-full bg-slate-500 px-4 py-3 text-slate-100 font-extralight shadow-md">
+        <footer className="w-full bg-slate-500 px-4 py-3 text-slate-100 font-extralight shadow-md">
             <div className="container mx-auto flex flex-wrap items-center justify-between gap-4 text-center sm:text-left">
 
                 {/* Left Section */}

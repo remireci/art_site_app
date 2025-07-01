@@ -7,9 +7,10 @@ interface Props {
     location: string;
     domain: string;
     url: string;
+    onUpdate: (newExhibition: Exhibition) => void;
 }
 
-export default function AddExhibitionButton({ location, domain, url }: Props) {
+export default function AddExhibitionButton({ location, domain, url, onUpdate }: Props) {
     const [isAdding, setIsAdding] = useState(false);
 
     if (isAdding) {
@@ -17,7 +18,7 @@ export default function AddExhibitionButton({ location, domain, url }: Props) {
             <EditExhibitionForm
                 initialData={{ title: "", date_end_st: "", location: `${location}`, url: `${url}`, domain: `${domain}`, image_reference: [""], show: true }}
                 onSave={(newData) => {
-                    console.log("Add", newData);
+                    onUpdate(newData); // ✅ inform parent
                     setIsAdding(false);
                 }}
                 onCancel={() => setIsAdding(false)}

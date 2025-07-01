@@ -35,7 +35,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <LocationContext.Provider value={{ userLocation, setUserLocation, getUserLocation }}>
+        <LocationContext.Provider value={{ userLocation, setUserLocation, getUserLocation }} >
             {children}
         </LocationContext.Provider>
     );

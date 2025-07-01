@@ -16,11 +16,13 @@
   }
 }
 
+html,
 body {
-  height: 100vh;
+  height: 100%;
   margin: 0;
   transition: background-color 30s ease-in-out;
 }
+
 
 @layer utilities {
   .text-balance {
@@ -29,7 +31,7 @@ body {
 }
 
 .main-container {
-  height: 100vh;
+  /* height: 100vh; */
   position: relative;
 }
 

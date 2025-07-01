@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import InstitutionTab from "./InstitutionTab";
 import ExhibitionsTab from "./ExhibitionsTab";
+import { AdSubmissionForm } from "./AdSubmissionForm";
 import { Exhibition } from "@/types";
 
 interface Props {
@@ -46,18 +47,21 @@ export default function InstitutionDashboard({ exhibitionsData, locationData }: 
 
                 {/* Ads Tab */}
                 <TabsContent value="ads">
-                    <Card>
+                    {/* <Card>
                         <CardContent className="space-y-4 py-4">
                             <h2 className="text-xl font-semibold">Promote Your Event</h2>
                             <Input type="file" />
                             <Input placeholder="Link to your event or website" />
                             <select className="border rounded px-3 py-2">
-                                <option value="1week">1 week - €10</option>
-                                <option value="2weeks">2 weeks - €18</option>
+                                <option value="1week">1 week - €75</option>
+                                <option value="2weeks">2 weeks - €120</option>
+                                <option value="2weeks">4 weeks - €200</option>
+                                <option value="2weeks">8 weeks - €350</option>
                             </select>
                             <Button>Pay & Publish</Button>
                         </CardContent>
-                    </Card>
+                    </Card> */}
+                    <AdSubmissionForm />
                 </TabsContent>
 
                 {/* History Tab */}

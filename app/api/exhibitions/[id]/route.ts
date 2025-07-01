@@ -20,14 +20,31 @@ export async function PATCH(
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
-    const { _id, ...updatableFields } = body;
+    const { _id, imageUrl, ...rest } = body;
 
-    console.log("update exh object ID", objectId);
+    console.log("this is the body", body);
+
+    const { image_reference, ...updatableFields } = rest;
+
+    const updateOperations: any = {
+      $set: updatableFields,
+    };
+
+    console.log("this is the image_reference", updateOperations);
+
+    if (imageUrl) {
+      updateOperations.$set.image_reference = [imageUrl];
+    }
 
     const result = await collection.updateOne(
       { _id: objectId },
-      { $set: updatableFields }
+      updateOperations
     );
+
+    // const result = await collection.updateOne(
+    //   { _id: objectId },
+    //   { $set: updatableFields }
+    // );
 
     console.log("update exh", result);
 

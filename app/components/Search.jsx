@@ -23,7 +23,7 @@ const MosaicTab = dynamic(() => import("./MosaicTab"), {
 });
 
 
-const Search = ({ initialList, initialLocations, exhibitions }) => {
+const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
     const t = useTranslations();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState(initialList);
@@ -41,6 +41,12 @@ const Search = ({ initialList, initialLocations, exhibitions }) => {
     // const indexInitialSearch = Math.floor(Math.random(number) * number);
     // const initialSearchTerm = initialSearchTerms[indexInitialSearch];
 
+    const BASE_URL =
+        process.env.NODE_ENV === "production"
+            ? "https://www.artnowdatabase.eu"
+            : "http://localhost:3000";
+
+    const ads = [{ src: "/test_gif.gif", name: "" }, { src: "250516MR_MetropolisM_500kb.gif", name: "" }, { src: "AP_Ad_MM-1.gif", name: "" }]
 
 
     useEffect(() => {
@@ -157,6 +163,8 @@ const Search = ({ initialList, initialLocations, exhibitions }) => {
         }
     }, [query]);
 
+
+
     // Function to highlight the query text within the snippet and limit the length of the snippet
     const highlightQuery = (snippet, query) => {
         if (!query) return snippet; // Return the snippet as is if the query is empty
@@ -194,33 +202,7 @@ const Search = ({ initialList, initialLocations, exhibitions }) => {
                 }
                 {activeTab === 'map' && (
                     <SearchMap query={query} setQuery={setQuery} onSearch={handleSearch} />
-                )
-                }
-                {/* <div className='input-container flex flex-row items-end justify-between w-full h-2/3'>
-                    <div className='flex flex-row items-end relative w-full ml-2 text-slate-400'>
-                        <textarea
-                            className="w-full h-8 bg-slate-50 mr-2 p-1 placeholder:text-slate-300 placeholder:text-sm placeholder:font-light rounded border border-slate-300 focus:border-orange-400 focus:outline-none focus:ring-0 focus:shadow-[0_0_1px_1px_#f97316]"
-                            type="text"
-                            placeholder='artist, city, museum, title...'
-                            value={query}
-                            onChange={handleInputChange}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    handleSearch(); // Trigger search when Enter is pressed
-                                }
-                            }}
-                        />
-                        <
-                    </div>
-                    <button
-                        className="w-1/5 h-8 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 mx-1 rounded flex items-center justify-center"
-                        onClick={handleSearch}
-                    >
-                        Search
-                    </button>
-                </div> */}
-
+                )}
             </div>
 
             <div className="w-full px-1 my-1 sm:px-1 sm:my-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5 ">
@@ -238,7 +220,10 @@ const Search = ({ initialList, initialLocations, exhibitions }) => {
                     <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>{t("homepage.mosaic")}</button>
                 </div>
 
-                <div className='results-container flex-grow overflow-x-auto overflow-y-auto sm:mt-4' id="results-container" style={{ maxHeight: activeTab === 'list' ? '60vh' : '60vh' }}>
+                <div
+                    className='results-container  sm:mt-4' id="results-container"
+                // style={{ maxHeight: activeTab === 'list' ? '75vh' : '75vh' }}
+                >
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
@@ -412,8 +397,12 @@ const Search = ({ initialList, initialLocations, exhibitions }) => {
                                                 imagePath = resizedImagePath;
                                             }
 
-                                            const title = result.title || "";
 
+                                            const location = locations.find((loc) => loc.domain === result.domain)
+
+                                            const title = result.title || "";
+                                            const slug = location.domain_slug;
+                                            const URL = `${BASE_URL}/${locale}/exhibitions/locations/${slug}`
                                             const isEven = index % 2 === 0;
 
                                             return (
@@ -422,22 +411,22 @@ const Search = ({ initialList, initialLocations, exhibitions }) => {
                                                         // For even index: Text on the left, image on the right
                                                         <>
                                                             <div className="flex-1">
-                                                                {exhibitionUrl ? (
-                                                                    <a href={exhibitionUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                {URL ? (
+                                                                    <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
                                                                         {`${result.title}`}
                                                                         {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
                                                                     </a>
                                                                 ) : (
-                                                                    <a href={locationUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                    <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
                                                                         {`${result.title}`}
                                                                     </a>
                                                                 )}
                                                                 <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `&#8702; ${formatDate(result.date_end_st)}` }} />
-                                                                <a href={locationUrl} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
+                                                                <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
                                                                     {`in ${result.location}`}
                                                                 </a>
                                                             </div>
-                                                            <a href={exhibitionUrl || locationUrl} target="_blank" rel="noopener noreferrer">
+                                                            <a href={URL} target="_blank" rel="noopener noreferrer">
                                                                 <div className="relative mt-2 sm:mt-0 sm:ml-4 flex-shrink-0 before:absolute before:top-[0px] before:left-0 before:-translate-x-52 before:w-48 before:h-[1px] before:bg-gray-400" style={{ width: '160px', height: '160px' }}>
                                                                     <ImageDisplay imagePath={imagePath} title={title} priority={index < 2} />
                                                                 </div>
@@ -446,24 +435,24 @@ const Search = ({ initialList, initialLocations, exhibitions }) => {
                                                     ) : (
                                                         // For odd index: Image on the left, text on the right
                                                         <>
-                                                            <a href={exhibitionUrl || locationUrl} target="_blank" rel="noopener noreferrer">
+                                                            <a href={URL} target="_blank" rel="noopener noreferrer">
                                                                 <div className="relative mt-2 sm:mt-0 sm:mr-4 flex-shrink-0 before:absolute before:top-[0px] before:right-0 before:translate-x-52 before:w-48 before:h-[1px] before:bg-gray-400" style={{ width: '160px', height: '160px' }}>
                                                                     <ImageDisplay imagePath={imagePath} title={title} priority={index < 2} />
                                                                 </div>
                                                             </a>
                                                             <div className="flex-1 text-right">
-                                                                {exhibitionUrl ? (
-                                                                    <a href={exhibitionUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                {URL ? (
+                                                                    <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
                                                                         {`${result.title}`}
                                                                         {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
                                                                     </a>
                                                                 ) : (
-                                                                    <a href={locationUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                    <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
                                                                         {`${result.title}`}
                                                                     </a>
                                                                 )}
                                                                 <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `&#8702; ${formatDate(result.date_end_st)}` }} />
-                                                                <a href={locationUrl} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
+                                                                <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
                                                                     {`in ${result.location}`}
                                                                 </a>
                                                             </div>
@@ -483,16 +472,33 @@ const Search = ({ initialList, initialLocations, exhibitions }) => {
                 </div>
             </div>
 
-            <div className="flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
-
-                {/* <div className='bg-amber-100 md-w-full h-40 w-4/5 border-t-4'></div>
-                <div className='bg-green-300 w-full h-40 md-w-1/2 border-t-4'></div>
-                <div className='bg-indigo-500 w-full h-40 md-w-1/2 border-t-4'></div>
-                <div className='bg-pink-300 w-full h-40 md-w-1/2 border-t-4'></div>
-                <div className='bg-amber-100 w-full h-40 md-w-1/2 border-t-4'></div>
-                <div className='bg-green-300 w-full h-40 md-w-1/2 border-t-4'></div>
-                <div className='bg-indigo-500 w-full h-40 md-w-1/2 border-t-4'></div>
-                <div className='bg-pink-300 w-full h-40 md-w-1/2 border-t-4'></div> */}
+            <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
+                <div
+                    className="flex flex-row flex-wrap md:flex-col bg-slate-300 justify-center md:items-end space-y-5 md:mt-28 space-x-2 md:space-x-0 ml-auto py-2 pl-1 md:pl-0 pr-1 w-full md:w-4/5 lg:w-3/5 md:max-w-[240px]"
+                >
+                    {ads.map((ad, i) => (
+                        <div
+                            key={i}
+                            className='flex justify-end items-center basis-1/3 max-w-[30%] md:basis-1 md:max-w-[100%]'>
+                            <img
+                                src={ad.src}
+                                className="w-32 sm:w-30 md:w-40 lg:w-40 xl:w-52 2xl:w-60 h-auto"
+                            />
+                        </div>
+                    ))}
+                    <div className="hidden md:block">
+                        {ads.map((ad, i) => (
+                            <div
+                                key={`dup-${i}`}
+                                className='flex justify-end items-center'>
+                                <img
+                                    src={ad.src}
+                                    className="w-32 sm:w-30 md:w-40 lg:w-40 xl:w-52 2xl:w-60 h-auto"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block">

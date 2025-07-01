@@ -7,6 +7,5 @@ export async function GET() {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  // optionally verify token with your DB/session logic
   return NextResponse.json({ loggedIn: true });
 }

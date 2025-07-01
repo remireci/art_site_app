@@ -163,7 +163,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
 
 
     return (
-        <main className="flex flex-col items-center p-4 min-h-screen">
+        <div className="flex flex-col items-center p-4">
             <div className="mt-20">
                 {exhibitions.length > 0 ? (
                     <div>
@@ -269,6 +269,6 @@ export default async function CityPage({ params }: { params: { locale: string; c
                         </p>}
                 </div>
             </div> */}
-        </main>
+        </div>
     );
 }

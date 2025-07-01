@@ -104,22 +104,22 @@ export default async function LocaleLayout({
         />
       </head>
       <body className={roboto.className}>
-        <div className="flex flex-col min-h-screen">
-          <NextIntlClientProvider
-            locale={locale}
-            messages={messages}
-            timeZone="Europe/Brussels"
-          >
+        <NextIntlClientProvider
+          locale={locale}
+          messages={messages}
+          timeZone="Europe/Brussels"
+        >
+          <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-1">
-              <LocationProvider>
+              <LocationProvider >
                 {children}
               </LocationProvider>
               {/* <CookieBanner /> */}
             </main>
             <Footer />
-          </NextIntlClientProvider>
-        </div>
+          </div>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

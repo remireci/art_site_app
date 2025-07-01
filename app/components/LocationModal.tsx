@@ -12,16 +12,16 @@ export default function Modal({ url, location }: { url: string; location: string
 
     return (
         <>
-            <button onClick={() => setIsOpen(true)} className="text-sm underline pointer">
+            <button onClick={() => setIsOpen(true)} className="text-md font-light underline pointer">
                 {location}
             </button>
 
             {isOpen && (
-                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 text-slate-500 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="absolute top-2 right-2 text-red-500 text-xl font-bold"
+                            className="absolute top-2 right-2 text-xl font-bold"
                         >
                             ✖
                         </button>
@@ -30,10 +30,10 @@ export default function Modal({ url, location }: { url: string; location: string
                             You are about to visit <strong>{location}</strong>. Click &quot;Continue&quot; to proceed.
                         </p>
                         <div className="flex justify-end space-x-2">
-                            <button onClick={() => setIsOpen(false)} className="px-4 py-2 bg-gray-300 rounded">
+                            <button onClick={() => setIsOpen(false)} className="px-4 py-2 bg-gray-300 hover:bg-gray-200 rounded">
                                 Cancel
                             </button>
-                            <button onClick={handleOpen} className="px-4 py-2 bg-blue-600 text-white rounded">
+                            <button onClick={handleOpen} className="px-4 py-2 bg-[#87bdd8] hover:bg-blue-300 text-white rounded">
                                 Continue
                             </button>
                         </div>

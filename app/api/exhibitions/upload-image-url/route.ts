@@ -37,9 +37,9 @@ export async function POST(req: Request) {
   const r2Client = new S3Client(getR2Config());
   const { imageUrl, exhibitionId } = await req.json();
 
-  if (!imageUrl || !exhibitionId) {
+  if (!imageUrl) {
     return NextResponse.json(
-      { error: "No image URL or exhibition ID provided" },
+      { error: "No image URL provided" },
       { status: 400 }
     );
   }
@@ -52,10 +52,12 @@ export async function POST(req: Request) {
     const blob = await response.blob();
     const buffer = Buffer.from(await blob.arrayBuffer());
 
-    // 2. Generate unique filename
-    const fileName = `agenda/${exhibitionId}/${uuidv4()}.jpg`;
+    // 2. Determine ID to use
+    const usedExhibitionId = exhibitionId || uuidv4();
 
-    // 3. Upload to R2
+    // 3. Generate unique filename and upload
+    const fileName = `agenda/${usedExhibitionId}/${uuidv4()}.jpg`;
+
     await r2Client.send(
       new PutObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME || "agenda",
@@ -70,15 +72,18 @@ export async function POST(req: Request) {
       process.env.R2_PUBLIC_URL || "pub-1070865a23b94011a35efcf0cf91803e.r2.dev"
     }/${fileName}`;
 
-    console.log("bucket url", publicUrl);
+    console.log("✅ Uploaded image:", publicUrl);
 
     // 5. Update database reference
-    await updateImageReference(exhibitionId, publicUrl);
+    if (exhibitionId) {
+      await updateImageReference(exhibitionId, publicUrl);
+    }
 
     return NextResponse.json(
       {
         message: "Image uploaded to R2 successfully",
         imageUrl: publicUrl,
+        exhibitionId: usedExhibitionId,
       },
       { status: 200 }
     );
