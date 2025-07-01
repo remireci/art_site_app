@@ -5,11 +5,9 @@ import Image from 'next/image';
 
 const AdsColumn = () => {
 
-    const SHOW_ADS = false;
 
-    if (!SHOW_ADS) {
-        return null;
-    }
+    return null;
+
 
     let optimizedUrl = '';
 
