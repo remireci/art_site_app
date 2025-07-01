@@ -473,7 +473,7 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
             </div>
 
             <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
-                <div
+                {/* <div
                     className="flex flex-row flex-wrap md:flex-col bg-slate-300 justify-center md:items-end space-y-5 md:mt-28 space-x-2 md:space-x-0 ml-auto py-2 pl-1 md:pl-0 pr-1 w-full md:w-4/5 lg:w-3/5 md:max-w-[240px]"
                 >
                     {ads.map((ad, i) => (
@@ -497,8 +497,8 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
                                 />
                             </div>
                         ))}
-                    </div>
-                </div>
+                    </div> */}
+                {/* </div> */}
             </div>
 
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block">
