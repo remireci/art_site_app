@@ -19,6 +19,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/pages") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||
+    pathname.startsWith("/robots") ||
     PUBLIC_FILE.test(pathname)
   ) {
     return NextResponse.next();
