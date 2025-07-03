@@ -401,8 +401,8 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
                                             const location = locations.find((loc) => loc.domain === result.domain)
 
                                             const title = result.title || "";
-                                            const slug = location.domain_slug;
-                                            const URL = `${BASE_URL}/${locale}/exhibitions/locations/${slug}`
+                                            const slug = location?.domain_slug;
+                                            const URL = `${BASE_URL}/${locale}/exhibitions/locations/${slug}` || result.url;
                                             const isEven = index % 2 === 0;
 
                                             return (

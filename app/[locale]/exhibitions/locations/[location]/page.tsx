@@ -136,6 +136,16 @@ export default async function LocationPage({ params }: { params: { location: str
                 <p className="text-gray-500">No data available</p>
             )}
 
+            <div className="hidden md:w-2/3 lg:w-1/3 text-slate-200 flex flex-col justify-start">
+                <div className="mt-20">
+                    {data.length > 0 &&
+                        <p className="mt-4">{institution?.description}
+                        </p>}
+
+                </div>
+            </div>
+
+
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 gap-6 w-1/2">
                 {data.map((exhibition: any, index: number) => {
 
@@ -180,14 +190,6 @@ export default async function LocationPage({ params }: { params: { location: str
             </ul>
 
 
-            <div className="md:w-2/3 lg:w-1/3 text-slate-200 min-h-screen flex flex-col justify-end">
-                <div>
-                    {data.length > 0 &&
-                        <p className="mt-4">{data[0].description}
-                        </p>}
-
-                </div>
-            </div>
         </main>
     );
 }
