@@ -402,7 +402,8 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
 
                                             const title = result.title || "";
                                             const slug = location?.domain_slug;
-                                            const URL = `${BASE_URL}/${locale}/exhibitions/locations/${slug}` || result.url;
+                                            const URL = slug ? `${BASE_URL}/${locale}/exhibitions/locations/${slug}` : result.url;
+
                                             const isEven = index % 2 === 0;
 
                                             return (
