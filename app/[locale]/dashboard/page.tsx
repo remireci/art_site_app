@@ -15,9 +15,9 @@ export default async function DashboardPage() {
   }
 
   const user: { email: string } = JSON.parse(auth.value);
-  // const domain = extractDomain(user.email);
+  const domain = extractDomain(user.email);
 
-  const domain = "petitpalais.paris.fr"
+  // const domain = "petitpalais.paris.fr"
 
 
   const rawExhibitionsData = await getExhibitionsByDomain(domain, { includeHidden: true, includeFuture: true });

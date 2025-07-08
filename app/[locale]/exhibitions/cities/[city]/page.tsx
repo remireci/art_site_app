@@ -41,6 +41,12 @@ export async function generateMetadata({ params }: { params: { locale: string; c
         keywords: `${messages['meta-keywords']} ${cityName}`,
         alternates: {
             canonical: canonicalUrl,
+            languages: {
+                'en': `https://www.artnowdatabase.eu/en/exhibitions/cities/${slug}`,
+                'fr': `https://www.artnowdatabase.eu/fr/exhibitions/cities/${slug}`,
+                'nl': `https://www.artnowdatabase.eu/nl/exhibitions/cities/${slug}`,
+                'x-default': `https://www.artnowdatabase.eu/en/exhibitions/cities/${slug}`,
+            },
         },
         openGraph: {
             title: title,

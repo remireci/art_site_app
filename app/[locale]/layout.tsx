@@ -42,6 +42,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
         en: "https://www.artnowdatabase.eu/en",
         fr: "https://www.artnowdatabase.eu/fr",
         nl: "https://www.artnowdatabase.eu/nl",
+        'x-default': "https://www.artnowdatabase.eu/en",
       },
     },
     icons: {

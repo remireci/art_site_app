@@ -22,15 +22,11 @@ export async function PATCH(
 
     const { _id, imageUrl, ...rest } = body;
 
-    console.log("this is the body", body);
-
     const { image_reference, ...updatableFields } = rest;
 
     const updateOperations: any = {
       $set: updatableFields,
     };
-
-    console.log("this is the image_reference", updateOperations);
 
     if (imageUrl) {
       updateOperations.$set.image_reference = [imageUrl];
@@ -45,8 +41,6 @@ export async function PATCH(
     //   { _id: objectId },
     //   { $set: updatableFields }
     // );
-
-    console.log("update exh", result);
 
     return NextResponse.json({ success: true, result });
   } catch (error: any) {

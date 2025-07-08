@@ -55,7 +55,13 @@ export async function generateMetadata({ params }: { params: { locale: string; l
         description: description,
         keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`,
         alternates: {
-            canonical: `/${locale}/exhibitions/locations/${location}`,
+            canonical: `https://www.artnowdatabase.eu/${locale}/exhibitions/locations/${location}`,
+            languages: {
+                'en': `https://www.artnowdatabase.eu/en/exhibitions/locations/${location}`,
+                'fr': `https://www.artnowdatabase.eu/fr/exhibitions/locations/${location}`,
+                'nl': `https://www.artnowdatabase.eu/nl/exhibitions/locations/${location}`,
+                'x-default': `https://www.artnowdatabase.eu/en/exhibitions/locations/${location}`,
+            }
         },
         openGraph: {
             title: title,

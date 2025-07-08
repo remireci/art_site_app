@@ -82,7 +82,7 @@ const TextPage = async ({
             </div>
 
             {/* HTML Content */}
-            <div className="w-full flex justify-center mt-10">
+            <div className="hidden w-full flex justify-center mt-10">
               <div className="max-w-md w-full text-slate-100 prose prose-sm prose-slate">
                 <div dangerouslySetInnerHTML={{ __html: article.html_content }} />
               </div>
