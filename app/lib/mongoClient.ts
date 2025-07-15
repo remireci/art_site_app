@@ -1,4 +1,8 @@
+import dns from "node:dns/promises";
 import { MongoClient } from "mongodb";
+
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
+dns.setDefaultResultOrder("ipv4first");
 
 const uri = process.env.MONGODB_URI!;
 const options = {};

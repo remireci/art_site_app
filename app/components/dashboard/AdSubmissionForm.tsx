@@ -65,10 +65,10 @@ export function AdSubmissionForm() {
                         value={duration}
                         onChange={(e) => setDuration(e.target.value)}
                     >
-                        <option value="1week">1 week - €75</option>
-                        <option value="2weeks">2 weeks - €120</option>
-                        <option value="4weeks">4 weeks - €200</option>
-                        <option value="8weeks">8 weeks - €350</option>
+                        <option value="1week">1 week - €120</option>
+                        <option value="2weeks">2 weeks - €220</option>
+                        <option value="4weeks">4 weeks - €390</option>
+                        <option value="8weeks">8 weeks - €700</option>
                     </select>
                     <Button onClick={handleSubmit}>Pay & Publish</Button>
                 </CardContent>

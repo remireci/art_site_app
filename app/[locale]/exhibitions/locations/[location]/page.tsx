@@ -102,7 +102,7 @@ export default async function LocationPage({ params }: { params: { location: str
     console.log("this is the domain", domain);
     // const data = await getExhibitionsByDomain(domain);
     const data = await getExhibitionsByDomain(domain, {
-        includeHidden: true,
+        includeHidden: false,
         includePast: false,
         includeFuture: true,
     });
