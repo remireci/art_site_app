@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addadvertisement } from "@/db/mongo";
+// import { addadvertisement } from "@/db/mongo";
 
 const durationToWeeks = {
   "1week": 1,
@@ -65,9 +65,10 @@ export async function POST(req: Request) {
       updated_at: new Date(),
     };
 
-    const inserted = await addadvertisement(adData);
+    // const inserted = await addadvertisement(adData);
 
-    return NextResponse.json({ success: true, advertisement: inserted });
+    // return NextResponse.json({ success: true, advertisement: inserted });
+    return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Error creating advertisement:", err);
     return NextResponse.json(
