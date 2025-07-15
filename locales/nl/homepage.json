@@ -2,6 +2,10 @@
     "homepage": 
     {
         "title": "Expo beeldende kunst",
+        "introduction": "Kunsttentoonstellingen in Europa – Musea & Galeries",
+        "description1": "Ontdek actuele kunsttentoonstellingen in Europa.",
+        "description2": "Interactieve zoekfunctie & kaart – filter op stad, kunstenaar, museum, galerie, thema.",
+        "glimpse": "een kleine selectie van lopende tentoonstellingen",
         "list": "Lijst",
         "map": "Kaart",
         "mosaic": "Mozaïek",
@@ -9,7 +13,8 @@
         "advertising": "Adverteren",
         "localisation": "Mijn locatie",
         "privacy": "Jouw privacy",
-        "disclaimer": "Disclaimer"
+        "disclaimer": "Disclaimer",
+        "login": "Inloggen"
     },
     "on-the-map": 
     {

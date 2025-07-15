@@ -10,10 +10,12 @@ import {
     DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
 
 const UserMenuButton = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const router = useRouter();
+    const t = useTranslations('homepage');
 
     useEffect(() => {
         fetch('/api/auth/me')
@@ -53,7 +55,7 @@ const UserMenuButton = () => {
                 {!isLoggedIn ? (
                     <DropdownMenuItem className="justify-center"
                         onClick={() => router.push('/auth/signin?reset=1')}>
-                        Log in
+                        {t('login')}
                     </DropdownMenuItem>
                 ) : (
                     <>

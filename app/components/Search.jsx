@@ -24,7 +24,7 @@ const MosaicTab = dynamic(() => import("./MosaicTab"), {
 
 
 const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
-    const t = useTranslations();
+    const t = useTranslations('homepage');
     const [query, setQuery] = useState('');
     const [results, setResults] = useState(initialList);
     const [initialLoad, setInitialLoad] = useState(true);
@@ -52,6 +52,7 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
     useEffect(() => {
         numberOfLoads.current += 1;
         console.log("Initial data loaded via SSR. Number of loads:", numberOfLoads.current);
+        console.log("Initial data loaded via SSR:", initialList);
     }, []);
 
     const handleInputChange = (e) => {
@@ -215,9 +216,9 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
 
             <div className="w-full px-1 mb-8 mt-2 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
                 <div className='flex justify-center space-x-10'>
-                    <button className={`text-sm h-6 px-2 sm:mt-2  rounded ${activeTab === 'list' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('list')}>{t("homepage.list")}</button>
-                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'map' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('map')}>{t("homepage.map")}</button>
-                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>{t("homepage.mosaic")}</button>
+                    <button className={`text-sm h-6 px-2 sm:mt-2  rounded ${activeTab === 'list' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('list')}>{t("list")}</button>
+                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'map' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('map')}>{t("map")}</button>
+                    <button className={`text-sm h-6 px-2 sm:mt-2 rounded ${activeTab === 'mosaic' ? 'bg-slate-500 text-slate-100' : 'bg-gray-200 text-gray-800 border-2 border-blue-200'} hover:bg-blue-800`} onClick={() => handleTabChange('mosaic')}>{t("mosaic")}</button>
                 </div>
 
                 <div
@@ -312,7 +313,9 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
                                 <ul className='w-full bg-slate-50 z-5 p-4 rounded text-xs'>
                                     <div>
                                         {initialLoad && (
-                                            <p className='text-center text-xs font-light italic text-slate-400 tracking-widest mb-4'>a glimpse into current exhibitions</p>
+                                            <p className='text-center text-xs font-light italic text-slate-400 tracking-widest mb-4'>
+                                                {t('glimpse')}
+                                            </p>
                                         )
                                         }
 

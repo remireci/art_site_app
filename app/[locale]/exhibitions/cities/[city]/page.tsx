@@ -1,20 +1,21 @@
 import { getLocations_by_city, getExhibitionsByDomain } from "@/db/mongo";
 import Image from "next/image";
 import { Metadata } from 'next';
+import { getTranslations } from "next-intl/server";
 
 
 export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
     const { locale, city: slug } = params;
 
     // Load locale-specific messages
-    let messages;
-    try {
-        messages = (await import(`../../../../../locales/${locale}/exhibitions.json`)).default;
-    } catch (error) {
-        // Fallback to English if locale messages are not found
-        messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
-    }
-
+    // let messages;
+    // try {
+    //     messages = (await import(`../../../../../locales/${locale}/exhibitions.json`)).default;
+    // } catch (error) {
+    //     // Fallback to English if locale messages are not found
+    //     messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
+    // }
+    const t = await getTranslations({ locale, namespace: 'exhibitions' });
     const data = await getLocations_by_city(slug);
     const cityName = data[0]?.city;
 
@@ -32,13 +33,14 @@ export async function generateMetadata({ params }: { params: { locale: string; c
 
     const baseUrl = 'https://www.artnowdatabase.eu';
     const canonicalUrl = `${baseUrl}/${locale}/exhibitions/cities/${slug}`;
-    const title = `${messages['meta-title_a']} ${cityName} ${messages['meta-title_b']}`;
-    const description = `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`;
+    const title = `${t('meta-title_a')} ${cityName} ${t('meta-title_b')}`;
+    const description = `${t('meta-description')} ${cityName}.`;
+    const keywords = `${t('meta-keywords')} ${cityName}`;
 
     const metadata: Metadata = {
         title: title,
         description: description,
-        keywords: `${messages['meta-keywords']} ${cityName}`,
+        keywords: keywords,
         alternates: {
             canonical: canonicalUrl,
             languages: {
@@ -142,8 +144,6 @@ export default async function CityPage({ params }: { params: { locale: string; c
     // exhibitionsWithDomains.forEach((item, index) => {
     //     console.log(`Item ${index + 1}: domain=${item.domain}, city=${item.city}, exhibitions=${item.exhibitions.length}`);
     // });
-
-
 
     const exhibitions = exhibitionsWithDomains.flatMap(item =>
         item.exhibitions.map(exhibition => ({

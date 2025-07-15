@@ -2,6 +2,10 @@
     "homepage": 
     {
         "title": "Art Exhibitions",
+        "introduction": "Europe Art Exhibitions Calendar – Museums & Galleries",
+        "description1": "Discover actual art exhibitions across Europe.",
+        "description2": "Interactive search & map - filter by city, artist, museum, gallery, theme.",
+        "glimpse": "a glimpse into current exhibitions",
         "list": "List",
         "map": "Map",
         "mosaic": "Mosaic",
@@ -9,18 +13,28 @@
         "advertising": "Advertising",
         "localisation": "My Location",
         "privacy": "Your Privacy",
-        "disclaimer": "Disclaimer"
+        "disclaimer": "Disclaimer",
+        "login": "Log in"
     },
     "on-the-map": 
     {
-    "title": "On The Map",
-    "future": "In the near future, you will be able to upload your exhibition data directly on this page.",
-    "description": "follows a non-hierarchical approach to presenting exhibitions. On the map, every institution is treated equally—just as in the mosaic, our",
-    "show": "random picture show",
-    "believe": "We believe that art should be accessible to everyone. That's why it only costs",
-    "euro": "50 per year ",
-    "present": "to present your exhibitions in the Art Exhibitions Calendar.",
-    "contact": " Meanwhile, you can contact us at:",
-    "join": "Join us in making art more visible and inclusive!"
+    "title": "On the Map",
+    "intro": "Discover Art Exhibitions Across Europe – Visualized. With the Art Now Database, you can explore a dynamic map of current art exhibitions across Europe. Whether you’re looking for inspiration in your own city or planning a cultural trip, the map makes it easy to find museums, galleries, and artist-run spaces near you.",
+    "equality": "All art institutions are treated equally — regardless of size or reputation. On the map, exhibitions are displayed based on their geographic coordinates, without prioritization or ranking. It offers a neutral and comprehensive overview of current exhibitions across Europe.",
+    "mosaic-promo": "Prefer a more visual, shuffled experience?",
+    "visit-mosaic": "Visit the Mosaic page",
+    "updates": "New exhibitions are added daily — so check back often.",
+    "professionals-title": "For Cultural Institutions & Professionals",
+    "professionals-desc": "Are you responsible for a museum, gallery, or exhibition space? You can manage your location and contribute exhibition data directly on this platform — free of charge.",
+    "request-login": "If your institution is already in our database, you can request a login code using your professional email.",
+    "domain-match": "If the domain of your email address matches an institution in our system, access will be granted automatically.",
+    "once-logged-in": "Once logged in, you can:",
+    "update-details": "Update your location details",
+    "manage-exhibitions": "Add, edit, or remove exhibition data",
+    "paid-upgrades": "Promote your exhibitions through paid ads",
+    "get-started": "Want to Get Started?",
+    "publish-help": "If you’d like to publish your exhibition but don’t have access yet, contact us at:",
+    "mission": "We believe that art should be accessible and visible to everyone. That’s why we built a decentralized, affordable, and inclusive platform to promote exhibitions — across countries and languages.",
+    "mission-tagline": "across countries and languages"
     }
 }

@@ -1,12 +1,38 @@
 import Search from "../components/Search";
 import { extractDomain } from "../utils/extractDomain";
 import { shuffleArray } from "../utils/shuffleArray";
-
+import { getTranslations } from "next-intl/server";
 // export const runtime = 'edge';
+
+
+function getRandomSubset(arr, count) {
+  const shuffled = [...arr]; // avoid mutating the original array
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, count);
+}
+
+// This helper function - normalizeExhibition - is only introduced to keep the original logic 
+// in the API; where search i also handling text documents;
+// mayby ultimately we should separate this logic in two API's
+// on client we have to be in accordance with this logic:
+// {activeTab === 'list' && results && results.filter(result => result.source === 'agenda').length > 0 && (
+
+function normalizeExhibition(exh) {
+  return {
+    ...exh,
+    source: exh.source ?? 'agenda',
+    snippet: exh.snippet ?? '',
+  };
+}
+
 
 export default async function HomePage({ params }) {
 
   const { locale } = params;
+  const t = await getTranslations('homepage');
 
   const URL =
     process.env.NODE_ENV === "production"
@@ -27,10 +53,12 @@ export default async function HomePage({ params }) {
     const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
     const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
 
-    const response = await fetch(`${URL}/api/search?terms=${initialSearchTerm}`, { cache: "no-store" });
-    const responseData = await response.json();
-    const data = responseData.data || [];
-    const randomized = shuffleArray(data);
+    // const response = await fetch(`${URL}/api/search?terms=${initialSearchTerm}`, { cache: "no-store" });
+    // const responseData = await response.json();
+    // const data = responseData.data || [];
+    // const randomized = shuffleArray(data);
+
+    // console.log("the randomized", randomized);
 
 
     if (!locationsResponse.ok || !exhibitionsResponse.ok) {
@@ -43,6 +71,11 @@ export default async function HomePage({ params }) {
     // console.log("Sample locations data:", locations.slice(0, 10));
     console.log("Total number of displayed exhibitions:", exhibitions.length);
     console.log("Total number of displayed locations:", locations.length);
+
+    const randomExhibitions = getRandomSubset(exhibitions, 20).map(normalizeExhibition);
+
+    console.log("the random exh", randomExhibitions);
+
 
     const extractWords = (title) =>
       title
@@ -121,18 +154,18 @@ export default async function HomePage({ params }) {
       <div>
         <div className="flex flex-1 relative hidden lg:block flex flex-col justify-center items-right">
           <section className="absolute top-10 lg:right-0 xl:left-0 w-1/4 xl:w-1/5 text-xs text-slate-600 font-light lg:pl-10 lg:pr-0 lg:py-20 xl:pl-4 xl:pr-24 xl:py-10">
-            <h1>Europe Art Exhibitions Calendar – Museums & Galleries</h1>
+            <h1>{t('introduction')}</h1>
             <p>
-              Discover actual art exhibitions across Europe.
+              {t('description1')}
             </p>
             <p>
-              Interactive search & map - filter by city, artist, museum, gallery, theme.
+              {t('description2')}
             </p>
           </section>
         </div>
         <div className="relative z-10">
           <Search
-            initialList={randomized}
+            initialList={randomExhibitions}
             initialLocations={filteredLocations}
             exhibitions={uniqueGroups}
             locale={locale}
