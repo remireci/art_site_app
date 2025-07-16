@@ -14,10 +14,10 @@ interface LocationsListPageProps {
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
     // Load translations
-    const messages = await import(`../../../../locales/${params.locale}/location.json`)
+    const messages = await import(`../../../../locales/${params.locale}/exhibitions.json`)
         .then(m => m.default)
         // @ts-ignore
-        .catch(() => import(`../../../../locales/en/location.json`).then(m => m.default));
+        .catch(() => import(`../../../../locales/en/exhibitions.json`).then(m => m.default));
 
     return {
         title: messages.locations.metaTitle || "Art Venues Worldwide",

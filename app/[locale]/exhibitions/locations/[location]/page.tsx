@@ -13,11 +13,11 @@ export async function generateMetadata({ params }: { params: { locale: string; l
     // Load locale-specific messages
     let messages;
     try {
-        messages = (await import(`../../../../../locales/${locale}/location.json`)).default;
+        messages = (await import(`../../../../../locales/${locale}/exhibitions.json`)).default;
     } catch (error) {
         // Fallback to English if locale messages are not found
         // @ts-ignore
-        messages = (await import(`../../../../../locales/en/location.json`)).default;
+        messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
     }
 
     const institution = await getLocationBySlug(location);
@@ -42,18 +42,18 @@ export async function generateMetadata({ params }: { params: { locale: string; l
     }
 
     const image = data[0].image_reference[0];
-    const imageName = image.split("?")[0].split("agenda/")[1];
+    const imageName = image?.split("?")[0].split("agenda/")[1];
     const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(imageName)}`;
 
     // Capitalize location name for display
     const locationName = location.charAt(0).toUpperCase() + location.slice(1);
-    const title = `${data[0].location} ${messages['meta-title'] || 'Art Exhibitions'} in ${city}`;
-    const description = `${messages['meta-description'] || 'Explore art exhibitions'} ${data[0].location}.`;
+    const title = `${data[0].location} ${messages.locations.meta_title || 'Art Exhibitions'} in ${city}`;
+    const description = `${messages.locations.meta_description || 'Explore art exhibitions'} ${data[0].location}.`;
 
     return {
         title: title,
         description: description,
-        keywords: `${locationName}, ${messages['meta-keywords'] || 'art exhibitions, contemporary art, modern art'}`,
+        keywords: `${locationName}, ${messages.locations.meta_keywords || 'art exhibitions, contemporary art, modern art'}`,
         alternates: {
             canonical: `https://www.artnowdatabase.eu/${locale}/exhibitions/locations/${location}`,
             languages: {
@@ -95,17 +95,26 @@ export async function generateMetadata({ params }: { params: { locale: string; l
 }
 
 
-export default async function LocationPage({ params }: { params: { location: string } }) {
-    const { location } = params;
+export default async function LocationPage({ params }: { params: { locale: string; location: string } }) {
+    const { locale, location } = params;
+    const messages = await import(`../../../../../locales/${locale}/exhibitions.json`).then(m => m.default);
     const institution = await getLocationBySlug(location);
     const domain = institution?.domain;
-    console.log("this is the domain", domain);
+    const city = institution?.city;
+    // console.log("this is the domain", domain);
     // const data = await getExhibitionsByDomain(domain);
     const data = await getExhibitionsByDomain(domain, {
         includeHidden: false,
         includePast: false,
         includeFuture: true,
     });
+
+
+    const validCities = ["N/A", "null", "", "-", "Unknown"];
+
+    const validCity = data.find(exhibition =>
+        exhibition.city && !validCities.includes(exhibition.city)
+    )?.city;
 
 
     if (!data) {
@@ -115,14 +124,16 @@ export default async function LocationPage({ params }: { params: { location: str
     return (
         <main className="flex flex-col items-center p-4 min-h-screen">
             <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
+
                 <a
-                    href="/"
-                    className="w-full text-center"
+                    href={`/${locale}?city=${city}`}
+                    className="text-sm"
                 >
-                    <p className="text-xl w-auto uppercase">
-                        Search exhibitions
-                    </p>
+                    {data.length > 0
+                        ? messages.cities.exploreMoreExhibitions.replace("{{city}}", validCity || city)
+                        : messages.cities.exploreExhibitions.replace("{{city}}", validCity || city)}
                 </a>
+
             </div>
 
             {data.length > 0 && data[0]?.url && data[0]?.location ? (
