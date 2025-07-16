@@ -1,17 +1,18 @@
 {    
-    "cities": {
-        "metaTitle": "Kunsttentoonstellingen | ArtNowDatabase",
-        "metaDescription": "Huidige kunstexposities in {city}. Hedendaagse en moderne kunst tentoonstellingen.",
-        "heading": "Tentoonstellingen per Stad",
-        "noResults": "Geen huidige tentoonstellingen"
-    },      
-    "meta-title_a": "Kunsttentoonstellingen in",
-    "meta-title_b": " | Moderne en hedendaagse kunst - ArtNowDatabase",
-    "meta-description": "Ontdek actuele moderne en hedendaagse kunsttentoonstellingen in",
-    "meta-keywords": "kunstmusea, kunstgaleries, kunstevenementen in",
-    "exploreMoreExhibitions": "Ontdek meer tentoonstellingen rond {{city}}",
-    "exploreExhibitions": "Ontdek tentoonstellingen rond {{city}}",
-    "page_title": "Moderne en hedendaagse kunst in ",
-    "page_description": "Ontdek moderne en hedendaagse kunsttentoonstellingen in {{city}}. Onze tentoonstellingsgids helpt je musea, galeries en kunstenaarsinitiatieven te verkennen die moderne en hedendaagse kunst tonen. Of je nu een kunstliefhebber bent of gewoon nieuwsgierig, blijf op de hoogte van de kunstscene in {{city}}."
+    "cities": 
+    {
+      "metaTitle": "Kunsttentoonstellingen | ArtNowDatabase",      
+      "heading": "Tentoonstellingen per Stad",
+      "noResults": "Geen huidige tentoonstellingen",      
+      "meta_title_a": "Kunsttentoonstellingen in",
+      "meta_title_b": " | Moderne en hedendaagse kunst - ArtNowDatabase",
+      "meta_description": "Ontdek actuele moderne en hedendaagse kunsttentoonstellingen in",
+      "meta_keywords": "kunstmusea, kunstgaleries, kunstevenementen in",
+      "noExhibitions": "Geen lopende tentoonstellingen in ",
+      "exploreMoreExhibitions": "Ontdek meer tentoonstellingen rond {{city}}",
+      "exploreExhibitions": "Ontdek tentoonstellingen rond {{city}}",
+      "page_title": "Moderne en hedendaagse kunst in ",
+      "page_description": "Ontdek moderne en hedendaagse kunsttentoonstellingen in {{city}}. Onze tentoonstellingsgids helpt je musea, galeries en kunstenaarsinitiatieven te verkennen die moderne en hedendaagse kunst tonen. Of je nu een kunstliefhebber bent of gewoon nieuwsgierig, blijf op de hoogte van de kunstscene in {{city}}."
+    }
   }
   

@@ -33,7 +33,10 @@
     "middleware.js",
     "middleware.js",
     "middleware.js",
-    "app/api/exhibitions/delete-image/route.js"
-, "scripts/sitemap.js"  ],
+    "app/api/exhibitions/delete-image/route.js",
+    "scripts/sitemap.js",
+    "app/[locale]/page.js",
+    "next-intl.config.mjs"
+  ],
   "exclude": ["node_modules"]
 }

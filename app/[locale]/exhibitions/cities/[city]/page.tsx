@@ -32,13 +32,13 @@ export async function generateMetadata({ params }: { params: { locale: string; c
 
     const baseUrl = 'https://www.artnowdatabase.eu';
     const canonicalUrl = `${baseUrl}/${locale}/exhibitions/cities/${slug}`;
-    const title = `${messages['meta-title_a']} ${cityName} ${messages['meta-title_b']}`;
-    const description = `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`;
+    const title = `${messages.cities.meta_title_a} ${cityName} ${messages.cities.meta_title_b}`;
+    const description = `${messages.cities.meta_description || 'Discover art exhibitions'} ${cityName}.`;
 
     const metadata: Metadata = {
         title: title,
         description: description,
-        keywords: `${messages['meta-keywords']} ${cityName}`,
+        keywords: `${messages.cities.meta_keywords} ${cityName}`,
         alternates: {
             canonical: canonicalUrl,
             languages: {

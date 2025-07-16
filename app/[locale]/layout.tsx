@@ -85,7 +85,7 @@ export default async function LocaleLayout({
     const exhibitionsMessages = (await import(`../../locales/${locale}/exhibitions.json`)).default;
 
     messages = { ...exhibitionsMessages, ...commonMessages, ...homepageMessages };
-    console.log('Loaded messages:', messages);
+
   } catch (error) {
     notFound();
   }
