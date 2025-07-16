@@ -34,7 +34,24 @@
     "paid-upgrades": "Promote your exhibitions through paid ads",
     "get-started": "Want to Get Started?",
     "publish-help": "If you’d like to publish your exhibition but don’t have access yet, contact us at:",
-    "mission": "We believe that art should be accessible and visible to everyone. That’s why we built a decentralized, affordable, and inclusive platform to promote exhibitions — across countries and languages.",
-    "mission-tagline": "across countries and languages"
+    "mission": "We believe that art should be accessible and visible to everyone. That’s why we built a decentralized, free, and inclusive platform to promote exhibitions — across countries and languages.",
+    "mission-tagline": "across countries and languages",
+    "meta-description": "Explore current art exhibitions across Europe with a neutral map view. Institutions can submit data for free and promote exhibitions with paid ads."
+    },
+        "cities": 
+    {
+      "metaTitle": "Art Exhibitions | ArtNowDatabase",
+      "metaDescription": "Current art shows in {city}. Contemporary and modern art exhibitions.",
+      "heading": "Exhibitions by City",
+      "noResults": "No current exhibitions",      
+      "meta_title_a": "Art Exhibitions in",
+      "meta_title_b": " | Modern & Contemporary Art - ArtNowDatabase",
+      "meta_description": "Explore upcoming contemporary and modern art exhibitions in",
+      "meta_keywords": "art museums, art galleries, art events in",
+      "noExhibitions": "No current art exhibitions in ",
+      "exploreMoreExhibitions": "Explore more exhibitions near {{city}}",
+      "exploreExhibitions": "Explore exhibitions near {{city}}",
+      "page_title": "Modern & Contemporary Art Exhibitions in ",
+      "page_description": "Discover contemporary and modern art exhibitions in {{city}}. Our exhibition guide helps you explore museums, galleries, and artist-run spaces showcasing modern and contemporary art. Whether you're an art enthusiast or a curious visitor, stay informed about what's happening in the art scene in {{city}}."
     }
 }

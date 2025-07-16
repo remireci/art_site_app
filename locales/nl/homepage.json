@@ -16,17 +16,26 @@
         "disclaimer": "Disclaimer",
         "login": "Inloggen"
     },
-    "on-the-map": 
-    {
-    "title": "Op de kaart",
-    "future": "Binnenkort kun je je tentoonstellingsgegevens rechtstreeks via deze pagina uploaden.",
-    "description": "hanteert een niet-hiërarchische aanpak voor het tonen van tentoonstellingen. Op de kaart wordt elke instelling gelijk behandeld — net als in de mozaïek, onze",
-    "show": "random picture show",
-    "believe": "Wij geloven dat kunst voor iedereen toegankelijk moet zijn. Daarom kost het slechts",
-    "euro": "50 per jaar ",
-    "present": "om je tentoonstellingen in de Tentoonstellingsagenda te laten opnemen.",
-    "contact": " Voor opname van je gegevens kan je mailen naar: ",
-    "join": "Doe mee en maak kunst zichtbaar en inclusief!"
-    }
 
+  "on-the-map": {
+    "title": "Op de Kaart",
+    "intro": "Ontdek kunsttentoonstellingen in Europa – visueel weergegeven. Met de Art Now Database kun je een dynamische kaart verkennen van actuele kunsttentoonstellingen in Europa. Of je nu inspiratie zoekt in je eigen stad of een cultureel uitstapje plant, de kaart maakt het eenvoudig om musea, galeries en kunstenaarsruimten in jouw omgeving te vinden.",
+    "equality": "Alle kunstinstellingen worden gelijk behandeld — ongeacht grootte of bekendheid. Op de kaart worden tentoonstellingen weergegeven op basis van hun geografische coördinaten, zonder voorrang of ranking. Het biedt een neutraal en uitgebreid overzicht van lopende kunsttentoonstellingen in Europa.",
+    "mosaic-promo": "Heeft u liever een visuele, willekeurige weergave?",
+    "visit-mosaic": "Bezoek de Mosaic‑pagina",
+    "updates": "Elke dag worden nieuwe tentoonstellingen toegevoegd — kom regelmatig terug.",
+    "professionals-title": "Voor culturele instellingen & professionals",
+    "professionals-desc": "Ben je verantwoordelijk voor een museum, galerie of tentoonstellingruimte? Je kunt je locatie beheren en tentoonstellingsgegevens rechtstreeks op dit platform toevoegen — gratis.",
+    "request-login": "Als je instelling al in onze database staat, kun je een toegangscode aanvragen met je professionele e-mailadres.",
+    "domain-match": "Als het domein van je e-mailadres overeenkomt met dat van een instelling in ons systeem, wordt toegang automatisch verleend.",
+    "once-logged-in": "Eenmaal ingelogd kun je:",
+    "update-details": "Je locatiedetails bijwerken",
+    "manage-exhibitions": "Tentoonstellingsgegevens toevoegen, bewerken of verwijderen",
+    "paid-upgrades": "Promoot je tentoonstellingen met betaalde advertenties",
+    "get-started": "Klaar om te beginnen?",
+    "publish-help": "Als je je tentoonstelling wilt publiceren maar nog geen toegang hebt, neem dan contact met ons op via:",
+    "mission": "Wij geloven dat kunst toegankelijk en zichtbaar moet zijn voor iedereen. Daarom hebben we een gedecentraliseerd, gratis en inclusief platform gebouwd om tentoonstellingen te promoten — in verschillende landen en talen.",
+    "mission-tagline": "in verschillende landen en talen",
+    "meta-description": "Verken actuele kunsttentoonstellingen in Europa via een neutrale kaartweergave. Instellingen kunnen gratis data toevoegen en hun tentoonstellingen promoten met betaalde advertenties."
+  }
 }

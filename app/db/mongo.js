@@ -122,7 +122,7 @@ export const getExhibitionsByDomain = async (domain, options = {}) => {
     includeFuture = false,
   } = options ?? {};
 
-  console.log("🌀 MongoDB query executing for domain:", domain);
+  // console.log("🌀 MongoDB query executing for domain:", domain);
   const client = await clientPromise;
   try {
     // await client.connect();
@@ -158,11 +158,11 @@ export const getExhibitionsByDomain = async (domain, options = {}) => {
       query.$or = dateConditions;
     }
 
-    console.log("MongoDB query:", JSON.stringify(query, null, 2));
+    // console.log("MongoDB query:", JSON.stringify(query, null, 2));
 
     const exhibitions = await collection.find(query).toArray();
 
-    console.log("MongoDB query executed:", exhibitions);
+    // console.log("MongoDB query executed:", exhibitions);
 
     return exhibitions;
   } catch (error) {

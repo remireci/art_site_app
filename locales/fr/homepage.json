@@ -16,17 +16,24 @@
         "disclaimer": "Avertissement",
         "login": "Se connecter"
     },
-    "on-the-map": 
-    {
+  "on-the-map": {
     "title": "Sur la carte",
-    "future": "Dans un avenir proche, vous pourrez télécharger directement vos données d’exposition sur cette page.",
-    "description": "adopte une approche non hiérarchique pour présenter les expositions. Sur la carte, chaque institution est traitée de manière égale—tout comme dans notre mosaïque, notre",
-    "show": "random picture show",
-    "believe": "Nous croyons que l’art doit être accessible à tous. C’est pourquoi il ne coûte que",
-    "euro": "50 par an ",
-    "present": "pour présenter vos expositions dans le Calendrier.",
-    "contact": " En attendant, vous pouvez nous contacter à: ",
-    "join": "Rejoignez-nous pour rendre l’art plus visible et inclusif !"
-    }
-
+    "intro": "Découvrez les expositions d’art en Europe – visualisées. Avec Art Now Database, explorez une carte dynamique des expositions d’art actuelles à travers l’Europe. Que vous cherchiez l’inspiration dans votre ville ou planifiiez un voyage culturel, la carte facilite la découverte de musées, galeries et espaces d’artistes près de chez vous.",
+    "equality": "Toutes les institutions artistiques sont traitées de manière égale — quelle que soit leur taille ou leur renommée. Sur la carte, les expositions sont affichées selon leurs coordonnées géographiques, sans mise en avant ou classement. Elle offre une vue neutre et complète des expositions d’art en cours en Europe.",
+    "mosaic-promo": "Vous préférez une présentation visuelle et aléatoire ?",
+    "visit-mosaic": "Visitez la page Mosaic",
+    "updates": "De nouvelles expositions sont ajoutées chaque jour — revenez souvent.",
+    "professionals-title": "Pour les institutions culturelles et les professionnels",
+    "professionals-desc": "Vous êtes responsable d’un musée, d’une galerie ou d’un espace d’exposition ? Vous pouvez gérer votre localisation et contribuer des données d’exposition directement sur cette plateforme — gratuitement.",
+    "request-login": "Si votre institution figure déjà dans notre base de données, vous pouvez demander un code d’accès en utilisant votre email professionnel.",
+    "domain-match": "Si le domaine de votre adresse email correspond à une institution de notre système, l’accès sera accordé automatiquement.",
+    "once-logged-in": "Une fois connecté, vous pouvez :",
+    "update-details": "Mettre à jour les informations de localisation",
+    "manage-exhibitions": "Ajouter, modifier ou supprimer des données d’exposition",
+    "paid-upgrades": "Promouvoir vos expositions via des publicités payantes",
+    "get-started": "Prêt à commencer ?",
+    "publish-help": "Si vous souhaitez publier votre exposition mais n’avez pas encore d’accès, contactez-nous à :",
+    "mission": "Nous croyons que l’art doit être accessible et visible pour tous. C’est pourquoi nous avons créé une plateforme décentralisée et inclusive pour promouvoir les expositions — à travers les pays et les langues.",
+    "mission-tagline": "à travers les pays et les langues"
+  }
 }

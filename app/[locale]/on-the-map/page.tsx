@@ -1,7 +1,41 @@
 import { getTranslations } from "next-intl/server";
+import { Metadata } from 'next';
 
 
-const Disclaimer = async () => {
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+    const t = await getTranslations({ locale: params.locale, namespace: 'on-the-map' });
+
+    console.log('meta-description translation:', t('meta-description'));
+
+    return {
+        title: t('title'),
+        description: t('meta-description'),
+        openGraph: {
+            title: t('title'),
+            description: t('meta-description'),
+            url: `https://www.artnowdatabase.eu/${params.locale}/on-the-map`,
+            siteName: 'Art Now Database',
+            images: [
+                {
+                    url: '/og-image.jpg',
+                    width: 1200,
+                    height: 630,
+                    alt: t('title'),
+                },
+            ],
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: t('title'),
+            description: t('meta-description'),
+            images: ['/og-image.jpg'],
+        },
+    }
+}
+
+
+const Onthemap = async () => {
 
     const t = await getTranslations('on-the-map');
 
@@ -118,4 +152,4 @@ const Disclaimer = async () => {
     );
 };
 
-export default Disclaimer;
+export default Onthemap;

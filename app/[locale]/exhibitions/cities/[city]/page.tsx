@@ -1,21 +1,20 @@
 import { getLocations_by_city, getExhibitionsByDomain } from "@/db/mongo";
 import Image from "next/image";
 import { Metadata } from 'next';
-import { getTranslations } from "next-intl/server";
 
 
 export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
     const { locale, city: slug } = params;
 
     // Load locale-specific messages
-    // let messages;
-    // try {
-    //     messages = (await import(`../../../../../locales/${locale}/exhibitions.json`)).default;
-    // } catch (error) {
-    //     // Fallback to English if locale messages are not found
-    //     messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
-    // }
-    const t = await getTranslations({ locale, namespace: 'exhibitions' });
+    let messages;
+    try {
+        messages = (await import(`../../../../../locales/${locale}/exhibitions.json`)).default;
+    } catch (error) {
+        // Fallback to English if locale messages are not found
+        messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
+    }
+
     const data = await getLocations_by_city(slug);
     const cityName = data[0]?.city;
 
@@ -33,14 +32,13 @@ export async function generateMetadata({ params }: { params: { locale: string; c
 
     const baseUrl = 'https://www.artnowdatabase.eu';
     const canonicalUrl = `${baseUrl}/${locale}/exhibitions/cities/${slug}`;
-    const title = `${t('meta-title_a')} ${cityName} ${t('meta-title_b')}`;
-    const description = `${t('meta-description')} ${cityName}.`;
-    const keywords = `${t('meta-keywords')} ${cityName}`;
+    const title = `${messages['meta-title_a']} ${cityName} ${messages['meta-title_b']}`;
+    const description = `${messages['meta-description'] || 'Discover art exhibitions'} ${cityName}.`;
 
     const metadata: Metadata = {
         title: title,
         description: description,
-        keywords: keywords,
+        keywords: `${messages['meta-keywords']} ${cityName}`,
         alternates: {
             canonical: canonicalUrl,
             languages: {
@@ -145,6 +143,8 @@ export default async function CityPage({ params }: { params: { locale: string; c
     //     console.log(`Item ${index + 1}: domain=${item.domain}, city=${item.city}, exhibitions=${item.exhibitions.length}`);
     // });
 
+
+
     const exhibitions = exhibitionsWithDomains.flatMap(item =>
         item.exhibitions.map(exhibition => ({
             ...exhibition,
@@ -178,17 +178,17 @@ export default async function CityPage({ params }: { params: { locale: string; c
                             {/* Display city only if it's valid */}
                             {validCity && (
                                 <span className="text-xl md:text-3xl text-gray-600 uppercase">
-                                    {`${messages.page_title} ${city}`}
+                                    {`${messages.cities.page_title} ${city}`}
                                 </span>
                             )}
                         </h1>
                         <p className="max-w-3xl mt-4 text-gray-700 text-sm md:text-base">
-                            {`${messages.page_description.replace(/{{city}}/g, validCity || city)}`}
+                            {`${messages.cities.page_description.replace(/{{city}}/g, validCity || city)}`}
                         </p>
                     </div>
                 ) : (<div>
                     <h1 className="text-2xl text-gray-700 font-semibold mb-4">
-                        {`${messages.noExhibitions}`} {city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1)}
+                        {`${messages.cities.noExhibitions}`} {city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1)}
                     </h1>
                     <p className="max-w-2xl text-gray-600">
                         While we couldn&apos;t find any exhibitions happening in {slug.slice(0, 1).toUpperCase() + slug.slice(1).toLocaleLowerCase()} right now, the art scene is always evolving. Check back soon or explore exhibitions in nearby cities. You can also use our interactive map to discover art events across Europe.
@@ -203,8 +203,8 @@ export default async function CityPage({ params }: { params: { locale: string; c
                     className="text-sm"
                 >
                     {exhibitions.length > 0
-                        ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
-                        : messages.exploreExhibitions.replace("{{city}}", city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1))}
+                        ? messages.cities.exploreMoreExhibitions.replace("{{city}}", validCity || city)
+                        : messages.cities.exploreExhibitions.replace("{{city}}", city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1))}
                 </a>
 
                 {/* <form action="/" method="GET">

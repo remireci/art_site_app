@@ -7,6 +7,7 @@ import CookieBanner from "../components/CookieBanner";
 import Footer from "../components/Footer";
 // import CookieConsentPopup from './components/CookieConsentPopup';
 import { NextIntlClientProvider } from 'next-intl';
+import { unstable_setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import enCommon from "../../locales/en/common.json";
@@ -81,8 +82,10 @@ export default async function LocaleLayout({
   try {
     const commonMessages = (await import(`../../locales/${locale}/common.json`)).default;
     const homepageMessages = (await import(`../../locales/${locale}/homepage.json`)).default;
-    messages = { ...commonMessages, ...homepageMessages };
-    // console.log('Loaded messages:', messages);
+    const exhibitionsMessages = (await import(`../../locales/${locale}/exhibitions.json`)).default;
+
+    messages = { ...exhibitionsMessages, ...commonMessages, ...homepageMessages };
+    console.log('Loaded messages:', messages);
   } catch (error) {
     notFound();
   }
