@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     const insertedId = await createLocation(data);
 
-    const result = await sendAndEmail(data.email);
+    const result = await sendAndEmail(data.mail);
 
     return NextResponse.json({ insertedId, result }, { status: 201 });
   } catch (error) {

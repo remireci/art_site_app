@@ -503,6 +503,7 @@ export async function createLocation(institutionData) {
   const newLocation = {
     ...institutionData,
     show: false,
+    confirmed: false,
     createdAt: new Date(),
   };
 

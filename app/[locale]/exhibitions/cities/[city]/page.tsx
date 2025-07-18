@@ -203,8 +203,8 @@ export default async function CityPage({ params }: { params: { locale: string; c
                     className="text-sm"
                 >
                     {exhibitions.length > 0
-                        ? messages.cities.exploreMoreExhibitions.replace("{{city}}", validCity || city)
-                        : messages.cities.exploreExhibitions.replace("{{city}}", city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1))}
+                        ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
+                        : messages.exploreExhibitions.replace("{{city}}", city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1))}
                 </a>
 
                 {/* <form action="/" method="GET">

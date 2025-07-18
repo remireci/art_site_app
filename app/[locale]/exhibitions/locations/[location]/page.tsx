@@ -130,8 +130,8 @@ export default async function LocationPage({ params }: { params: { locale: strin
                     className="text-sm"
                 >
                     {data.length > 0
-                        ? messages.cities.exploreMoreExhibitions.replace("{{city}}", validCity || city)
-                        : messages.cities.exploreExhibitions.replace("{{city}}", validCity || city)}
+                        ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
+                        : messages.exploreExhibitions.replace("{{city}}", validCity || city)}
                 </a>
 
             </div>

@@ -1,7 +1,7 @@
 type LoginMailFormProps = {
     email: string;
     message: string;
-    status: 'idle' | 'institution-not-found' | 'user-not-found' | 'loading' | 'success' | 'error' | 'redirecting' | 'awaiting-code';
+    status: 'idle' | 'institution-not-found' | 'institution-not-confirmed' | 'user-not-found' | 'loading' | 'success' | 'error' | 'redirecting' | 'awaiting-code';
     setEmail: (email: string) => void;
     handleEmailSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 };
@@ -38,8 +38,21 @@ export const LoginMailForm = ({
                     style={{ whiteSpace: 'pre-line' }}
                 >
                     {message}
+                    {status === 'institution-not-confirmed' && (
+                        <>
+                            {' '}
+                            <a
+                                href="mailto:info@artnowdatabase.eu?subject=Request%20for%20Institution%20Confirmation"
+                                className="underline text-blue-600 hover:text-blue-800"
+                            >
+                                Email us
+                            </a>{' '}
+                            to request confirmation.
+                        </>
+                    )}
                 </p>
             )}
+
         </form>
     )
 }

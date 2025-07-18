@@ -1,4 +1,9 @@
 {
+  "city_title": "Expositions d'art par ville",
+  "location_title": "Expositions d'art par lieu",
+  "search": "Rechercher des expositions",
+  "exploreMoreExhibitions": "Découvrez plus d'expositions près de {{city}}",
+  "exploreExhibitions": "Découvrez les expositions près de {{city}}",
   "cities": 
     {
       "metaTitle": "Expositions d'Art | ArtNowDatabase",      
@@ -8,9 +13,8 @@
       "meta_title_b": " | Art moderne et contemporain - ArtNowDatabase",
       "meta_description": "Découvrez les expositions d'art moderne et contemporain à",
       "meta_keywords": "musées d'art, galeries d'art, événements artistiques à",
-      "noExhibitions": "Pas d'expositions d'art en cours à ",
-      "exploreMoreExhibitions": "Découvrez plus d'expositions près de {{city}}",
-      "exploreExhibitions": "Découvrez les expositions près de {{city}}",
+      "noExhibitions": "Pas d'expositions d'art en cours à ",      
+      
       "page_title": "Expositions d'art moderne et contemporain à ",
       "page_description": "Découvrez des expositions d'art moderne et contemporain à {{city}}. Notre guide des expositions vous aide à explorer les musées, galeries et espaces gérés par des artistes qui mettent en valeur l'art moderne et contemporain. Que vous soyez passionné d'art ou simple curieux, restez informé de l'actualité artistique à {{city}}."
     },

@@ -13,7 +13,7 @@ export default function SigninForm() {
     const reset = searchParams?.get('reset');
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
-    const [status, setStatus] = useState<'idle' | 'institution-not-found' | 'user-not-found' | 'loading' | 'success' | 'error' | 'redirecting' | 'awaiting-code'>('idle');
+    const [status, setStatus] = useState<'idle' | 'institution-not-found' | 'institution-not-confirmed' | 'user-not-found' | 'loading' | 'success' | 'error' | 'redirecting' | 'awaiting-code'>('idle');
     const [message, setMessage] = useState('');
     const [institutionRequested, setInstitutionRequested] = useState(false);
     const [showInstitutionForm, setShowInstitutionForm] = useState(false);
@@ -58,9 +58,27 @@ export default function SigninForm() {
 
         const locationResult = await fetchLocationByDomain(domain);
 
+        console.log("this is the locationResult", locationResult);
+
         if (!locationResult.location) {
             setStatus('institution-not-found');
-            // setMessage('We’ve noted your institution’s domain and will review it for inclusion.');
+            setMessage('We’ve noted your institution’s domain and will review it for inclusion.');
+
+            // const res = await fetch(`/api/auth/test-email?email=${encodeURIComponent(email)}`);
+
+            // if (!res.ok) {
+            //     console.error('Failed to notify Art Now Database');
+            //     setMessage('We could not notify Art Now Database at this time. Please try again later.');
+            // }
+
+            return;
+        }
+
+        if (!locationResult.location.confirmed) {
+            setStatus('institution-not-confirmed');
+            setMessage(
+                "We’ve recognized your institution’s domain, but it hasn’t been confirmed yet. Please contact us to proceed."
+            );
 
             // const res = await fetch(`/api/auth/test-email?email=${encodeURIComponent(email)}`);
 
