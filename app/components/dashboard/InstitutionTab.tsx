@@ -17,6 +17,8 @@ export default function InstitutionTab({ locationData }: Props) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+
+        // If there is no user yet, it will be created in the dashboard API!
         fetch("../api/dashboard")
             .then((res) => res.json())
             .then((res) => {

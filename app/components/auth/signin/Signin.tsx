@@ -74,7 +74,7 @@ export default function SigninForm() {
             return;
         }
 
-        if (!locationResult.location.confirmed) {
+        if (locationResult.location.confirmed === false) {
             setStatus('institution-not-confirmed');
             setMessage(
                 "We’ve recognized your institution’s domain, but it hasn’t been confirmed yet. Please contact us to proceed."
@@ -90,59 +90,67 @@ export default function SigninForm() {
             return;
         }
 
-        const userResult = await fetchUserByEmail(email);
 
-        if (!userResult.user) {
+        // We don't need to check for the user anymore, since we are creating it automatically when loading
+        // the first time the institutions tab!!!
 
-            try {
-                const res = await fetch('/api/auth/request-invite', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email }),
-                });
+        // const userResult = await fetchUserByEmail(email);
 
-                const data = await res.json();
+        // if (!userResult.user) {
+        //     try {
+        //         const res = await fetch('/api/auth/request-invite', {
+        //             method: 'POST',
+        //             headers: { 'Content-Type': 'application/json' },
+        //             body: JSON.stringify({ email }),
+        //         });
 
-                if (!res.ok) {
-                    if (data.error === 'Unrecognized institution') {
-                        setStatus('idle');
-                        setShowInstitutionForm(true);
-                    } else {
-                        setStatus('error');
-                        setMessage(data.error || 'Something went wrong.');
-                    }
-                    return;
-                }
-                // Change if needed
-                // setStatus('user-not-found');
-                setStatus('awaiting-code');
-                setMessage(
-                    "Invite email sent! Please check your inbox (and spam folder) to create your account.\n\n" +
-                    "Didn’t get the email? Try signing in again to receive a new one.\n\n" +
-                    "You’ll be redirected to the homepage shortly."
-                );
-                return;
+        //         const data = await res.json();
 
-
-            } catch {
-                setStatus('error');
-                setMessage('Unexpected error occurred.');
-            }
-            // setInstitutionRequested(true);
-            // setStatus('not-in-database');
-            // setMessage('We’ve noted your institution’s domain and will review it for inclusion.');
-
-            // const res = await fetch(`/api/auth/test-email?email=${encodeURIComponent(email)}`);
-
-            // if (!res.ok) {
-            //     console.error('Failed to notify Art Now Database');
-            //     setMessage('We could not notify Art Now Database at this time. Please try again later.');
-            // }
-
-            // return;
-        }
+        //         if (!res.ok) {
+        //             if (data.error === 'Unrecognized institution') {
+        //                 setStatus('idle');
+        //                 setShowInstitutionForm(true);
+        //             } else {
+        //                 setStatus('error');
+        //                 setMessage(data.error || 'Something went wrong.');
+        //             }
+        //             return;
+        //         }
+        //         // Change if needed
+        //         // setStatus('user-not-found');
+        //         setStatus('awaiting-code');
+        //         setMessage(
+        //             "Invite email sent! Please check your inbox (and spam folder) to create your account.\n\n" +
+        //             "Didn’t get the email? Try signing in again to receive a new one.\n\n" +
+        //             "You’ll be redirected to the homepage shortly."
+        //         );
+        //         return;
 
 
+        //     } catch {
+        //         setStatus('error');
+        //         setMessage('Unexpected error occurred.');
+        //     }
+        //     // setInstitutionRequested(true);
+        //     // setStatus('not-in-database');
+        //     // setMessage('We’ve noted your institution’s domain and will review it for inclusion.');
+
+        //     // const res = await fetch(`/api/auth/test-email?email=${encodeURIComponent(email)}`);
+
+        //     // if (!res.ok) {
+        //     //     console.error('Failed to notify Art Now Database');
+        //     //     setMessage('We could not notify Art Now Database at this time. Please try again later.');
+        //     // }
+
+        //     // return;
+        // }
+
+
+
+        // If there is a location, and if it is confirmed, we will have a 'pre-user'
+        // the pre-user is the email in the locations document
+        // the first time they log in, the 'real user' will be created by opening
+        // the institutions tab (is handled in the dasboard api!)
 
         try {
             const res = await fetch('/api/auth/send-login-code', {
@@ -152,6 +160,10 @@ export default function SigninForm() {
             });
 
             const data = await res.json();
+
+            // So, logically, this block can never be reached again
+            // since we have already confirmed there is a '(pre-)user'
+            // @TODO remove this block?
 
             if (!res.ok) {
                 if (data.error === 'User not found') {

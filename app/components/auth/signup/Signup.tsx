@@ -52,6 +52,7 @@ export default function SignupForm() {
         setStatus('loading');
 
         try {
+
             const res = await fetch('/api/auth/request-invite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
