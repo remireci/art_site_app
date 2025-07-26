@@ -218,11 +218,24 @@ export async function GET(req, res) {
           $and: [
             { show: { $ne: false } }, // Exclude hidden documents
             textSearch, // Apply text search
-            { date_end_st: { $gte: today.toISOString() } }, // Filter where event is ongoing
+            {
+              date_end_st: {
+                $gte: today.toISOString().split("T")[0], // YYYY-MM-DD string
+                $lt: "2048-06-16", // sanity upper bound
+                $regex: /^\d{4}-\d{2}-\d{2}$/, // ensure valid date format
+              }
+            },
             {
               $or: [
-                { date_begin_st: { $lte: today.toISOString() } }, // Event has started
-                { date_begin_st: { $eq: null } } // Or, date_begin_st is null
+                {
+                  date_begin_st: {
+                    $lte: today.toISOString().split("T")[0],
+                    $regex: /^\d{4}-\d{2}-\d{2}$/,
+                  }
+                },
+                { date_begin_st: { $eq: null } },
+                { date_begin_st: { $exists: false } },
+                { date_begin_st: "" },
               ]
             }
           ]

@@ -2,6 +2,7 @@ import Search from "../components/Search";
 import { extractDomain } from "../utils/extractDomain";
 import { shuffleArray } from "../utils/shuffleArray";
 import { getTranslations } from "next-intl/server";
+import { getValidAds } from '@/lib/ads';
 // export const runtime = 'edge';
 
 
@@ -54,6 +55,11 @@ export default async function HomePage({ params }) {
     const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
     const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
 
+    const ads = await getValidAds();
+
+
+    // console.log("the valid ads", ads);
+
     // const response = await fetch(`${URL}/api/search?terms=${initialSearchTerm}`, { cache: "no-store" });
     // const responseData = await response.json();
     // const data = responseData.data || [];
@@ -72,6 +78,9 @@ export default async function HomePage({ params }) {
     // console.log("Sample locations data:", locations.slice(0, 10));
     console.log("Total number of displayed exhibitions:", exhibitions.length);
     console.log("Total number of displayed locations:", locations.length);
+
+    // const civa = exhibitions.filter(exh => exh.domain === "civa.brussels");
+    // console.log(civa);
 
     const randomExhibitions = getRandomSubset(exhibitions, 20).map(normalizeExhibition);
 
@@ -139,11 +148,11 @@ export default async function HomePage({ params }) {
     });
 
 
-    // // Now you can get your unique exhibitions if needed
-    // const uniqueExhibitions = uniqueGroups.flatMap(group => group.exhibitions);
+    // Now you can get your unique exhibitions if needed
+    const uniqueExhibitions = uniqueGroups.flatMap(group => group.exhibitions);
 
-    // // Filter for SMB museum
-    // const smbGroups = uniqueGroups.filter(group => group.domain === 'eenwerk.nl');
+    // Filter for SMB museum
+    // const smbGroups = uniqueGroups.filter(group => group.domain === 'smb.museum');
 
 
     // console.log("cached or not?", smbGroups);
@@ -167,6 +176,7 @@ export default async function HomePage({ params }) {
             initialLocations={filteredLocations}
             exhibitions={uniqueGroups}
             locale={locale}
+            ads={ads}
           />
         </div>
       </div>

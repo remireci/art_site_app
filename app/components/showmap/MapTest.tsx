@@ -51,6 +51,7 @@ interface Location {
     longitude: number;
     domain: string;
     name: string;
+    domain_slug: string;
 }
 
 type LocationWithMarker = LocationMarker & {
@@ -59,6 +60,7 @@ type LocationWithMarker = LocationMarker & {
     address: string;
     domain: Location['domain'];
     name: Location['name'];
+    domain_slug: Location['domain_slug'];
 };
 
 
@@ -181,6 +183,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
                     address: `${location.name}`, // Combine domain and name as the address
                     domain: location.domain,
                     name: location.name,
+                    domain_slug: location.domain_slug,
                 });
             }
         });
@@ -198,6 +201,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
                 address: `${location.name}`, // Combine domain and name as the address
                 domain: location.domain,
                 name: location.name,
+                domain_slug: location.domain_slug,
             }));
 
 
@@ -385,6 +389,7 @@ const MapTest = React.memo(({ searchQuery, locations, groupedExhibitions }: MapP
                                     <div className='bg-slate-200 text-slate-600 rounded-lg p-2 text-center text-sm'>
                                         <ExhibitionCarousel
                                             exhibitionsInLocation={exhibitionsInLocation}
+                                            slug={location.domain_slug}
                                         />
                                     </div>
                                 </Popup>

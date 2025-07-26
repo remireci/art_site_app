@@ -1,6 +1,7 @@
 import { getExhibitionsByDomain, getLocationBySlug } from "@/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { formatDate } from "@/utils/formatDate";
 import Modal from "../../../../components/LocationModal";
 import { Metadata } from 'next';
 import { convertToDomain } from "@/utils/convertToDomain";
@@ -122,38 +123,28 @@ export default async function LocationPage({ params }: { params: { locale: strin
     }
 
     return (
-        <main className="flex flex-col items-center p-4 min-h-screen">
-            <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
-
-                <a
-                    href={`/${locale}?city=${city}`}
-                    className="text-sm"
-                >
-                    {data.length > 0
-                        ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
-                        : messages.exploreExhibitions.replace("{{city}}", validCity || city)}
-                </a>
-
-            </div>
-
+        <main className="relative flex flex-col items-center p-4 min-h-screen">
             {data.length > 0 && data[0]?.url && data[0]?.location ? (
                 <a
-                    className="text-md font-light underline rounded hover:bg-gray-100 p-1 border border-transparent hover:border-orange-400 transition-colors"
                     href={data[0].url}
+                    className="p-1 w-auto xl:w-1/5 h-8 mt-20 font-medium bg-slate-500 hover:bg-slate-400 text-sm text-slate-100 rounded flex items-center justify-center cursor-pointer"
                 >
-
-                    <h1 >
+                    <h1>
                         {data[0].location}
                         {data[0].city && (
-                            <span className="text-sm text-gray-600"> - {" - "}{data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}</span>
+                            <span>
+                                {" - "}
+                                {data[0].city.charAt(0).toUpperCase() + data[0].city.slice(1).toLowerCase()}
+                            </span>
                         )}
                     </h1>
                 </a>
+
             ) : (
                 <p className="text-gray-500">No data available</p>
             )}
 
-            <div className="hidden md:w-2/3 lg:w-1/3 text-slate-200 flex flex-col justify-start">
+            <div className="hidden md:w-2/3 lg:w-1/3 text-slate-200 flex-col justify-start">
                 <div className="mt-20">
                     {data.length > 0 &&
                         <p className="mt-4">{institution?.description}
@@ -184,27 +175,69 @@ export default async function LocationPage({ params }: { params: { locale: strin
                     }
 
                     return (
-                        <li key={exhibition._id}
-                            className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
-                            <h2 className="text-sm">{exhibition.title}</h2>
-                            <p className="text-xs">{exhibition.date_end_st}</p>
+                        <li
+                            key={exhibition._id}
+                            className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] space-y-3"
+                        >
+                            {/* Hover Popup */}
+                            {exhibition.description && (
+                                <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-auto max-h-[200px] pointer-events-auto">
+
+                                    <div dangerouslySetInnerHTML={{ __html: exhibition.description }} />
+                                </div>
+                            )}
+
+                            <div className="absolute -top-3 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                                Tap for description
+                            </div>
+
+
+                            {/* Card Content */}
+                            <div className="flex flex-col space-y-2">
+                                <h2 className="text-sm">{exhibition.title}</h2>
+                                <p
+                                    className="mt-2 text-sm"
+                                    dangerouslySetInnerHTML={{
+                                        __html: `&#8702; ${formatDate(exhibition.date_end_st)}`,
+                                    }}
+                                />
+                            </div>
 
                             {exhibition.image_reference && (
-                                <Image
-                                    priority={index === 0}
-                                    loading={index === 0 ? "eager" : "lazy"}
-                                    unoptimized
-                                    src={optimizedUrl}
-                                    alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
-                                    width={150}
-                                    height={100}
-                                    className="rounded-lg"
-                                />
+                                <div className="flex flex-col space-y-4">
+                                    <Image
+                                        priority={index === 0}
+                                        loading={index === 0 ? 'eager' : 'lazy'}
+                                        unoptimized
+                                        src={optimizedUrl}
+                                        alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
+                                        width={150}
+                                        height={100}
+                                        className="rounded-lg"
+                                    />
+                                </div>
                             )}
+
+                            <div className="bg-slate-50 text-sm">
+                                <a href={exhibition.exhibition_url || exhibition.url}>More info</a>
+                            </div>
+
                         </li>
                     )
                 })}
             </ul>
+
+            <div className="absolute bottom-4 p-1 w-auto xl:w-1/5 h-8 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
+
+                <a
+                    href={`/${locale}?city=${city}`}
+                >
+                    {data.length > 0
+                        ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
+                        : messages.exploreExhibitions.replace("{{city}}", validCity || city)}
+                </a>
+
+            </div>
 
 
         </main>

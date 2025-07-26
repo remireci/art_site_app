@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 interface MapProps {
     exhibitionsInLocation: Exhibition[];
+    slug: string;
 }
 
 type Exhibition = {
@@ -20,8 +22,18 @@ type Exhibition = {
     exhibition_url: string;
 }
 
-const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
+const ExhibitionCarousel = ({ exhibitionsInLocation, slug }: MapProps) => {
+    const BASE_URL =
+        process.env.NODE_ENV === "production"
+            ? "https://www.artnowdatabase.eu"
+            : "http://localhost:3000";
+
+    const pathname = usePathname();
+    const locale = pathname.split('/')[1];
+
     const [currentExhibitionIndex, setCurrentExhibitionIndex] = useState(0);
+
+
 
     // console.log("exhibitions in location", exhibitionsInLocation);
 
@@ -57,6 +69,8 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
 
                 }
 
+                const URL = slug ? `${BASE_URL}/${locale}/exhibitions/locations/${slug}` : exhibition.url;
+
                 // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
                 // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
@@ -67,7 +81,11 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
                         style={{ display: index === currentExhibitionIndex ? "block" : "none" }}
                         className="flex flex-col justify-between h-full"
                     >
-                        <h3 className="italic pt-2 leading-tight text-ellipsis overflow-hidden whitespace-nowrap">
+                        <h3
+                            title={exhibition.title}
+                            className="italic pt-2 leading-tight text-ellipsis overflow-hidden whitespace-nowrap"
+                        >
+
                             {exhibition.title}
                         </h3>
 
@@ -100,10 +118,13 @@ const ExhibitionCarousel = ({ exhibitionsInLocation }: MapProps) => {
                                 <div className="flex flex-col -space-y-4 h-1/2">
                                     {exhibition.location && exhibition.location !== "N/A" && (
                                         <p className="text-sm">
-                                            <a href={exhibition.exhibition_url && exhibition.exhibition_url !== 'N/A'
-                                                ? exhibition.exhibition_url
-                                                : exhibition.url
-                                            }
+                                            <a
+                                                // href={
+                                                //     exhibition.exhibition_url && exhibition.exhibition_url !== 'N/A'
+                                                //     ? exhibition.exhibition_url
+                                                //     : exhibition.url
+                                                // }
+                                                href={URL}
                                                 target="_blank" rel="noopener noreferrer"
                                             >
                                                 {exhibition.location}

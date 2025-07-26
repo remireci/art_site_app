@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Metadata } from 'next';
-
+import AdsColumn from "@/components/AdsColumn";
+import { getValidAds } from '@/lib/ads';
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
     const t = await getTranslations({ locale: params.locale, namespace: 'on-the-map' });
@@ -34,10 +35,26 @@ export async function generateMetadata({ params }: { params: { locale: string } 
     }
 }
 
+type Ad = {
+    image_url: string;
+    link: string;
+    title: string;
+};
 
-const Onthemap = async () => {
 
+const Onthemap = async ({ params }: { params: { locale: string; city: string } }) => {
+
+    const { locale } = params;
     const t = await getTranslations('on-the-map');
+    const rawAds = await getValidAds();
+
+    const ads: Ad[] = rawAds.map(ad => ({
+        image_url: ad.image_url,
+        link: ad.link,
+        title: ad.title
+    }));
+
+    console.log("locale", locale);
 
     return (
         <div className="main-container flex flex-wrap min-h-screen overflow-auto">
@@ -131,6 +148,7 @@ const Onthemap = async () => {
                 <div className='bg-green-300 w-full h-40 md-w-1/2 border-t-4'></div>
                 <div className='bg-indigo-500 w-full h-40 md-w-1/2 border-t-4'></div>
                 <div className='bg-pink-300 w-full h-40 md-w-1/2 border-t-4'></div> */}
+
                 </div>
 
                 <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block">
@@ -147,6 +165,12 @@ const Onthemap = async () => {
 
                 <div className="w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5 "></div>
                 {/* <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:w-1/3 lg:px-1 lg:my-1 xl:w-1/3 "></div> */}
+            </div>
+            <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
+
+                <AdsColumn
+                    ads={ads}
+                />
             </div>
         </div>
     );

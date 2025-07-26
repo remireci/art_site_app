@@ -5,6 +5,7 @@ import SearchList from './SearchList';
 import SearchMap from './SearchMap';
 import ImageDisplay from './ImageDisplay';
 import GetLocation from './GetLocation';
+import AdsColumn from './AdsColumn';
 import { shuffleArray } from '../utils/shuffleArray';
 import dynamic from 'next/dynamic';
 // import MosaicTab from './MosaicTab';
@@ -23,7 +24,7 @@ const MosaicTab = dynamic(() => import("./MosaicTab"), {
 });
 
 
-const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
+const Search = ({ initialList, initialLocations, exhibitions, locale, ads }) => {
     const t = useTranslations('homepage');
     const [query, setQuery] = useState('');
     const [results, setResults] = useState(initialList);
@@ -45,14 +46,13 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
         process.env.NODE_ENV === "production"
             ? "https://www.artnowdatabase.eu"
             : "http://localhost:3000";
-
-    const ads = [{ src: "/test_gif.gif", name: "" }, { src: "250516MR_MetropolisM_500kb.gif", name: "" }, { src: "AP_Ad_MM-1.gif", name: "" }]
+    // const ads = [{ src: "/test_gif.gif", name: "" }, { src: "250516MR_MetropolisM_500kb.gif", name: "" }, { src: "AP_Ad_MM-1.gif", name: "" }]
 
 
     useEffect(() => {
         numberOfLoads.current += 1;
         console.log("Initial data loaded via SSR. Number of loads:", numberOfLoads.current);
-        console.log("Initial data loaded via SSR:", initialList);
+        // console.log("Initial data loaded via SSR:", initialList);
     }, []);
 
     const handleInputChange = (e) => {
@@ -122,8 +122,10 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
             // Assuming the backend response is an object with a 'data' property containing an array
             const data = responseData.data || [];
 
-            // Assuming the backend response is an object with a 'urls' property            
-            setResults(data);
+            // Assuming the backend response is an object with a 'urls' property
+            if (data.length !== 0) {
+                setResults(data);
+            }
 
             // Store articles in local storage to show them if needed dynamically
 
@@ -400,7 +402,6 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
                                                 imagePath = resizedImagePath;
                                             }
 
-
                                             const location = locations.find((loc) => loc.domain === result.domain)
 
                                             const title = result.title || "";
@@ -415,16 +416,20 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
                                                         // For even index: Text on the left, image on the right
                                                         <>
                                                             <div className="flex-1">
-                                                                {URL ? (
-                                                                    <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                    {`${result.title}`}
+                                                                    {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
+                                                                </a>
+                                                                {/* {exhibitionUrl ? (
+                                                                    <a href={exhibitionUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
                                                                         {`${result.title}`}
                                                                         {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
                                                                     </a>
                                                                 ) : (
-                                                                    <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                    <a href={locationUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
                                                                         {`${result.title}`}
                                                                     </a>
-                                                                )}
+                                                                )} */}
                                                                 <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `&#8702; ${formatDate(result.date_end_st)}` }} />
                                                                 <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
                                                                     {`in ${result.location}`}
@@ -445,22 +450,75 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
                                                                 </div>
                                                             </a>
                                                             <div className="flex-1 text-right">
-                                                                {URL ? (
-                                                                    <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                    {`${result.title}`}
+                                                                    {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
+                                                                </a>
+                                                                {/* {exhibitionUrl ? (
+                                                                    <a href={exhibitionUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
                                                                         {`${result.title}`}
                                                                         {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
                                                                     </a>
                                                                 ) : (
-                                                                    <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                                    <a href={locationUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
                                                                         {`${result.title}`}
                                                                     </a>
-                                                                )}
+                                                                )} */}
                                                                 <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `&#8702; ${formatDate(result.date_end_st)}` }} />
                                                                 <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
                                                                     {`in ${result.location}`}
                                                                 </a>
                                                             </div>
                                                         </>
+                                                        // For even index: Text on the left, image on the right
+                                                        //     <>
+                                                        //         <div className="flex-1">
+                                                        //             {URL ? (
+                                                        //                 <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                        //                     {`${result.title}`}
+                                                        //                     {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
+                                                        //                 </a>
+                                                        //             ) : (
+                                                        //                 <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                        //                     {`${result.title}`}
+                                                        //                 </a>
+                                                        //             )}
+                                                        //             <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `&#8702; ${formatDate(result.date_end_st)}` }} />
+                                                        //             <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
+                                                        //                 {`in ${result.location}`}
+                                                        //             </a>
+                                                        //         </div>
+                                                        //         <a href={URL} target="_blank" rel="noopener noreferrer">
+                                                        //             <div className="relative mt-2 sm:mt-0 sm:ml-4 flex-shrink-0 before:absolute before:top-[0px] before:left-0 before:-translate-x-52 before:w-48 before:h-[1px] before:bg-gray-400" style={{ width: '160px', height: '160px' }}>
+                                                        //                 <ImageDisplay imagePath={imagePath} title={title} priority={index < 2} />
+                                                        //             </div>
+                                                        //         </a>
+                                                        //     </>
+                                                        // ) : (
+                                                        //     // For odd index: Image on the left, text on the right
+                                                        //     <>
+                                                        //         <a href={URL} target="_blank" rel="noopener noreferrer">
+                                                        //             <div className="relative mt-2 sm:mt-0 sm:mr-4 flex-shrink-0 before:absolute before:top-[0px] before:right-0 before:translate-x-52 before:w-48 before:h-[1px] before:bg-gray-400" style={{ width: '160px', height: '160px' }}>
+                                                        //                 <ImageDisplay imagePath={imagePath} title={title} priority={index < 2} />
+                                                        //             </div>
+                                                        //         </a>
+                                                        //         <div className="flex-1 text-right">
+                                                        //             {URL ? (
+                                                        //                 <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                        //                     {`${result.title}`}
+                                                        //                     {result.artists && result.artists !== 'N/A' && <span>{` - ${result.artists}`}</span>}
+                                                        //                 </a>
+                                                        //             ) : (
+                                                        //                 <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm italic">
+                                                        //                     {`${result.title}`}
+                                                        //                 </a>
+                                                        //             )}
+                                                        //             <p className="mt-2 text-sm" dangerouslySetInnerHTML={{ __html: `&#8702; ${formatDate(result.date_end_st)}` }} />
+                                                        //             <a href={URL} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm block sm:inline">
+                                                        //                 {`in ${result.location}`}
+                                                        //             </a>
+                                                        //         </div>
+                                                        //     </>
                                                     )}
                                                 </li>
                                             );
@@ -477,6 +535,10 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
             </div>
 
             <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
+
+                <AdsColumn
+                    ads={ads}
+                />
                 {/* <div
                     className="flex flex-row flex-wrap md:flex-col bg-slate-300 justify-center md:items-end space-y-5 md:mt-28 space-x-2 md:space-x-0 ml-auto py-2 pl-1 md:pl-0 pr-1 w-full md:w-4/5 lg:w-3/5 md:max-w-[240px]"
                 >
@@ -501,8 +563,8 @@ const Search = ({ initialList, initialLocations, exhibitions, locale }) => {
                                 />
                             </div>
                         ))}
-                    </div> */}
-                {/* </div> */}
+                    </div>
+                </div> */}
             </div>
 
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block">

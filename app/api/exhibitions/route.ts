@@ -11,9 +11,15 @@ export async function GET(
 
     const currentDateString = new Date().toISOString().split("T")[0];
 
+    const upperDateLimit = "2048-06-16";
+
     const baseFilter: any = {
       show: true,
-      date_end_st: { $gt: currentDateString },
+      date_end_st: {
+        $gt: currentDateString,
+        $lt: upperDateLimit,
+        $regex: /^\d{4}-\d{2}-\d{2}$/, // Only valid YYYY-MM-DD format
+      },
       $or: [
         { date_begin_st: { $exists: false } },
         { date_begin_st: null },
@@ -22,7 +28,7 @@ export async function GET(
         {
           date_begin_st: {
             $lte: currentDateString,
-            $regex: /^\d{4}-\d{2}-\d{2}$/,
+            $regex: /^\d{4}-\d{2}-\d{2}$/, // valid and not in future
           },
         },
       ],
