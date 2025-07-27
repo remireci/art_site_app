@@ -160,13 +160,16 @@ export default async function CityPage({ params }: { params: { locale: string; c
     //     console.log(`Item ${index + 1}: domain=${item.domain}, city=${item.city}, exhibitions=${item.exhibitions.length}`);
     // });
 
-
-
-    const exhibitions = exhibitionsWithDomains.flatMap(item =>
+    const allExhibitions = exhibitionsWithDomains.flatMap(item =>
         item.exhibitions.map(exhibition => ({
             ...exhibition,
             city: item.city,
         }))
+    );
+
+    // Remove duplicates for institutions with multiple locations
+    const exhibitions = Array.from(
+        new Map(allExhibitions.map(ex => [ex._id.toString(), ex])).values()
     );
 
     const validCities = ["N/A", "null", "", "-", "Unknown"];
@@ -266,8 +269,8 @@ export default async function CityPage({ params }: { params: { locale: string; c
                                             unoptimized
                                             src={optimizedUrl}
                                             alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
-                                            width={100}
-                                            height={50}
+                                            width={150}
+                                            height={100}
                                             className="rounded-lg"
                                         />
                                         <span className="absolute top-0 right-0 bg-gray-900 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">

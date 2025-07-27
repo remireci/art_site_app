@@ -181,7 +181,7 @@ export default async function LocationPage({ params }: { params: { locale: strin
                         >
                             {/* Hover Popup */}
                             {exhibition.description && (
-                                <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-auto max-h-[200px] pointer-events-auto">
+                                <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-auto max-h-[260px] pointer-events-auto">
 
                                     <div dangerouslySetInnerHTML={{ __html: exhibition.description }} />
                                 </div>
