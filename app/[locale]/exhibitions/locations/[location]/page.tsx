@@ -227,7 +227,7 @@ export default async function LocationPage({ params }: { params: { locale: strin
                 })}
             </ul>
 
-            <div className="absolute bottom-4 p-1 w-auto xl:w-1/5 h-8 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
+            <div className="p-1 w-auto xl:w-1/5 h-8 mt-40 mb-20 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
 
                 <a
                     href={`/${locale}?city=${city}`}
