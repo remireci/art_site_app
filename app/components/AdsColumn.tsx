@@ -64,6 +64,32 @@ const AdsColumn = ({ ads }: AdsColumnProps) => {
                     </div>
                 ))}
 
+                {ads.map((ad, i) => (
+                    <div
+                        key={`dup-${i}`}
+                        className='flex justify-end items-center'>
+                        <a href={`/${locale}/on-the-map`}>
+                            <img
+                                src={ad.image_url}
+                                className="w-32 sm:w-30 md:w-40 lg:w-40 xl:w-52 2xl:w-60 h-auto"
+                            />
+                        </a>
+                    </div>
+                ))}
+
+                {ads.map((ad, i) => (
+                    <div
+                        key={`dup-${i}`}
+                        className='flex justify-end items-center'>
+                        <a href={`/${locale}/on-the-map`}>
+                            <img
+                                src={ad.image_url}
+                                className="w-32 sm:w-30 md:w-40 lg:w-40 xl:w-52 2xl:w-60 h-auto"
+                            />
+                        </a>
+                    </div>
+                ))}
+
             </div>
         </div>
     );

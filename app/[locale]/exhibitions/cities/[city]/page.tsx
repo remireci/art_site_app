@@ -193,33 +193,33 @@ export default async function CityPage({ params }: { params: { locale: string; c
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block h-14 lg:h-40">
             </div>
             <div className="flex flex-col justify-center items-center w-full text-slate-800 px-1 mb-8 mt-2 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
-                <div className="mt-20">
-                    {exhibitions.length > 0 ? (
-                        <div>
-                            <h1>
-                                {/* <Modal url={data[0].url} location={data[0].location} /> */}
-                                {/* Display city only if it's valid */}
-                                {validCity && (
-                                    <span className="text-xl md:text-3xl text-gray-600 uppercase">
-                                        {`${messages.cities.page_title} ${city}`}
-                                    </span>
-                                )}
-                            </h1>
-                            <p className="max-w-3xl mt-4 text-gray-700 text-sm md:text-base">
-                                {`${messages.cities.page_description.replace(/{{city}}/g, validCity || city)}`}
-                            </p>
-                        </div>
-                    ) : (<div>
-                        <h1 className="text-2xl text-gray-700 font-semibold mb-4">
-                            {`${messages.cities.noExhibitions}`} {city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1)}
+
+                {exhibitions.length > 0 ? (
+                    <div>
+                        <h1>
+                            {/* <Modal url={data[0].url} location={data[0].location} /> */}
+                            {/* Display city only if it's valid */}
+                            {validCity && (
+                                <span className="text-xl md:text-3xl text-gray-600 uppercase">
+                                    {`${messages.cities.page_title} ${city}`}
+                                </span>
+                            )}
                         </h1>
-                        <p className="max-w-2xl text-gray-600">
-                            While we couldn&apos;t find any exhibitions happening in {slug.slice(0, 1).toUpperCase() + slug.slice(1).toLocaleLowerCase()} right now, the art scene is always evolving. Check back soon or explore exhibitions in nearby cities. You can also use our interactive map to discover art events across Europe.
+                        <p className="max-w-3xl mt-4 text-gray-700 text-sm md:text-base">
+                            {`${messages.cities.page_description.replace(/{{city}}/g, validCity || city)}`}
                         </p>
                     </div>
-
-                    )}
+                ) : (<div>
+                    <h1 className="text-2xl text-gray-700 font-semibold mb-4">
+                        {`${messages.cities.noExhibitions}`} {city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1)}
+                    </h1>
+                    <p className="max-w-2xl text-gray-600">
+                        While we couldn&apos;t find any exhibitions happening in {slug.slice(0, 1).toUpperCase() + slug.slice(1).toLocaleLowerCase()} right now, the art scene is always evolving. Check back soon or explore exhibitions in nearby cities. You can also use our interactive map to discover art events across Europe.
+                    </p>
                 </div>
+
+                )}
+
                 <div className="p-1 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
                     <a
                         href={`/${locale}?city=${city}`}
@@ -242,7 +242,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
                     </p>
                 </a> */}
                 </div>
-                <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-4 gap-4 w-1/2 space-y-1 my-20">
+                <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 w-full">
                     {exhibitions.map((exhibition: any, index: number) => {
 
                         let optimizedUrl = '';
@@ -258,11 +258,33 @@ export default async function CityPage({ params }: { params: { locale: string; c
 
                         return (
                             <li key={exhibition._id}
-                                className="flex flex-col justify-between items-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] text-center">
-                                <h2 className="text-sm italic">{exhibition.title}</h2>
+                                className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[260px] space-y-2"
+                            >
+
+                                {exhibition.description && (
+                                    <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-auto max-h-[260px] pointer-events-auto">
+
+                                        <div dangerouslySetInnerHTML={{ __html: exhibition.description }} />
+                                    </div>
+                                )}
+
+                                <div className="absolute -top-3 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                                    Tap for description
+                                </div>
+
+                                <div className="flex flex-col space-y-2">
+                                    <h2 className="text-sm italic">{exhibition.title}</h2>
+                                    <p
+                                        className="mt-2 text-sm"
+                                        dangerouslySetInnerHTML={{
+                                            __html: `&#8702; ${formatDate(exhibition.date_end_st)}`,
+                                        }}
+                                    />
+                                </div>
                                 {/* <h3 className="text-sm">{exhibition.city}</h3> */}
                                 {exhibition.image_reference && (
-                                    <a href={exhibition.url} target="_blank" rel="noopener noreferrer" className="relative group">
+                                    <div className="flex flex-col space-y-4">
+                                        {/* <a href={exhibition.url} target="_blank" rel="noopener noreferrer" className="relative group"> */}
                                         <Image
                                             priority={index === 0}
                                             loading={index === 0 ? "eager" : "lazy"}
@@ -273,10 +295,11 @@ export default async function CityPage({ params }: { params: { locale: string; c
                                             height={100}
                                             className="rounded-lg"
                                         />
-                                        <span className="absolute top-0 right-0 bg-gray-900 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
-                                            Open external site
-                                        </span>
-                                    </a>
+                                        {/* <span className="absolute top-0 right-0 bg-gray-900 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
+                                                Open external site
+                                            </span> */}
+                                        {/* </a> */}
+                                    </div>
                                 )}
                                 {exhibition.artists && exhibition.artists !== "N/A" &&
                                     <p className='text-xs'>{exhibition.artists}</p>
@@ -285,6 +308,15 @@ export default async function CityPage({ params }: { params: { locale: string; c
                                     <p className='text-xs'>{exhibition.location}</p>
                                 }
                                 <p className="text-xs mt-4">&#8702; {formatDate(exhibition.date_end_st)}</p>
+                                <div className="bg-slate-50 text-sm">
+                                    <a
+                                        href={exhibition.exhibition_url || exhibition.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        More info
+                                    </a>
+                                </div>
                             </li>
                         )
                     })}
@@ -299,12 +331,12 @@ export default async function CityPage({ params }: { params: { locale: string; c
                 </div>
             </div> */}
             </div>
-            <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
+            {/* <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
 
                 <AdsColumn
                     ads={ads}
                 />
-            </div>
+            </div> */}
         </div>
     );
 }

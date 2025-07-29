@@ -4,6 +4,8 @@ import Image from "next/image";
 import { formatDate } from "@/utils/formatDate";
 import Modal from "../../../../components/LocationModal";
 import { Metadata } from 'next';
+import AdsColumn from "@/components/AdsColumn";
+import { getValidAds } from "@/lib/ads";
 import { convertToDomain } from "@/utils/convertToDomain";
 
 // app/[locale]/exhibitions/locations/[location]/page.tsx
@@ -95,6 +97,12 @@ export async function generateMetadata({ params }: { params: { locale: string; l
     };
 }
 
+type Ad = {
+    image_url: string;
+    link: string;
+    title: string;
+};
+
 
 export default async function LocationPage({ params }: { params: { locale: string; location: string } }) {
     const { locale, location } = params;
@@ -109,6 +117,13 @@ export default async function LocationPage({ params }: { params: { locale: strin
         includePast: false,
         includeFuture: true,
     });
+    const rawAds = await getValidAds();
+    const ads: Ad[] = rawAds.map(ad => ({
+        image_url: ad.image_url,
+        link: ad.link,
+        title: ad.title
+    }));
+
 
 
     const validCities = ["N/A", "null", "", "-", "Unknown"];
@@ -123,7 +138,7 @@ export default async function LocationPage({ params }: { params: { locale: strin
     }
 
     return (
-        <main className="relative flex flex-col items-center p-4 min-h-screen">
+        <div className="relative flex flex-col items-center p-4 min-h-screen">
             {data.length > 0 && data[0]?.url && data[0]?.location ? (
                 <a
                     href={data[0].url}
@@ -186,12 +201,9 @@ export default async function LocationPage({ params }: { params: { locale: strin
                                     <div dangerouslySetInnerHTML={{ __html: exhibition.description }} />
                                 </div>
                             )}
-
                             <div className="absolute -top-3 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
                                 Tap for description
                             </div>
-
-
                             {/* Card Content */}
                             <div className="flex flex-col space-y-2">
                                 <h2 className="text-sm">{exhibition.title}</h2>
@@ -202,7 +214,6 @@ export default async function LocationPage({ params }: { params: { locale: strin
                                     }}
                                 />
                             </div>
-
                             {exhibition.image_reference && (
                                 <div className="flex flex-col space-y-4">
                                     <Image
@@ -217,18 +228,20 @@ export default async function LocationPage({ params }: { params: { locale: strin
                                     />
                                 </div>
                             )}
-
                             <div className="bg-slate-50 text-sm">
-                                <a href={exhibition.exhibition_url || exhibition.url}>More info</a>
+                                <a
+                                    href={exhibition.exhibition_url || exhibition.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    More info
+                                </a>
                             </div>
-
                         </li>
                     )
                 })}
             </ul>
-
             <div className="p-1 w-auto xl:w-1/5 h-8 mt-40 mb-20 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
-
                 <a
                     href={`/${locale}?city=${city}`}
                 >
@@ -236,11 +249,13 @@ export default async function LocationPage({ params }: { params: { locale: strin
                         ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
                         : messages.exploreExhibitions.replace("{{city}}", validCity || city)}
                 </a>
-
             </div>
-
-
-        </main>
+            <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
+                <AdsColumn
+                    ads={ads}
+                />
+            </div>
+        </div>
     );
 }
 
