@@ -201,9 +201,11 @@ export default async function LocationPage({ params }: { params: { locale: strin
                                     <div dangerouslySetInnerHTML={{ __html: exhibition.description }} />
                                 </div>
                             )}
-                            <div className="absolute -top-3 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
-                                Tap for description
-                            </div>
+                            {exhibition.description && (
+                                <div className="absolute -top-2 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                                    Tap for description
+                                </div>
+                            )}
                             {/* Card Content */}
                             <div className="flex flex-col space-y-2">
                                 <h2 className="text-sm">{exhibition.title}</h2>
