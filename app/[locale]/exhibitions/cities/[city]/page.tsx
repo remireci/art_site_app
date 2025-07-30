@@ -242,7 +242,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
                     </p>
                 </a> */}
                 </div>
-                <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 w-full">
+                <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center my-20 w-full gap-y-6">
                     {exhibitions.map((exhibition: any, index: number) => {
 
                         let optimizedUrl = '';
@@ -258,17 +258,17 @@ export default async function CityPage({ params }: { params: { locale: string; c
 
                         return (
                             <li key={exhibition._id}
-                                className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[260px] space-y-2"
+                                className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[260px] my-4"
                             >
 
                                 {exhibition.description && (
-                                    <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-auto max-h-[260px] pointer-events-auto">
+                                    <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-auto max-h-auto mb-12 pointer-events-auto">
 
                                         <div dangerouslySetInnerHTML={{ __html: exhibition.description }} />
                                     </div>
                                 )}
 
-                                <div className="absolute -top-3 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                                <div className="absolute -top-2 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
                                     Tap for description
                                 </div>
 
@@ -308,7 +308,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
                                     <p className='text-xs'>{exhibition.location}</p>
                                 }
                                 <p className="text-xs mt-4">&#8702; {formatDate(exhibition.date_end_st)}</p>
-                                <div className="bg-slate-50 text-sm">
+                                <div className="bg-slate-50 text-sm z-20">
                                     <a
                                         href={exhibition.exhibition_url || exhibition.url}
                                         target="_blank"

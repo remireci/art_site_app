@@ -169,7 +169,7 @@ export default async function LocationPage({ params }: { params: { locale: strin
             </div>
 
 
-            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 gap-6 w-1/2">
+            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 gap-6 w-full lg:w-1/2">
                 {data.map((exhibition: any, index: number) => {
 
                     // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
