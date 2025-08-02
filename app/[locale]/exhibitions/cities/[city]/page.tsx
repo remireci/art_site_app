@@ -103,7 +103,6 @@ export default async function CityPage({ params }: { params: { locale: string; c
     const data = await getLocations_by_city(slug);
     const city = data[0]?.city;
     const rawAds = await getValidAds();
-
     const ads: Ad[] = rawAds.map(ad => ({
         image_url: ad.image_url,
         link: ad.link,
@@ -189,10 +188,10 @@ export default async function CityPage({ params }: { params: { locale: string; c
 
 
     return (
-        <div className="main-container flex flex-wrap min-h-screen overflow-auto">
+        <div className="main-container flex flex-wrap min-h-screen overflow-auto mt-20">
             <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-1/5 hidden xl:block h-14 lg:h-40">
             </div>
-            <div className="flex flex-col justify-center items-center w-full text-slate-800 px-1 mb-8 mt-2 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5 ">
+            <div className="flex flex-col justify-center items-center w-full text-slate-800 px-1 mb-8 sm:w-full sm:px-1 sm:my-1 md:w-2/3 md:px-1 md:my-1 lg:px-1 lg:my-1 xl:w-2/5">
 
                 {exhibitions.length > 0 ? (
                     <div>
@@ -220,7 +219,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
 
                 )}
 
-                <div className="p-1 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
+                <div className="w-20 p-2 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center mt-10">
                     <a
                         href={`/${locale}?city=${city}`}
                         className="text-sm"
@@ -229,20 +228,9 @@ export default async function CityPage({ params }: { params: { locale: string; c
                             ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
                             : messages.exploreExhibitions.replace("{{city}}", city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1))}
                     </a>
-
-                    {/* <form action="/" method="GET">
-                    <input type="hidden" name="city" value={city} />
-                    <button type="submit" className="text-xl w-auto uppercase hover:text-gray-600">
-                        Show on map
-                    </button>
-                </form> */}
-                    {/* <a href={`/?city=${city}`}>
-                    <p className="text-xl w-auto uppercase hover:text-gray-600">
-                        See the Map
-                    </p>
-                </a> */}
                 </div>
-                <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center my-20 w-full gap-x-1 gap-y-6">
+
+                <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-12 mb-20 w-full gap-x-1 gap-y-6">
                     {exhibitions.map((exhibition: any, index: number) => {
 
                         let optimizedUrl = '';

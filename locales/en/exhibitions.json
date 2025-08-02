@@ -1,8 +1,9 @@
+
 {
     "city_title": "Art Exhibitions by City",
     "location_title": "Art Exhibitions by Location",
     "search": "Search Exhibitions",
-    "exploreMoreExhibitions": "Explore more exhibitions near {{city}}",
+    "exploreMoreExhibitions": "Map",
     "exploreExhibitions": "Explore exhibitions near {{city}}",
     "cities": 
     {

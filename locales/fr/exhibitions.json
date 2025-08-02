@@ -2,7 +2,7 @@
   "city_title": "Expositions d'art par ville",
   "location_title": "Expositions d'art par lieu",
   "search": "Rechercher des expositions",
-  "exploreMoreExhibitions": "Découvrez plus d'expositions près de {{city}}",
+  "exploreMoreExhibitions": "Carte",
   "exploreExhibitions": "Découvrez les expositions près de {{city}}",
   "cities": 
     {
