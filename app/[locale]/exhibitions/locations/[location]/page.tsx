@@ -230,7 +230,7 @@ export default async function LocationPage({ params }: { params: { locale: strin
                                     />
                                 </div>
                             )}
-                            <div className="bg-slate-50 text-sm">
+                            <div className="bg-slate-50 text-sm z-20">
                                 <a
                                     href={exhibition.exhibition_url || exhibition.url}
                                     target="_blank"
