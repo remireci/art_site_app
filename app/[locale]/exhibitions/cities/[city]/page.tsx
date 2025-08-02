@@ -199,7 +199,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
                             {/* <Modal url={data[0].url} location={data[0].location} /> */}
                             {/* Display city only if it's valid */}
                             {validCity && (
-                                <span className="text-xl md:text-3xl text-gray-600 uppercase">
+                                <span className="text-xl md:text-2xl text-gray-600 uppercase">
                                     {`${messages.cities.page_title} ${city}`}
                                 </span>
                             )}
