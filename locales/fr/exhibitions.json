@@ -4,6 +4,8 @@
   "search": "Rechercher des expositions",
   "exploreMoreExhibitions": "Carte",
   "exploreExhibitions": "Découvrez les expositions près de {{city}}",
+  "moreInfo": "Plus d'infos",
+  "description": "Description",
   "cities": 
     {
       "metaTitle": "Expositions d'Art | ArtNowDatabase",      

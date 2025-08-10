@@ -27,7 +27,11 @@ export async function generateMetadata({ params }: { params: { locale: string; l
     const domain = institution?.domain;
     const city = institution?.city;
 
-    const data = await getExhibitionsByDomain(domain);
+    const data = await getExhibitionsByDomain(domain, {
+        includeHidden: false,
+        includePast: false,
+        includeFuture: true,
+    });
 
     // 1. Handle empty data case first
     if (data.length === 0 || !data[0].image_reference) {
@@ -117,14 +121,20 @@ export default async function LocationPage({ params }: { params: { locale: strin
         includePast: false,
         includeFuture: true,
     });
+    // @TODO We could refactor the mongo function, to retrieve only axhibitions from the past
+    // const archivedData = await getExhibitionsByDomain(domain, {
+    //     includeHidden: false,
+    //     includePast: true,
+    //     includeRunning: false,
+    //     includeFuture: false,
+    // });
+    // And then the user can click 'archived exhibitions' to make them appear on the page?
     const rawAds = await getValidAds();
     const ads: Ad[] = rawAds.map(ad => ({
         image_url: ad.image_url,
         link: ad.link,
         title: ad.title
     }));
-
-
 
     const validCities = ["N/A", "null", "", "-", "Unknown"];
 
@@ -142,7 +152,7 @@ export default async function LocationPage({ params }: { params: { locale: strin
             {data.length > 0 && data[0]?.url && data[0]?.location ? (
                 <a
                     href={data[0].url}
-                    className="p-1 w-auto xl:w-1/5 h-8 mt-20 font-medium bg-slate-500 hover:bg-slate-400 text-sm text-slate-100 rounded flex items-center justify-center cursor-pointer"
+                    className="p-1 w-auto h-8 mt-20 font-medium bg-slate-500 hover:bg-slate-400 text-sm text-slate-100 rounded flex items-center justify-center cursor-pointer"
                 >
                     <h1>
                         {data[0].location}
@@ -178,6 +188,9 @@ export default async function LocationPage({ params }: { params: { locale: strin
 
                     let optimizedUrl = '';
 
+                    const today = new Date();
+                    const startDate = new Date(exhibition.date_begin_st);
+
                     if (exhibition.image_reference[0]) {
                         const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
@@ -192,29 +205,34 @@ export default async function LocationPage({ params }: { params: { locale: strin
                     return (
                         <li
                             key={exhibition._id}
-                            className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[250px] space-y-3"
+                            className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow w-full max-w-[250px] space-y-3"
                         >
                             {/* Hover Popup */}
                             {exhibition.description && (
-                                <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-auto max-h-[260px] pointer-events-auto">
+                                <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-auto max-h-[320px] pointer-events-auto">
 
                                     <div dangerouslySetInnerHTML={{ __html: exhibition.description }} />
                                 </div>
                             )}
                             {exhibition.description && (
-                                <div className="absolute -top-2 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
-                                    Tap for description
+                                <div className="absolute -top-3 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                                    {messages.description}
                                 </div>
                             )}
                             {/* Card Content */}
                             <div className="flex flex-col space-y-2">
                                 <h2 className="text-sm">{exhibition.title}</h2>
-                                <p
-                                    className="mt-2 text-sm"
-                                    dangerouslySetInnerHTML={{
-                                        __html: `&#8702; ${formatDate(exhibition.date_end_st)}`,
-                                    }}
-                                />
+
+
+                                {startDate > today ? (
+                                    <p className="mt-2 text-xs">
+                                        {formatDate(exhibition.date_begin_st)} – {formatDate(exhibition.date_end_st)}
+                                    </p>
+                                ) : (
+                                    <p className="mt-2 text-xs">
+                                        &#8702; {formatDate(exhibition.date_end_st)}
+                                    </p>
+                                )}
                             </div>
                             {exhibition.image_reference && (
                                 <div className="flex flex-col space-y-4">
@@ -225,38 +243,40 @@ export default async function LocationPage({ params }: { params: { locale: strin
                                         src={optimizedUrl}
                                         alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
                                         width={150}
-                                        height={100}
+                                        height={50}
                                         className="rounded-lg"
                                     />
                                 </div>
                             )}
-                            <div className="bg-slate-50 text-sm z-20">
+                            <div className="text-sm bg-slate-200 rounded-md z-20 p-1">
                                 <a
                                     href={exhibition.exhibition_url || exhibition.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    More info
+                                    {messages.moreInfo}
                                 </a>
                             </div>
                         </li>
                     )
                 })}
             </ul>
-            <div className="p-1 w-auto xl:w-1/5 h-8 mt-40 mb-20 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
+            <div className="px-5 w-auto h-8 mt-40 mb-20 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
                 <a
                     href={`/${locale}?city=${city}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     {data.length > 0
                         ? messages.exploreMoreExhibitions.replace("{{city}}", validCity || city)
                         : messages.exploreExhibitions.replace("{{city}}", validCity || city)}
                 </a>
             </div>
-            <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
+            {/* <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
                 <AdsColumn
                     ads={ads}
                 />
-            </div>
+            </div> */}
         </div>
     );
 }

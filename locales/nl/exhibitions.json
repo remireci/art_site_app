@@ -4,6 +4,8 @@
     "search": "Tentoonstellingen zoeken",
     "exploreMoreExhibitions": "Kaart",
     "exploreExhibitions": "Ontdek tentoonstellingen rond {{city}}",
+    "moreInfo": "Meer info",
+    "description": "Beschrijving",
     "cities": 
     {
       "metaTitle": "Kunsttentoonstellingen | ArtNowDatabase",      

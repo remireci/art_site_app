@@ -34,7 +34,9 @@ const AdsColumn = ({ ads }: AdsColumnProps) => {
     // }
 
     return (
-        <div className={`relative w-full aspect-[1]`}>
+        <div
+            className={`relative w-full aspect-[1]`}
+        >
             <div
                 className="flex flex-row flex-wrap md:flex-col justify-center md:items-end md:space-y-5 md:mt-28 space-x-2 md:space-x-0 ml-auto py-2 pl-1 md:pl-0 pr-1 w-full md:w-4/5 lg:w-3/5 md:max-w-[240px]"
             >

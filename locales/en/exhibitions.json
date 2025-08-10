@@ -5,6 +5,8 @@
     "search": "Search Exhibitions",
     "exploreMoreExhibitions": "Map",
     "exploreExhibitions": "Explore exhibitions near {{city}}",
+    "moreInfo": "More info",
+    "description": "Description",
     "cities": 
     {
       "metaTitle": "Art Exhibitions | ArtNowDatabase",

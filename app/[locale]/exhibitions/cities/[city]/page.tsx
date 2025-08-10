@@ -146,7 +146,11 @@ export default async function CityPage({ params }: { params: { locale: string; c
         }
 
         // Fetch exhibitions for the specific location (you can implement this function)
-        const exhibitions = await getExhibitionsByDomain(domain);
+        const exhibitions = await getExhibitionsByDomain(domain, {
+            includeHidden: false,
+            includePast: false,
+            includeFuture: true,
+        });
         return {
             domain,
             exhibitions,
@@ -234,6 +238,8 @@ export default async function CityPage({ params }: { params: { locale: string; c
                     {exhibitions.map((exhibition: any, index: number) => {
 
                         let optimizedUrl = '';
+                        const today = new Date();
+                        const startDate = new Date(exhibition.date_begin_st);
 
                         if (exhibition.image_reference[0]) {
                             const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
@@ -257,19 +263,22 @@ export default async function CityPage({ params }: { params: { locale: string; c
                                 )}
 
                                 {exhibition.description && (
-                                    <div className="absolute -top-2 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
-                                        Tap for description
+                                    <div className="absolute top-0 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                                        {messages.description}
                                     </div>
                                 )}
 
-                                <div className="flex flex-col space-y-2">
+                                <div className="flex flex-col mt-2 space-y-2">
                                     <h2 className="text-sm italic">{exhibition.title}</h2>
-                                    <p
-                                        className="mt-2 text-sm"
-                                        dangerouslySetInnerHTML={{
-                                            __html: `&#8702; ${formatDate(exhibition.date_end_st)}`,
-                                        }}
-                                    />
+                                    {startDate > today ? (
+                                        <p className="mt-2 text-xs">
+                                            {formatDate(exhibition.date_begin_st)} – {formatDate(exhibition.date_end_st)}
+                                        </p>
+                                    ) : (
+                                        <p className="mt-2 text-xs">
+                                            &#8702; {formatDate(exhibition.date_end_st)}
+                                        </p>
+                                    )}
                                 </div>
                                 {/* <h3 className="text-sm">{exhibition.city}</h3> */}
                                 {exhibition.image_reference && (
@@ -282,7 +291,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
                                             src={optimizedUrl}
                                             alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
                                             width={150}
-                                            height={100}
+                                            height={50}
                                             className="rounded-lg"
                                         />
                                         {/* <span className="absolute top-0 right-0 bg-gray-900 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
@@ -297,14 +306,13 @@ export default async function CityPage({ params }: { params: { locale: string; c
                                 {exhibition.location && exhibition.location !== "N/A" &&
                                     <p className='text-xs'>{exhibition.location}</p>
                                 }
-                                <p className="text-xs mt-4">&#8702; {formatDate(exhibition.date_end_st)}</p>
-                                <div className="bg-slate-50 text-sm z-20">
+                                <div className="text-sm bg-slate-200 rounded-md z-20 p-1">
                                     <a
                                         href={exhibition.exhibition_url || exhibition.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        More info
+                                        {messages.moreInfo}
                                     </a>
                                 </div>
                             </li>
