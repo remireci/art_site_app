@@ -1,19 +1,20 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from 'lucide-react';
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
+// import {
+//     DropdownMenu,
+//     DropdownMenuTrigger,
+//     DropdownMenuContent,
+//     DropdownMenuItem,
+// } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 
 const UserMenuButton = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const t = useTranslations('homepage');
 
@@ -22,6 +23,17 @@ const UserMenuButton = () => {
             .then((res) => setIsLoggedIn(res.ok))
             .catch(() => setIsLoggedIn(false));
 
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     const handleLogout = async () => {
@@ -37,37 +49,50 @@ const UserMenuButton = () => {
         }
     };
 
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger
-                asChild
-                onClick={(e) => {
-                    e.stopPropagation();
-                }}
-            >
-                <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
-                    <span className="sr-only">Account</span>
-                </Button>
-            </DropdownMenuTrigger>
+    const handleNavigation = (path: string) => {
+        setIsOpen(false);
+        router.push(path);
+    };
 
-            <DropdownMenuContent align="end" className="text-center p-2 rounded-md">
-                {!isLoggedIn ? (
-                    <DropdownMenuItem className="justify-center"
-                        onClick={() => router.push('/auth/signin?reset=1')}>
-                        {t('login')}
-                    </DropdownMenuItem>
-                ) : (
-                    <>
-                        <DropdownMenuItem className="hover:bg-gray-500 hover:text-white justify-center transition-colors duration-200 rounded-md"
-                            onClick={() => router.push('/dashboard')}>
-                            Dashboard
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-gray-500 hover:text-white justify-center transition-colors duration-200 rounded-md" onClick={handleLogout}>Log out</DropdownMenuItem>
-                    </>
-                )}
-            </DropdownMenuContent>
-        </DropdownMenu>
+    return (
+        <div ref={dropdownRef} className="relative">
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+            </Button>
+
+            {isOpen && (
+                <div className="absolute md:fixed right-1 md:right-20 top-12 md:top-16 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[140px] p-2">
+                    {!isLoggedIn ? (
+                        <button
+                            className="w-full text-center py-2 px-4 hover:bg-gray-100 rounded-md transition-colors"
+                            onClick={() => handleNavigation('/auth/signin?reset=1')}
+                        >
+                            {t('login')}
+                        </button>
+                    ) : (
+                        <>
+                            <button
+                                className="w-full text-center py-2 px-4 hover:bg-gray-100 rounded-md transition-colors mb-1"
+                                onClick={() => handleNavigation('/dashboard')}
+                            >
+                                Dashboard
+                            </button>
+                            <button
+                                className="w-full text-center py-2 px-4 hover:bg-gray-100 rounded-md transition-colors"
+                                onClick={handleLogout}
+                            >
+                                Log out
+                            </button>
+                        </>
+                    )}
+                </div>
+            )}
+        </div>
     );
 };
 

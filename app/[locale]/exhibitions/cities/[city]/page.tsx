@@ -235,7 +235,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
 
                 )}
 
-                <div className="w-20 p-2 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center mt-10">
+                <div className="w-auto p-2 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center mt-10">
                     <a
                         href={`/${locale}?city=${city}`}
                         className="text-sm"

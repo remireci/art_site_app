@@ -174,7 +174,6 @@ export default async function LocationPage({ params }: { params: { locale: strin
                     {data.length > 0 &&
                         <p className="mt-4">{institution?.description}
                         </p>}
-
                 </div>
             </div>
 
@@ -215,7 +214,7 @@ export default async function LocationPage({ params }: { params: { locale: strin
                                 </div>
                             )}
                             {exhibition.description && (
-                                <div className="absolute -top-3 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                                <div className="absolute -top-3 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block lg:hidden pointer-events-none">
                                     {messages.description}
                                 </div>
                             )}
