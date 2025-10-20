@@ -61,6 +61,7 @@
     "@types/react-slick": "^0.23.13",
     "@types/webpack": "^5.28.5",
     "autoprefixer": "^10.0.1",
+    "caniuse-lite": "^1.0.30001751",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",
