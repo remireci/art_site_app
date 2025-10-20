@@ -10,7 +10,9 @@
     {
       "metaTitle": "Kunsttentoonstellingen | ArtNowDatabase",      
       "heading": "Tentoonstellingen per Stad",
-      "noResults": "Geen huidige tentoonstellingen",      
+      "noResults": "Geen huidige tentoonstellingen",
+      "actual": "Lopend & Komend",
+      "past": "Afgelopen",
       "meta_title_a": "Kunsttentoonstellingen in",
       "meta_title_b": " | Moderne en hedendaagse kunst - ArtNowDatabase",
       "meta_description": "Ontdek actuele moderne en hedendaagse kunsttentoonstellingen in",

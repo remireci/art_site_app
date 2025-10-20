@@ -10,7 +10,9 @@
     {
       "metaTitle": "Expositions d'Art | ArtNowDatabase",      
       "heading": "Expositions par Ville",
-      "noResults": "Aucune exposition en cours",   
+      "noResults": "Aucune exposition en cours",
+      "actual": "En cours & A venir",
+      "past": "Passées",
       "meta_title_a": "Expositions d'art à",
       "meta_title_b": " | Art moderne et contemporain - ArtNowDatabase",
       "meta_description": "Découvrez les expositions d'art moderne et contemporain à",

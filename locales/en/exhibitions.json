@@ -11,7 +11,9 @@
     {
       "metaTitle": "Art Exhibitions | ArtNowDatabase",
       "heading": "Exhibitions by City",
-      "noResults": "No current exhibitions",      
+      "noResults": "No current exhibitions",
+      "actual": "Actual & Future",
+      "past": "Past",
       "meta_title_a": "Art Exhibitions in",
       "meta_title_b": " | Modern & Contemporary Art - ArtNowDatabase",
       "meta_description": "Explore upcoming contemporary and modern art exhibitions in",
