@@ -9,6 +9,7 @@ import Footer from "../components/Footer";
 import { NextIntlClientProvider } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import ChunkErrorHandler from './ChunkErrorHandler';
 
 import enCommon from "../../locales/en/common.json";
 import frCommon from "../../locales/fr/common.json";
@@ -118,6 +119,7 @@ export default async function LocaleLayout({
             <main className="flex-1">
               <LocationProvider >
                 {children}
+                <ChunkErrorHandler />
               </LocationProvider>
               {/* <CookieBanner /> */}
             </main>
