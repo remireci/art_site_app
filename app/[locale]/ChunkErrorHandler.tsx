@@ -6,39 +6,44 @@ export default function ChunkErrorHandler() {
     const [reconnecting, setReconnecting] = useState(false);
 
     useEffect(() => {
-        const handleChunkError = (event: PromiseRejectionEvent) => {
-            const error = event.reason;
+        console.log('✅ ChunkErrorHandler mounted');
 
-            // Detect failed dynamic chunk load
-            if (
-                error?.name === 'ChunkLoadError' ||
-                /Loading chunk \d+ failed/i.test(error?.message)
-            ) {
-                console.warn('Chunk load failed — attempting to reconnect...');
+        const reloadSafely = () => {
+            const lastReload = sessionStorage.getItem('lastChunkReload');
+            const now = Date.now();
+            if (!lastReload || now - parseInt(lastReload) > 30000) {
+                sessionStorage.setItem('lastChunkReload', now.toString());
                 setReconnecting(true);
-
-                // Prevent reload loops (only reload if not done recently)
-                const lastReload = sessionStorage.getItem('lastChunkReload');
-                const now = Date.now();
-                if (!lastReload || now - parseInt(lastReload) > 30000) {
-                    sessionStorage.setItem('lastChunkReload', now.toString());
-
-                    // Give the user 1.5s to see the message before reload
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                }
+                setTimeout(() => window.location.reload(), 1500);
             }
         };
 
-        window.addEventListener('unhandledrejection', handleChunkError);
+        const handleRejection = (event: PromiseRejectionEvent) => {
+            const err = event.reason;
+            if (err?.name === 'ChunkLoadError' || /Loading chunk \d+ failed/i.test(err?.message)) {
+                console.warn('ChunkLoadError detected → reloading');
+                reloadSafely();
+            }
+        };
+
+        const handleError = (event: ErrorEvent) => {
+            if (/Loading chunk \d+ failed/i.test(event?.message)) {
+                console.warn('ChunkLoadError (ErrorEvent) detected → reloading');
+                reloadSafely();
+            }
+        };
+
+        window.addEventListener('unhandledrejection', handleRejection);
+        window.addEventListener('error', handleError);
+
         return () => {
-            window.removeEventListener('unhandledrejection', handleChunkError);
+            window.removeEventListener('unhandledrejection', handleRejection);
+            window.removeEventListener('error', handleError);
         };
     }, []);
 
-    // Show overlay only if reconnecting
     if (!reconnecting) return null;
+
 
     return (
         <div
