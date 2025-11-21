@@ -152,7 +152,9 @@ export default async function LocationPage({ params }: { params: { locale: strin
             {data.length > 0 && data[0]?.url && data[0]?.location ? (
                 <a
                     href={data[0].url}
-                    className="p-1 w-auto h-8 mt-20 font-medium bg-slate-500 hover:bg-slate-400 text-sm text-slate-100 rounded flex items-center justify-center cursor-pointer"
+                    className="w-full sm:w-auto px-1 py-1 mt-10 font-medium bg-slate-500 hover:bg-slate-400 text-sm text-slate-100 rounded flex items-center justify-center text-center cursor-pointer"
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     <h1>
                         {data[0].location}

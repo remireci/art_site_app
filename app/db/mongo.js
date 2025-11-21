@@ -133,6 +133,10 @@ export const getExhibitionsByDomain = async (domain, options = {}) => {
 
     const query = {
       domain,
+      image_reference: {
+        $exists: true,
+        $ne: [] // Exclude empty arrays
+      },
     };
 
     // Handle visibility

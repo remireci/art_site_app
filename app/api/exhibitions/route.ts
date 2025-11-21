@@ -15,6 +15,10 @@ export async function GET(
 
     const baseFilter: any = {
       show: true,
+      image_reference: {
+        $exists: true,
+        $ne: [],
+      },
       date_end_st: {
         $gt: currentDateString,
         $lt: upperDateLimit,

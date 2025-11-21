@@ -217,6 +217,12 @@ export async function GET(req, res) {
         return {
           $and: [
             { show: { $ne: false } }, // Exclude hidden documents
+            {
+              image_reference: {
+                $exists: true,
+                $ne: [] // Exclude empty arrays
+              }
+            },
             textSearch, // Apply text search
             {
               date_end_st: {
