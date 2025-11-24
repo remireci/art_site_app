@@ -370,6 +370,54 @@ export const getUniqueCities = async () => {
 };
 
 
+export async function getExhibitionsForCity(slug) {
+  const client = await clientPromise;
+  const db = client.db(dbNameAgenda);
+
+  const locations = await db.collection(collectionNameLocations)
+    .find(
+      { slug },
+      { projection: { _id: 1, domain: 1, city: 1 } }
+    )
+    .toArray();
+
+  if (!locations.length) return { locations: [], exhibitions: [] };
+
+  const domains = locations
+    .map(l => l.domain)
+    .filter(d => d && typeof d === "string" && d.includes(".") && !d.startsWith("http"));
+
+  if (!domains.length) return { locations, exhibitions: [] };
+
+  const todayISO = new Date().toISOString();
+
+  const exhibitions = await db.collection(collectionNameAgenda)
+    .find({
+      domain: { $in: domains },
+      image_reference: { $exists: true, $ne: [] },
+      show: { $ne: false },
+
+      // EXHIBITION DATE LOGIC (your original rules)
+      $or: [
+        { date_end_st: { $gte: todayISO } },  // not past
+        { date_begin_st: { $lte: todayISO } }, // already started
+        { date_begin_st: null }
+      ]
+    })
+    .toArray();
+
+  // Deduplicate by _id
+  const deduped = Array.from(
+    new Map(exhibitions.map(ex => [ex._id.toString(), ex])).values()
+  );
+
+  return {
+    locations,
+    exhibitions: deduped,
+  };
+}
+
+
 export async function getLocations_by_city(slug) {
   try {
     const client = await clientPromise;

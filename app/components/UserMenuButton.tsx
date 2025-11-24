@@ -11,19 +11,23 @@ import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 
-const UserMenuButton = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+export type UserMenuButtonProps = {
+    isLoggedIn: boolean;
+};
+
+const UserMenuButton = ({ isLoggedIn }: UserMenuButtonProps) => {
+    // const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const t = useTranslations('homepage');
 
-    useEffect(() => {
-        fetch('/api/auth/me')
-            .then((res) => setIsLoggedIn(res.ok))
-            .catch(() => setIsLoggedIn(false));
+    // useEffect(() => {
+    //     fetch('/api/auth/me')
+    //         .then((res) => setIsLoggedIn(res.ok))
+    //         .catch(() => setIsLoggedIn(false));
 
-    }, []);
+    // }, []);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -36,17 +40,24 @@ const UserMenuButton = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleLogout = async () => {
-        const confirmed = window.confirm('Are you sure you want to log out?');
-        if (!confirmed) return;
+    // const handleLogout = async () => {
+    //     const confirmed = window.confirm('Are you sure you want to log out?');
+    //     if (!confirmed) return;
 
-        const res = await fetch('/api/auth/logout', { method: 'POST' });
-        if (res.ok) {
-            setIsLoggedIn(false);
-            router.refresh();
-        } else {
-            alert('Logout failed.');
-        }
+    //     const res = await fetch('/api/auth/logout', { method: 'POST' });
+    //     if (res.ok) {
+    //         setIsLoggedIn(false);
+    //         router.refresh();
+    //     } else {
+    //         alert('Logout failed.');
+    //     }
+    // };
+
+    const handleLogout = async () => {
+        const confirmed = window.confirm("Are you sure you want to log out?");
+        if (!confirmed) return;
+        const res = await fetch("/api/auth/logout", { method: "POST" });
+        if (res.ok) router.refresh();
     };
 
     const handleNavigation = (path: string) => {

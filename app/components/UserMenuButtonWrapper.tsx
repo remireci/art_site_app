@@ -2,10 +2,16 @@
 import { usePathname } from 'next/navigation';
 import UserMenuButton from './UserMenuButton';
 
-const UserMenuButtonWrapper = () => {
+type UserMenuButtonWrapperProps = {
+    isLoggedIn: boolean;
+};
+
+const UserMenuButtonWrapper = ({ isLoggedIn }: UserMenuButtonWrapperProps) => {
     const pathname = usePathname();
 
-    return <UserMenuButton key={pathname} />;
+    return <UserMenuButton
+        key={pathname}
+        isLoggedIn={isLoggedIn} />;
 };
 
 export default UserMenuButtonWrapper;

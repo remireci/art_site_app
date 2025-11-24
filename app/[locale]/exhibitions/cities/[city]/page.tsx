@@ -1,4 +1,4 @@
-import { getLocations_by_city, getExhibitionsByDomain } from "@/db/mongo";
+import { getExhibitionsForCity } from "@/db/mongo";
 import Image from "next/image";
 import { Metadata } from 'next';
 import AdsColumn from "@/components/AdsColumn";
@@ -25,22 +25,21 @@ export async function generateMetadata({ params }: { params: { locale: string; c
         messages = (await import(`../../../../../locales/en/exhibitions.json`)).default;
     }
 
-    const data = await getLocations_by_city(slug);
-    const cityName = data[0]?.city;
+    const serverSideExhibitions = await getExhibitionsForCity(slug);
+    const exhibitions = serverSideExhibitions.exhibitions;
+    const cityName = exhibitions[0]?.city;
 
     // Get the first exhibition with an image in this city
-    const exhibitionWithImage = data.find((loc: any) => loc.image_reference);
+    const exhibitionWithImage = exhibitions.find((loc: any) => loc.image_reference);
     let optimizedUrl = '';
     let imageAlt = '';
 
     if (exhibitionWithImage) {
-        const image = exhibitionWithImage.image_reference;
+        const image = exhibitionWithImage.image_reference[0];
         const imageName = image.split("?")[0].split("agenda/")[1];
-        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=1200/agenda/${encodeURI(imageName)}`;
+        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=600/agenda/${encodeURI(imageName)}`;
         imageAlt = `${exhibitionWithImage.title} at ${exhibitionWithImage.location} in ${cityName}`;
     }
-
-    console.log("the optimized url from cities page", optimizedUrl);
 
     const baseUrl = 'https://www.artnowdatabase.eu';
     const canonicalUrl = `${baseUrl}/${locale}/exhibitions/cities/${slug}`;
@@ -108,8 +107,9 @@ export default async function CityPage({ params }: { params: { locale: string; c
 
     const { locale, city: slug } = params;
     const messages = await import(`../../../../../locales/${locale}/exhibitions.json`).then(m => m.default);
-    const data = await getLocations_by_city(slug);
-    const city = data[0]?.city;
+    const serverSideExhibitions = await getExhibitionsForCity(slug);
+    const exhibitions = serverSideExhibitions.exhibitions;
+    const city = exhibitions[0]?.city;
     const rawAds = await getValidAds();
     const ads: Ad[] = rawAds.map(ad => ({
         image_url: ad.image_url,
@@ -117,7 +117,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
         title: ad.title
     }));
 
-    if (!data || data.length === 0) {
+    if (!exhibitions || exhibitions.length === 0) {
 
         <main className="flex flex-col items-center p-4 min-h-screen">
             <div className="mt-20">
@@ -139,57 +139,11 @@ export default async function CityPage({ params }: { params: { locale: string; c
         </main>
     }
 
-    // Now we need to get the domain from each location and use it to get exhibitions
-    const exhibitionsWithDomains = await Promise.all(data.map(async (location) => {
-        const { domain, city: locationCity, _id } = location;
-        const isValidDomain = domain && typeof domain === "string" && domain.includes(".") && !domain.startsWith("http");
-        if (!isValidDomain) {
-            console.warn(`⚠️ Skipping invalid domain: '${domain}' for city: ${locationCity}`);
-            return {
-                domain,
-                exhibitions: [],
-                city: locationCity,
-                locationId: _id,
-            };
-        }
-
-        // Fetch exhibitions for the specific location (you can implement this function)
-        const exhibitions = await getExhibitionsByDomain(domain, {
-            includeHidden: false,
-            includePast: true,
-            includeFuture: true,
-        });
-
-        return {
-            domain,
-            exhibitions,
-            city: locationCity,
-            locationId: _id,
-        };
-    }));
-
-    // exhibitionsWithDomains.forEach((item, index) => {
-    //     console.log(`Item ${index + 1}: domain=${item.domain}, city=${item.city}, exhibitions=${item.exhibitions.length}`);
-    // });
-
-    const allExhibitions = exhibitionsWithDomains.flatMap(item =>
-        item.exhibitions.map(exhibition => ({
-            ...exhibition,
-            city: item.city,
-        }))
-    );
-
-    // Remove duplicates for institutions with multiple locations
-    const exhibitions: Exhibition[] = Array.from(
-        new Map(allExhibitions.map(ex => [ex._id.toString(), ex])).values()
-    );
-
     const validCities = ["N/A", "null", "", "-", "Unknown"];
 
     const validCity = exhibitions.find(exhibition =>
         exhibition.city && !validCities.includes(exhibition.city)
     )?.city;
-
 
     const formatDate = (dateStr: string) => {
         if (!dateStr || typeof dateStr !== "string" || !dateStr.includes('-')) {

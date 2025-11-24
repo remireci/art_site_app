@@ -6,7 +6,7 @@ import Menu from "./Menu";
 import { useTranslations } from "next-intl";
 
 type HeaderProps = {
-    isLoggedIn?: boolean;
+    isLoggedIn: boolean;
 };
 
 const Header = ({ isLoggedIn }: HeaderProps) => {
@@ -84,8 +84,7 @@ const Header = ({ isLoggedIn }: HeaderProps) => {
                     showMenu && (
                         <div ref={menuRef} className="absolute top-12 left-0 w-full bg-slate-50 shadow-lg p-1 lg:hidden z-40">
                             <nav className="flex flex-col mx-4 space-y-4">
-                                <Menu
-                                />
+                                <Menu isLoggedIn={isLoggedIn} />
                             </nav>
                         </div>
                     )
@@ -94,7 +93,7 @@ const Header = ({ isLoggedIn }: HeaderProps) => {
                 {
                     !showMenu && (
                         <div className="hidden lg:block">
-                            <Menu />
+                            <Menu isLoggedIn={isLoggedIn} />
                         </div>
                     )
                 }
