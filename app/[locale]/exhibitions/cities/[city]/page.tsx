@@ -1,11 +1,13 @@
 import { getExhibitionsForCity } from "@/db/mongo";
-import { getCities } from "@/db/mongo.js";
 import Image from "next/image";
 import { Metadata } from 'next';
 import AdsColumn from "@/components/AdsColumn";
 import { getValidAds } from "@/lib/ads";
 
-export const revalidate = 86400;
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
+
 
 type Exhibition = {
     _id: string | { toString: () => string };
@@ -15,13 +17,6 @@ type Exhibition = {
     city?: string;
     description?: string;
 };
-
-type Ad = {
-    image_url: string;
-    link: string;
-    title: string;
-};
-
 
 export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
     const { locale, city: slug } = params;
@@ -107,17 +102,11 @@ export async function generateMetadata({ params }: { params: { locale: string; c
     return metadata;
 }
 
-
-export async function generateStaticParams() {
-
-    const cities: Array<any> = await getCities({ onlyWithExhibitions: true });
-
-    return cities.map(c => ({
-        locale: "en",
-        city: typeof c === "string" ? c : c.slug,
-    }));
-}
-
+type Ad = {
+    image_url: string;
+    link: string;
+    title: string;
+};
 
 export default async function CityPage({ params }: { params: { locale: string; city: string } }) {
 

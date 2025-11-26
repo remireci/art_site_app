@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from 'next/font/google';
 import "../styles/globals.css";
-import HeaderWithAuth from "@/components/HeaderWithAuth";
+import Header from "@/components/Header";
 import { LocationProvider } from "../context/LocationContext";
 import CookieBanner from "../components/CookieBanner";
 import Footer from "../components/Footer";
@@ -115,7 +115,7 @@ export default async function LocaleLayout({
           timeZone="Europe/Brussels"
         >
           <div className="flex flex-col min-h-screen">
-            <HeaderWithAuth />
+            <Header />
             <main className="flex-1">
               <LocationProvider >
                 {children}
