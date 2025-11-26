@@ -4,6 +4,8 @@ import { Metadata } from 'next';
 import AdsColumn from "@/components/AdsColumn";
 import { getValidAds } from "@/lib/ads";
 
+export const dynamic = "force-static";
+
 type Exhibition = {
     _id: string | { toString: () => string };
     date_end_st?: string;
