@@ -5,11 +5,7 @@ import { FiMenu } from "react-icons/fi";
 import Menu from "./Menu";
 import { useTranslations } from "next-intl";
 
-type HeaderProps = {
-    isLoggedIn: boolean;
-};
-
-const Header = ({ isLoggedIn }: HeaderProps) => {
+const Header = () => {
     const t = useTranslations();
     const [showMenu, setShowMenu] = useState(false);
     const toggleMenu = () => {
@@ -84,7 +80,7 @@ const Header = ({ isLoggedIn }: HeaderProps) => {
                     showMenu && (
                         <div ref={menuRef} className="absolute top-12 left-0 w-full bg-slate-50 shadow-lg p-1 lg:hidden z-40">
                             <nav className="flex flex-col mx-4 space-y-4">
-                                <Menu isLoggedIn={isLoggedIn} />
+                                <Menu />
                             </nav>
                         </div>
                     )
@@ -93,7 +89,7 @@ const Header = ({ isLoggedIn }: HeaderProps) => {
                 {
                     !showMenu && (
                         <div className="hidden lg:block">
-                            <Menu isLoggedIn={isLoggedIn} />
+                            <Menu />
                         </div>
                     )
                 }

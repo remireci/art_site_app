@@ -159,7 +159,7 @@ export default async function HomePage({ params }) {
 
     return (
       <div>
-        <div className="flex flex-1 relative hidden lg:block flex-col justify-center items-right">
+        <div className="flex-1 relative hidden lg:block flex-col justify-center items-right">
           <section className="absolute top-10 lg:right-0 xl:left-0 w-1/4 xl:w-1/5 text-xs text-slate-600 font-light lg:pl-10 lg:pr-0 lg:py-20 xl:pl-4 xl:pr-24 xl:py-10">
             <h1>{t('introduction')}</h1>
             <p>

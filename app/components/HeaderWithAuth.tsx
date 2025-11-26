@@ -9,5 +9,5 @@ export default async function HeaderWithAuth() {
     // const isLoggedIn = !!authToken;
     const isLoggedIn = Boolean(authToken);
 
-    return <Header isLoggedIn={isLoggedIn} />;
+    return <Header />;
 }

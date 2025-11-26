@@ -11,23 +11,20 @@ import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 
-export type UserMenuButtonProps = {
-    isLoggedIn: boolean;
-};
 
-const UserMenuButton = ({ isLoggedIn }: UserMenuButtonProps) => {
-    // const [isLoggedIn, setIsLoggedIn] = useState(false);
+const UserMenuButton = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const t = useTranslations('homepage');
 
-    // useEffect(() => {
-    //     fetch('/api/auth/me')
-    //         .then((res) => setIsLoggedIn(res.ok))
-    //         .catch(() => setIsLoggedIn(false));
+    useEffect(() => {
+        fetch('/api/auth/me')
+            .then((res) => setIsLoggedIn(res.ok))
+            .catch(() => setIsLoggedIn(false));
 
-    // }, []);
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

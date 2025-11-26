@@ -8,12 +8,7 @@ import UserMenuButtonWrapper from "./UserMenuButtonWrapper";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 
-type MenuProps = {
-    isLoggedIn: boolean;
-};
-
-
-const Menu = ({ isLoggedIn }: MenuProps) => {
+const Menu = () => {
     const t = useTranslations();
     const locale = useLocale();
     const router = useRouter();
@@ -37,7 +32,6 @@ const Menu = ({ isLoggedIn }: MenuProps) => {
                 </Button> */}
 
                 <UserMenuButtonWrapper
-                    isLoggedIn={isLoggedIn}
                 />
                 {/* <Link href="/account?message=wishlist"> */}
                 <div className="relative hover:text-gray-600 cursor-pointer"
