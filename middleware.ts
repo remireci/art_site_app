@@ -10,6 +10,16 @@ const intlMiddleware = createMiddleware({
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  console.log(
+    "Blocked request from region:",
+    request.geo?.region,
+    "path:",
+    request.nextUrl.pathname
+  );
+
+  if (request.geo?.region === "Île-de-France") {
+    return new NextResponse("Region blocked", { status: 403 });
+  }
 
   const PUBLIC_FILE =
     /\.(js|css|png|jpg|jpeg|gif|svg|webp|ico|eot|otf|ttf|woff|woff2|json)$/;
