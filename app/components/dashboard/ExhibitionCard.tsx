@@ -13,6 +13,13 @@ import {
 } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 
+const getOptimizedSrc = (imagePath: string | undefined) => {
+    if (imagePath) {
+        return imagePath; // Use your own pre-optimized R2 file
+    }
+    return "https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png";
+};
+
 
 export default function ExhibitionCard({ exhibition, priority, onUpdate }: { exhibition: Exhibition, priority?: boolean; onUpdate: (updated: Exhibition) => void; }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -30,18 +37,7 @@ export default function ExhibitionCard({ exhibition, priority, onUpdate }: { exh
         setIsEditingImage(false); // closes modal if open
     };
 
-    let optimizedUrl;
-
-    if (exhibition.image_reference && exhibition.image_reference[0]) {
-        const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
-
-        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
-
-    } else {
-
-        optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
-
-    }
+    const optimizedUrl = getOptimizedSrc(exhibition.image_reference[0]);
 
 
     return (

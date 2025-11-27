@@ -20,19 +20,6 @@ const AdsColumn = ({ ads }: AdsColumnProps) => {
     const pathname = usePathname();
     const locale = pathname.split('/')[1];
 
-    let optimizedUrl = '';
-
-    // To refactor according to the ads objects
-
-    // if (ads[0]) {
-    //     const imageName = ads[0].split('?')[0].split('agenda/')[1];
-
-    //     optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(imageName)}`;
-    // } else {
-    //     optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
-
-    // }
-
     return (
         <div
             className={`relative w-full aspect-[1]`}

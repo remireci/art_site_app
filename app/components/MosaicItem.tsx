@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
 
 interface MosaicItemProps {
     exhibition: {
@@ -21,11 +22,7 @@ export default function MosaicItem({ exhibition }: MosaicItemProps) {
 
     // console.log("the exhibition", exhibition)
 
-    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
-
-    // Construct the Cloudflare optimized URL
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,quality=70,fit=cover,format=auto/agenda/${encodeURI(imageName as string)}`;
-
+    const optimizedUrl = getOptimizedSrc(exhibition.image_reference[0]);
 
     return (
         <motion.div

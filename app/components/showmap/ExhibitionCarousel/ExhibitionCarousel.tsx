@@ -1,8 +1,9 @@
 "use client"
-
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { getOptimizedSrc } from '@/utils/getOptimizedSrc';
+
 
 interface MapProps {
     exhibitionsInLocation: Exhibition[];
@@ -21,6 +22,8 @@ type Exhibition = {
     image_reference: string[];
     exhibition_url: string;
 }
+
+
 
 const ExhibitionCarousel = ({ exhibitionsInLocation, slug }: MapProps) => {
     const BASE_URL =
@@ -58,22 +61,13 @@ const ExhibitionCarousel = ({ exhibitionsInLocation, slug }: MapProps) => {
         <div className="w-[200px] min-h-[280px]">
             {exhibitionsInLocation.map((exhibition, index) => {
 
-                let optimizedUrl = '';
 
-                if (exhibition.image_reference[0]) {
-                    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
-
-                    optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
-                } else {
-                    optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
-
-                }
 
                 const URL = slug ? `${BASE_URL}/${locale}/exhibitions/locations/${slug}` : exhibition.url;
 
                 // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
-                // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
+                const optimizedUrl = getOptimizedSrc(exhibition.image_reference[0]);
 
                 return (
                     <div

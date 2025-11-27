@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { getOptimizedSrc } from '@/utils/getOptimizedSrc';
 import Image from 'next/image';
 
 // Initialize Supabase client
@@ -8,6 +9,7 @@ import Image from 'next/image';
 //     process.env.NEXT_PUBLIC_SUPABASE_URL,
 //     process.env.NEXT_PUBLIC_SUPABASE_API_KEY
 // );
+
 
 const ImageDisplay = ({ imagePath, title, priority = false }) => {
 
@@ -50,16 +52,7 @@ const ImageDisplay = ({ imagePath, title, priority = false }) => {
 
     // Get the full path after 'agenda/', and remove any query parameters
 
-    let optimizedUrl = '';
-
-    if (imagePath[0]) {
-        const imageName = imagePath.split('?')[0].split('agenda/')[1];
-
-        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(imageName)}`;
-    } else {
-        optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
-
-    }
+    const optimizedUrl = getOptimizedSrc(imagePath);
 
     return (
         <div className={`relative w-full aspect-[1]`}>

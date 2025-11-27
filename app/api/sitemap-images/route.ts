@@ -1,6 +1,7 @@
 // app/sitemap-images/route.ts
 import { getAgendaItems, getLocations, getCities } from "@/db/mongo";
 import { NextResponse } from "next/server";
+import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
 
 const BASE_URL = "https://www.artnowdatabase.eu";
 const LANGUAGES = ["en", "fr", "nl"];
@@ -77,9 +78,7 @@ export async function GET() {
       for (const image of ex.image_reference) {
         if (typeof image === "string" && image.includes("agenda/")) {
           const imageName = image.split("?")[0].split("agenda/")[1];
-          const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(
-            imageName
-          )}`;
+          const optimizedUrl = getOptimizedSrc(imageName);
 
           locationGroups.get(domainSlug).images.push({
             url: optimizedUrl,
@@ -103,9 +102,7 @@ export async function GET() {
       for (const image of ex.image_reference) {
         if (typeof image === "string" && image.includes("agenda/")) {
           const imageName = image.split("?")[0].split("agenda/")[1];
-          const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(
-            imageName
-          )}`;
+          const optimizedUrl = getOptimizedSrc(imageName);
 
           cityGroups.get(citySlug).images.push({
             url: optimizedUrl,

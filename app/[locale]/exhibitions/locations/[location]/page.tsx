@@ -7,6 +7,7 @@ import { Metadata } from 'next';
 import AdsColumn from "@/components/AdsColumn";
 import { getValidAds } from "@/lib/ads";
 import { convertToDomain } from "@/utils/convertToDomain";
+import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
 
 // app/[locale]/exhibitions/locations/[location]/page.tsx
 
@@ -50,7 +51,7 @@ export async function generateMetadata({ params }: { params: { locale: string; l
 
     const image = data[0].image_reference[0];
     const imageName = image?.split("?")[0].split("agenda/")[1];
-    const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=300/agenda/${encodeURI(imageName)}`;
+    const optimizedUrl = getOptimizedSrc(image);
 
     // Capitalize location name for display
     const locationName = location.charAt(0).toUpperCase() + location.slice(1);
@@ -187,21 +188,11 @@ export default async function LocationPage({ params }: { params: { locale: strin
 
                     // const optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
 
-                    let optimizedUrl = '';
 
                     const today = new Date();
                     const startDate = new Date(exhibition.date_begin_st);
 
-                    if (exhibition.image_reference[0]) {
-                        const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
-
-                        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
-
-                    } else {
-
-                        optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
-
-                    }
+                    const optimizedUrl = getOptimizedSrc(exhibition.image_reference[0]);
 
                     return (
                         <li
