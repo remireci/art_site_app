@@ -22,13 +22,16 @@ export function middleware(request: NextRequest) {
 
   console.log(`Request from IP ${ip}, region ${region}, path ${url}`);
   console.log(
-    "Blocked request from region:",
+    "Request from region:",
     request.geo?.region,
     "path:",
     request.nextUrl.pathname
   );
 
-  if (request.geo?.region === "Île-de-France") {
+  if (
+    request.geo?.region === "Île-de-France" ||
+    request.geo?.region === "cdg1"
+  ) {
     return new NextResponse("Region blocked", { status: 403 });
   }
 
