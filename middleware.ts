@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ipAddress } from "@vercel/functions";
 import createMiddleware from "next-intl/middleware";
 import { locales } from "./i18n.config";
 
@@ -11,13 +10,15 @@ const intlMiddleware = createMiddleware({
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const ip =
-    ipAddress(request) || req.headers.get("x-forwarded-for") || "unknown";
+  const forwarded =
+    request.headers.get("x-forwarded-for") ??
+    request.headers.get("x-vercel-forwarded-for");
+  const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
   const region =
-    req.geo?.region ||
-    req.headers.get("x-vercel-ip-country-region") ||
+    request.geo?.region ||
+    request.headers.get("x-vercel-ip-country-region") ||
     "unknown-region";
-  const url = req.nextUrl.pathname;
+  const url = request.nextUrl.pathname;
 
   console.log(`Request from IP ${ip}, region ${region}, path ${url}`);
   console.log(
