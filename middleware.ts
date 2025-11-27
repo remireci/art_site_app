@@ -35,13 +35,17 @@ export function middleware(request: NextRequest) {
     region === "WA" ||
     region === "BRU" ||
     region === "unknown-region" ||
+    region === "CA" ||
+    region === "14" ||
     ip === "104.23.241.31" ||
     ip === "162.158.233.65" ||
     ip === "162.158.42.179" ||
     ip === "162.158.233.8" ||
     ip === "172.68.23.78" ||
     ip === "172.71.124.157" ||
-    ip === "108.162.227.86"
+    ip === "108.162.227.86" ||
+    ip === "146.190.121.254" ||
+    ip === "162.158.103.219"
   ) {
     return new NextResponse("Region blocked", { status: 403 });
   }
