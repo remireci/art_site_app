@@ -45,7 +45,6 @@ export function middleware(request: NextRequest) {
     region === "cdg1" ||
     region === "VA" ||
     region === "WA" ||
-    region === "BRU" ||
     region === "unknown-region" ||
     region === "CA" ||
     region === "14" ||
