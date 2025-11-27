@@ -29,8 +29,19 @@ export function middleware(request: NextRequest) {
   );
 
   if (
-    request.geo?.region === "Île-de-France" ||
-    request.geo?.region === "cdg1"
+    region === "Île-de-France" ||
+    region === "cdg1" ||
+    region === "VA" ||
+    region === "WA" ||
+    region === "BRU" ||
+    region === "unknown-region" ||
+    ip === "104.23.241.31" ||
+    ip === "162.158.233.65" ||
+    ip === "162.158.42.179" ||
+    ip === "162.158.233.8" ||
+    ip === "172.68.23.78" ||
+    ip === "172.71.124.157" ||
+    ip === "108.162.227.86"
   ) {
     return new NextResponse("Region blocked", { status: 403 });
   }
