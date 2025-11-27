@@ -22,6 +22,8 @@
     "@supabase/supabase-js": "^2.47.13",
     "@types/leaflet": "^1.9.16",
     "@types/react-leaflet": "^3.0.0",
+    "@upstash/ratelimit": "^2.0.7",
+    "@upstash/redis": "^1.35.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "coffee-script": "^1.12.7",

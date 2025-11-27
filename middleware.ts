@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { locales } from "./i18n.config";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "10 s"), // 5 requests per 10 seconds per IP
+});
 
 const intlMiddleware = createMiddleware({
   defaultLocale: "en",
@@ -8,7 +20,7 @@ const intlMiddleware = createMiddleware({
   localeDetection: false,
 });
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const forwarded =
     request.headers.get("x-forwarded-for") ??
@@ -21,34 +33,34 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.pathname;
 
   console.log(`Request from IP ${ip}, region ${region}, path ${url}`);
-  console.log(
-    "Request from region:",
-    request.geo?.region,
-    "path:",
-    request.nextUrl.pathname
-  );
+  const { success } = await ratelimit.limit(ip);
 
-  if (
-    region === "Île-de-France" ||
-    region === "cdg1" ||
-    region === "VA" ||
-    region === "WA" ||
-    region === "BRU" ||
-    region === "unknown-region" ||
-    region === "CA" ||
-    region === "14" ||
-    ip === "104.23.241.31" ||
-    ip === "162.158.233.65" ||
-    ip === "162.158.42.179" ||
-    ip === "162.158.233.8" ||
-    ip === "172.68.23.78" ||
-    ip === "172.71.124.157" ||
-    ip === "108.162.227.86" ||
-    ip === "146.190.121.254" ||
-    ip === "162.158.103.219"
-  ) {
-    return new NextResponse("Region blocked", { status: 403 });
+  if (!success) {
+    // Too many requests — block / return 429
+    return new NextResponse("Too many requests", { status: 429 });
   }
+  // if (
+  //   region === "Île-de-France" ||
+  //   region === "cdg1" ||
+  //   region === "VA" ||
+  //   region === "WA" ||
+  //   region === "BRU" ||
+  //   region === "unknown-region" ||
+  //   region === "CA" ||
+  //   region === "14" ||
+  //   ip === "104.23.241.31" ||
+  //   ip === "162.158.233.65" ||
+  //   ip === "162.158.42.179" ||
+  //   ip === "162.158.233.8" ||
+  //   ip === "172.68.23.78" ||
+  //   ip === "172.71.124.157" ||
+  //   ip === "108.162.227.86" ||
+  //   ip === "146.190.121.254" ||
+  //   ip === "162.158.103.219" ||
+  //   ip === "64.23.159.153"
+  // ) {
+  //   return new NextResponse("Region blocked", { status: 403 });
+  // }
 
   const PUBLIC_FILE =
     /\.(js|css|png|jpg|jpeg|gif|svg|webp|ico|eot|otf|ttf|woff|woff2|json)$/;
