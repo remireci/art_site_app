@@ -37,6 +37,6 @@
     "scripts/sitemap.js",
     "app/[locale]/page.js",
     "next-intl.config.mjs"
-  ],
+, "app/components/ImageDisplay.jsx", "app/components/ImageDisplay.jsx", "app/components/Search.jsx"  ],
   "exclude": ["node_modules"]
 }
