@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Metadata } from 'next';
 import AdsColumn from "@/components/AdsColumn";
 import { getValidAds } from "@/lib/ads";
+import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -36,13 +37,12 @@ export async function generateMetadata({ params }: { params: { locale: string; c
 
     // Get the first exhibition with an image in this city
     const exhibitionWithImage = exhibitions.find((loc: any) => loc.image_reference);
-    let optimizedUrl = '';
+    const image = exhibitionWithImage?.image_reference[0];
+    const imageName = image.split("?")[0].split("agenda/")[1];
+    const optimizedUrl = getOptimizedSrc(image);
     let imageAlt = '';
 
     if (exhibitionWithImage) {
-        const image = exhibitionWithImage.image_reference[0];
-        const imageName = image.split("?")[0].split("agenda/")[1];
-        optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/format=auto,fit=cover,width=600/agenda/${encodeURI(imageName)}`;
         imageAlt = `${exhibitionWithImage.title} at ${exhibitionWithImage.location} in ${cityName}`;
     }
 
@@ -217,19 +217,12 @@ export default async function CityPage({ params }: { params: { locale: string; c
                         })
                         .map((exhibition: any, index: number) => {
 
-                            let optimizedUrl = '';
                             const today = new Date();
                             const startDate = new Date(exhibition.date_begin_st);
                             const endDate = new Date(exhibition.date_end_st);
                             if (exhibition.image_reference && (today < endDate)) {
-                                if (exhibition.image_reference[0]) {
-                                    const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 
-                                    optimizedUrl = `https://img.artnowdatabase.eu/cdn-cgi/image/width=300,fit=cover/agenda/${encodeURI(imageName as string)}`;
-                                } else {
-                                    optimizedUrl = 'https://pub-1070865a23b94011a35efcf0cf91803e.r2.dev/byArtNowDatabase_placeholder.png';
-
-                                }
+                                const optimizedUrl = getOptimizedSrc(exhibition.image_reference[0])
 
                                 return (
                                     <li key={exhibition._id}
