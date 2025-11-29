@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: { locale: string; c
     // Get the first exhibition with an image in this city
     const exhibitionWithImage = exhibitions.find((loc: any) => loc.image_reference);
     const image = exhibitionWithImage?.image_reference[0];
-    const imageName = image.split("?")[0].split("agenda/")[1];
+    // const imageName = image.split("?")[0].split("agenda/")[1];
     const optimizedUrl = getOptimizedSrc(image);
     let imageAlt = '';
 
