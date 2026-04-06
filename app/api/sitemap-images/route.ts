@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
 import { getSitemapImageUrl } from "@/utils/getSitemapImageUrl";
 
+export const dynamic = "force-static";
+
 const BASE_URL = "https://www.artnowdatabase.eu";
 const LANGUAGES = ["en", "fr", "nl"];
 
