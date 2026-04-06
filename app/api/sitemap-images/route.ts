@@ -2,6 +2,7 @@
 import { getAgendaItems, getLocations, getCities } from "@/db/mongo";
 import { NextResponse } from "next/server";
 import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
+import { getSitemapImageUrl } from "@/utils/getSitemapImageUrl";
 
 const BASE_URL = "https://www.artnowdatabase.eu";
 const LANGUAGES = ["en", "fr", "nl"];
@@ -35,7 +36,7 @@ export async function GET() {
         location: 1,
         city: 1,
         domain: 1,
-      }
+      },
     ),
     getLocations({ onlyWithExhibitions: true }),
     getCities({ onlyWithExhibitions: true }),
@@ -75,13 +76,30 @@ export async function GET() {
           city: city,
         });
       }
+      // for (const image of ex.image_reference) {
+      //   if (typeof image === "string" && image.includes("agenda/")) {
+      //     const imageName = image.split("?")[0].split("agenda/")[1];
+
+      //     console.log(
+      //       `Processing image: ${imageName} for domain: ${domainSlug}`,
+      //     );
+      //     const optimizedUrl = getOptimizedSrc(imageName);
+
+      //     locationGroups.get(domainSlug).images.push({
+      //       url: optimizedUrl,
+      //       title: ex.title,
+      //       venue: ex.location || "",
+      //       city: city || "",
+      //     });
+      //   }
+      // }
       for (const image of ex.image_reference) {
         if (typeof image === "string" && image.includes("agenda/")) {
-          const imageName = image.split("?")[0].split("agenda/")[1];
-          const optimizedUrl = getOptimizedSrc(imageName);
+          const sitemapImageUrl = getSitemapImageUrl(image);
+          if (!sitemapImageUrl) continue;
 
           locationGroups.get(domainSlug).images.push({
-            url: optimizedUrl,
+            url: sitemapImageUrl,
             title: ex.title,
             venue: ex.location || "",
             city: city || "",
@@ -101,11 +119,10 @@ export async function GET() {
       }
       for (const image of ex.image_reference) {
         if (typeof image === "string" && image.includes("agenda/")) {
-          const imageName = image.split("?")[0].split("agenda/")[1];
-          const optimizedUrl = getOptimizedSrc(imageName);
+          const sitemapImageUrl = image.split("?")[0];
 
           cityGroups.get(citySlug).images.push({
-            url: optimizedUrl,
+            url: sitemapImageUrl,
             title: ex.title,
             venue: ex.location || "",
             city: city || "",
@@ -118,7 +135,7 @@ export async function GET() {
   const generateUrlEntries = (
     basePath: string,
     images: { url: string; title: string; venue: string; city: string }[],
-    cityName: string
+    cityName: string,
   ) =>
     LANGUAGES.map((lang) => {
       const pageUrl = `${BASE_URL}/${lang}${basePath}`;
@@ -130,19 +147,18 @@ export async function GET() {
           <image:title><![CDATA[${img.title}]]></image:title>
           <image:caption><![CDATA[Image courtesy of ${img.venue} Used for promotional purposes only]]></image:caption>
           <image:geo_location><![CDATA[${cityName}]]></image:geo_location>
-        </image:image>`
+        </image:image>`,
         )
         .join("");
 
       const alternateLinks = LANGUAGES.map(
         (altLang) => `
-        <xhtml:link rel="alternate" hreflang="${altLang}" href="${BASE_URL}/${altLang}${basePath}"/>`
+        <xhtml:link rel="alternate" hreflang="${altLang}" href="${BASE_URL}/${altLang}${basePath}"/>`,
       ).join("");
 
       return `
       <url>
         <loc>${pageUrl}</loc>
-        <lastmod>${now}</lastmod>
         ${alternateLinks}
         ${imageTags}
       </url>`;
@@ -150,13 +166,13 @@ export async function GET() {
 
   const locationXml = Array.from(locationGroups.entries())
     .map(([slug, { images, venue, city }]) =>
-      generateUrlEntries(`/exhibitions/locations/${slug}`, images, venue)
+      generateUrlEntries(`/exhibitions/locations/${slug}`, images, city),
     )
     .join("");
 
   const cityXml = Array.from(cityGroups.entries())
     .map(([slug, { images, city }]) =>
-      generateUrlEntries(`/exhibitions/cities/${slug}`, images, city)
+      generateUrlEntries(`/exhibitions/cities/${slug}`, images, city),
     )
     .join("");
 
