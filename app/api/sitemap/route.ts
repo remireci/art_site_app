@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const LANGUAGES = ["en", "nl", "fr"];
 const BASE_URL =
@@ -6,25 +6,26 @@ const BASE_URL =
     ? "https://www.artnowdatabase.eu"
     : "http://localhost:3000";
 
-type Params = { params: { lang: string } };
+export const revalidate = 3600;
 
-export async function GET(req: NextRequest, { params }: Params) {
-  // const lang = params.lang;
+export async function GET() {
+  const now = new Date().toISOString();
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${LANGUAGES.map(
     (lang) => `
   <sitemap>
-    <loc>${BASE_URL}/api/sitemap/${lang}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>
-  `,
+    <loc>${BASE_URL}/sitemap-${lang}.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>`,
   ).join("")}
 </sitemapindex>`;
 
-  return new Response(xml, {
+  return new NextResponse(xml, {
     headers: {
       "Content-Type": "application/xml",
+      "Cache-Control": "public, max-age=3600, stale-while-revalidate=60",
     },
   });
 }

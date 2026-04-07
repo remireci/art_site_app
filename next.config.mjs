@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 import createNextIntlPlugin from "next-intl/plugin";
-import path from "path";
 
 const withNextIntl = createNextIntlPlugin();
 
@@ -49,6 +48,25 @@ const nextConfig = {
 
   async rewrites() {
     return [
+      // Normal sitemap index + language sitemaps
+      {
+        source: "/sitemap.xml",
+        destination: "/api/sitemap",
+      },
+      {
+        source: "/sitemap-en.xml",
+        destination: "/api/sitemap/en",
+      },
+      {
+        source: "/sitemap-nl.xml",
+        destination: "/api/sitemap/nl",
+      },
+      {
+        source: "/sitemap-fr.xml",
+        destination: "/api/sitemap/fr",
+      },
+
+      // Image sitemap index + child sitemaps
       {
         source: "/sitemap-images.xml",
         destination: "/sitemap-images",
