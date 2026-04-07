@@ -40,22 +40,26 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/locations/:slug',
-        destination: '/exhibitions/locations/:slug',
+        source: "/locations/:slug",
+        destination: "/exhibitions/locations/:slug",
         permanent: true,
       },
-    ]
+    ];
   },
 
   async rewrites() {
     return [
       {
-        source: '/sitemap.xml',
-        destination: '/api/sitemap',
+        source: "/sitemap-images.xml",
+        destination: "/sitemap-images",
       },
       {
-        source: '/sitemap-:lang.xml',
-        destination: '/api/sitemap/:lang',
+        source: "/sitemap-images-locations.xml",
+        destination: "/sitemap-images-locations",
+      },
+      {
+        source: "/sitemap-images-cities.xml",
+        destination: "/sitemap-images-cities",
       },
     ];
   },

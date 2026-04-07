@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -9,14 +9,13 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["app/*"]
+      "@/*": ["./app/*"]
     },
     "types": ["node"],
     "plugins": [
@@ -36,7 +35,10 @@
     "app/api/exhibitions/delete-image/route.js",
     "scripts/sitemap.js",
     "app/[locale]/page.js",
-    "next-intl.config.mjs"
-, "app/components/ImageDisplay.jsx", "app/components/ImageDisplay.jsx", "app/components/Search.jsx"  ],
+    "next-intl.config.mjs",
+    "app/components/ImageDisplay.jsx",
+    "app/components/ImageDisplay.jsx",
+    "app/components/Search.jsx"
+  ],
   "exclude": ["node_modules"]
 }
