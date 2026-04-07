@@ -1,36 +1,33 @@
-
 {
-    "city_title": "Art Exhibitions by City",
-    "location_title": "Art Exhibitions by Location",
-    "search": "Search Exhibitions",
-    "exploreMoreExhibitions": "Map",
-    "exploreExhibitions": "Explore exhibitions near {{city}}",
-    "moreInfo": "More info",
-    "description": "Description",
-    "cities": 
-    {
-      "metaTitle": "Art Exhibitions | ArtNowDatabase",
-      "heading": "Exhibitions by City",
-      "noResults": "No current exhibitions",
-      "actual": "Actual & Future",
-      "past": "Past",
-      "meta_title_a": "Art Exhibitions in",
-      "meta_title_b": " | Modern & Contemporary Art - ArtNowDatabase",
-      "meta_description": "Explore upcoming contemporary and modern art exhibitions in",
-      "meta_keywords": "art museums, art galleries, art events in",
-      "noExhibitions": "No current art exhibitions in ",      
-      "page_title": "Modern & Contemporary Art Exhibitions in ",
-      "page_description": "Discover contemporary and modern art exhibitions in {{city}}. Our exhibition guide helps you explore museums, galleries, and artist-run spaces showcasing modern and contemporary art. Whether you're an art enthusiast or a curious visitor, stay informed about what's happening in the art scene in {{city}}."
-    },
-    "locations": 
-    {
-      "metaTitle": "Art Venues | ArtNowDatabase",
-      "metaDescription": "Discover art museums and galleries hosting current exhibitions in Western Europe",
-      "metaKeywords": "art museums, contemporary galleries, exhibition venues",
-      "heading": "Featured Art Venues",
-      "searchPlaceholder": "Search venues...",      
-      "meta_title": "Art Exhibitions",
-      "meta_description": "Explore upcoming modern and contemporary art exhibitions at",
-      "meta_keywords": "art exhibitions, contemporary art, modern art, gallery, museum, art space"
-    }
+  "city_title": "Art Exhibitions by City",
+  "location_title": "Art Exhibitions by Location",
+  "search": "Search Exhibitions",
+  "exploreMoreExhibitions": "Map",
+  "exploreExhibitions": "Explore exhibitions near {{city}}",
+  "moreInfo": "More info",
+  "description": "Description",
+  "cities": {
+    "metaTitle": "Art Exhibitions | ArtNowDatabase",
+    "heading": "Exhibitions by City",
+    "noResults": "No current exhibitions",
+    "actual": "Actual & Future Exhibitions",
+    "past": "Past Exhibitions",
+    "meta_title_a": "Art Exhibitions in",
+    "meta_title_b": " | Modern & Contemporary Art - ArtNowDatabase",
+    "meta_description": "Explore upcoming contemporary and modern art exhibitions in",
+    "meta_keywords": "art museums, art galleries, art events in",
+    "noExhibitions": "No current art exhibitions in ",
+    "page_title": "Modern & Contemporary Art Exhibitions in ",
+    "page_description": "Discover contemporary and modern art exhibitions in {{city}}. Our exhibition guide helps you explore museums, galleries, and artist-run spaces showcasing modern and contemporary art. Whether you're an art enthusiast or a curious visitor, stay informed about what's happening in the art scene in {{city}}."
+  },
+  "locations": {
+    "metaTitle": "Art Venues | ArtNowDatabase",
+    "metaDescription": "Discover art museums and galleries hosting current exhibitions in Western Europe",
+    "metaKeywords": "art museums, contemporary galleries, exhibition venues",
+    "heading": "Featured Art Venues",
+    "searchPlaceholder": "Search venues...",
+    "meta_title": "Art Exhibitions",
+    "meta_description": "Explore upcoming modern and contemporary art exhibitions at",
+    "meta_keywords": "art exhibitions, contemporary art, modern art, gallery, museum, art space"
+  }
 }
