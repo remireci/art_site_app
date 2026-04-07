@@ -15,10 +15,10 @@ export async function GET(req: NextRequest, { params }: Params) {
   ${LANGUAGES.map(
     (lang) => `
   <sitemap>
-    <loc>${BASE_URL}/sitemap-${lang}.xml</loc>
+    <loc>${BASE_URL}/api/sitemap/${lang}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
   </sitemap>
-  `
+  `,
   ).join("")}
 </sitemapindex>`;
 
