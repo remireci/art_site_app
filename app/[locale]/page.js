@@ -3,6 +3,7 @@ import { extractDomain } from "../utils/extractDomain";
 import { shuffleArray } from "../utils/shuffleArray";
 import { getTranslations } from "next-intl/server";
 import { getValidAds } from "@/lib/ads";
+import Link from "next/link";
 // export const runtime = 'edge';
 
 function getRandomSubset(arr, count) {
@@ -176,11 +177,29 @@ export default async function HomePage({ params }) {
 
     return (
       <div>
-        <div className="flex-1 relative hidden lg:block flex-col justify-center items-right">
+        <div className="flex-1 relative hidden lg:block flex-col justify-center items-right z-30">
           <section className="absolute top-10 lg:right-0 xl:left-0 w-1/4 xl:w-1/5 text-xs text-slate-600 font-light lg:pl-10 lg:pr-0 lg:py-20 xl:pl-4 xl:pr-24 xl:py-10">
             <h1>{t("introduction")}</h1>
             <p>{t("description1")}</p>
             <p>{t("description2")}</p>
+
+            <div className="mt-20 mb-1 text-xs text-slate-600 font-light flex justify-start items-center">
+              <p>Browse exhibitions by city or location.</p>
+            </div>
+            <div className="mt-1 mb-20 text-sm text-slate-600 font-light flex gap-4">
+              <Link
+                className="underline underline-offset-4 hover:text-slate-800"
+                href="/exhibitions/cities"
+              >
+                Cities
+              </Link>
+              <Link
+                className="underline underline-offset-4 hover:text-slate-800"
+                href="/exhibitions/locations"
+              >
+                Locations
+              </Link>
+            </div>
           </section>
         </div>
         <div className="relative z-10">
@@ -191,13 +210,24 @@ export default async function HomePage({ params }) {
             locale={locale}
             ads={ads}
           />
-          <div className="justify-center items-center mt-10 mb-20 text-sm text-slate-600 font-light flex gap-4">
-            <a className="px-8" href="/exhibitions/cities">
-              Cities
-            </a>
-            <a className="px-8" href="/exhibitions/locations">
-              Locations
-            </a>
+          <div className="lg:hidden">
+            <div className="mt-0 mb-1 text-xs text-slate-600 font-light flex gap-4 justify-center items-center">
+              <p>Browse exhibitions by city or location.</p>
+            </div>
+            <div className="justify-center items-center mt-1 mb-20 text-sm text-slate-600 font-light flex gap-4">
+              <Link
+                className="underline underline-offset-4 hover:text-slate-800"
+                href="/exhibitions/cities"
+              >
+                Cities
+              </Link>
+              <Link
+                className="underline underline-offset-4 hover:text-slate-800"
+                href="/exhibitions/locations"
+              >
+                Locations
+              </Link>
+            </div>
           </div>
         </div>
       </div>

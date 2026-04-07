@@ -23,7 +23,6 @@ body {
   transition: background-color 30s ease-in-out;
 }
 
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -67,11 +66,11 @@ input:focus-visible {
 }
 
 .input-container {
-  position: relative;  
+  position: relative;
 }
 
 .results-container {
-  position: relative;  
+  position: relative;
 }
 
 .leaflet-popup-content-wrapper {
@@ -107,7 +106,7 @@ input:focus-visible {
   background-color: rgba(100, 100, 100, 0.8);
 }
 
-input::-ms-clear, 
+input::-ms-clear,
 input::-webkit-search-cancel-button {
   display: none;
 }
@@ -115,8 +114,6 @@ input::-webkit-search-cancel-button {
 textarea {
   resize: none;
 }
-
-
 
 @layer base {
   :root {
@@ -173,8 +170,6 @@ textarea {
     --chart-5: 340 75% 55%;
   }
 }
-
-
 
 @layer base {
   * {
