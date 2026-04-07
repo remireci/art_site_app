@@ -2,9 +2,8 @@ import Search from "../components/Search";
 import { extractDomain } from "../utils/extractDomain";
 import { shuffleArray } from "../utils/shuffleArray";
 import { getTranslations } from "next-intl/server";
-import { getValidAds } from '@/lib/ads';
+import { getValidAds } from "@/lib/ads";
 // export const runtime = 'edge';
-
 
 function getRandomSubset(arr, count) {
   const shuffled = [...arr]; // avoid mutating the original array
@@ -15,7 +14,7 @@ function getRandomSubset(arr, count) {
   return shuffled.slice(0, count);
 }
 
-// This helper function - normalizeExhibition - is only introduced to keep the original logic 
+// This helper function - normalizeExhibition - is only introduced to keep the original logic
 // in the API; where search i also handling text documents;
 // mayby ultimately we should separate this logic in two API's
 // on client we have to be in accordance with this logic:
@@ -24,16 +23,14 @@ function getRandomSubset(arr, count) {
 function normalizeExhibition(exh) {
   return {
     ...exh,
-    source: exh.source ?? 'agenda',
-    snippet: exh.snippet ?? '',
+    source: exh.source ?? "agenda",
+    snippet: exh.snippet ?? "",
   };
 }
 
-
 export default async function HomePage({ params }) {
-
   const { locale } = params;
-  const t = await getTranslations('homepage');
+  const t = await getTranslations("homepage");
   // const t = await getTranslations();
 
   const URL =
@@ -41,7 +38,18 @@ export default async function HomePage({ params }) {
       ? "https://www.artnowdatabase.eu"
       : "http://localhost:3000";
 
-  const initialSearchTerms = ["pain", "scul", "phot", "imag", "mode", "arch", "ber", "ams", 'kunsthal', 'dessin'];
+  const initialSearchTerms = [
+    "pain",
+    "scul",
+    "phot",
+    "imag",
+    "mode",
+    "arch",
+    "ber",
+    "ams",
+    "kunsthal",
+    "dessin",
+  ];
   const number = initialSearchTerms.length;
   const indexInitialSearch = Math.floor(Math.random(number) * number);
   const initialSearchTerm = initialSearchTerms[indexInitialSearch];
@@ -52,11 +60,16 @@ export default async function HomePage({ params }) {
         ? { cache: "no-store" }
         : { next: { revalidate: 3600 } };
 
-    const locationsResponse = await fetch(`${URL}/api/map/locations`, cacheOption);
-    const exhibitionsResponse = await fetch(`${URL}/api/exhibitions`, cacheOption);
+    const locationsResponse = await fetch(
+      `${URL}/api/map/locations`,
+      cacheOption,
+    );
+    const exhibitionsResponse = await fetch(
+      `${URL}/api/exhibitions`,
+      cacheOption,
+    );
 
     const ads = await getValidAds();
-
 
     // console.log("the valid ads", ads);
 
@@ -66,7 +79,6 @@ export default async function HomePage({ params }) {
     // const randomized = shuffleArray(data);
 
     // console.log("the randomized", randomized);
-
 
     if (!locationsResponse.ok || !exhibitionsResponse.ok) {
       throw new Error("Failed to fetch data");
@@ -82,7 +94,9 @@ export default async function HomePage({ params }) {
     // const civa = exhibitions.filter(exh => exh.domain === "civa.brussels");
     // console.log(civa);
 
-    const randomExhibitions = getRandomSubset(exhibitions, 20).map(normalizeExhibition);
+    const randomExhibitions = getRandomSubset(exhibitions, 20).map(
+      normalizeExhibition,
+    );
 
     const extractWords = (title) =>
       title
@@ -90,9 +104,10 @@ export default async function HomePage({ params }) {
         .split(/\s+/) // Split by whitespace
         .filter((word) => word.length >= 4); // Keep words with at least 4 characters
 
-
     const filteredLocations = locations.filter((location) =>
-      exhibitions.some((exhibition) => extractDomain(exhibition.url) === location.domain)
+      exhibitions.some(
+        (exhibition) => extractDomain(exhibition.url) === location.domain,
+      ),
     );
 
     const locationsMap = filteredLocations.reduce((map, location) => {
@@ -112,7 +127,9 @@ export default async function HomePage({ params }) {
       const domainLocations = locationsMap[domain] || [];
 
       // Check if any location is marked as multi-location
-      const hasMultiLocations = domainLocations.some(loc => loc.hasMultipleLocations);
+      const hasMultiLocations = domainLocations.some(
+        (loc) => loc.hasMultipleLocations,
+      );
 
       // Create the group key
       const groupKey = hasMultiLocations
@@ -125,35 +142,35 @@ export default async function HomePage({ params }) {
           key: groupKey,
           domain,
           location: exhibition.location,
-          exhibitions: []  // This will directly contain the array
+          exhibitions: [], // This will directly contain the array
         };
       }
       // Push the exhibition directly into the array
       groupedExhibitions[groupKey].exhibitions.push(exhibition);
     }
 
-    const uniqueGroups = Object.values(groupedExhibitions).map(group => {
+    const uniqueGroups = Object.values(groupedExhibitions).map((group) => {
       const titleMap = {};
       return {
         ...group,
-        exhibitions: group.exhibitions.filter(exhibition => {
+        exhibitions: group.exhibitions.filter((exhibition) => {
           const normalizedTitle = exhibition.title.toLowerCase().trim();
           if (!titleMap[normalizedTitle]) {
             titleMap[normalizedTitle] = true;
             return true;
           }
           return false;
-        })
+        }),
       };
     });
 
-
     // Now you can get your unique exhibitions if needed
-    const uniqueExhibitions = uniqueGroups.flatMap(group => group.exhibitions);
+    const uniqueExhibitions = uniqueGroups.flatMap(
+      (group) => group.exhibitions,
+    );
 
     // Filter for SMB museum
     // const smbGroups = uniqueGroups.filter(group => group.domain === 'smb.museum');
-
 
     // console.log("cached or not?", smbGroups);
 
@@ -161,13 +178,9 @@ export default async function HomePage({ params }) {
       <div>
         <div className="flex-1 relative hidden lg:block flex-col justify-center items-right">
           <section className="absolute top-10 lg:right-0 xl:left-0 w-1/4 xl:w-1/5 text-xs text-slate-600 font-light lg:pl-10 lg:pr-0 lg:py-20 xl:pl-4 xl:pr-24 xl:py-10">
-            <h1>{t('introduction')}</h1>
-            <p>
-              {t('description1')}
-            </p>
-            <p>
-              {t('description2')}
-            </p>
+            <h1>{t("introduction")}</h1>
+            <p>{t("description1")}</p>
+            <p>{t("description2")}</p>
           </section>
         </div>
         <div className="relative z-10">
@@ -178,6 +191,14 @@ export default async function HomePage({ params }) {
             locale={locale}
             ads={ads}
           />
+          <div className="justify-center items-center mt-10 mb-20 text-sm text-slate-600 font-light flex gap-4">
+            <a className="px-8" href="/exhibitions/cities">
+              Cities
+            </a>
+            <a className="px-8" href="/exhibitions/locations">
+              Locations
+            </a>
+          </div>
         </div>
       </div>
     );
