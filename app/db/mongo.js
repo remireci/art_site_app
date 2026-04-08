@@ -1,6 +1,6 @@
-import { verifyCode } from '@/lib/codeUtils';
-import { MongoClient, ObjectId } from 'mongodb';
-import { cache } from 'react';
+import { verifyCode } from "@/lib/codeUtils";
+import { MongoClient, ObjectId } from "mongodb";
+import { cache } from "react";
 import clientPromise from "@/lib/mongoClient";
 
 // Connection URI, replace with your actual MongoDB connection string
@@ -9,25 +9,23 @@ const uri = process.env.MONGODB_URI;
 if (!uri) throw new Error("MongoDB uri is not defined");
 
 // Database and collection names
-const dbNameTexts = 'd_art_w_texts_r';
-const collectionNameTexts = 'DWR_Texts';
+const dbNameTexts = "d_art_w_texts_r";
+const collectionNameTexts = "DWR_Texts";
 
-const dbNameAgenda = 'Agenda';
-const collectionNameAgenda = 'Agenda_AI';
-const collectionNameLocations = 'Locations';
-const collectionCities = 'city_mapping';
+const dbNameAgenda = "Agenda";
+const collectionNameAgenda = "Agenda_AI";
+const collectionNameLocations = "Locations";
+const collectionCities = "city_mapping";
 
-const dbNameUsers = 'usersDb';
-const collectionNameUsers = 'users';
-const collectionNameLoginCodes = 'loginCodes';
-const collectionNameAuthLogs = 'authLogs';
+const dbNameUsers = "usersDb";
+const collectionNameUsers = "users";
+const collectionNameLoginCodes = "loginCodes";
+const collectionNameAuthLogs = "authLogs";
 
 // Function to connect to MongoDB and retrieve documents from the "texts" collection
 export async function getDocuments(query, skip, pageSize) {
-
   try {
     const client = await clientPromise;
-
 
     const database = client.db(dbNameTexts);
     const collection = database.collection(collectionNameTexts);
@@ -35,42 +33,35 @@ export async function getDocuments(query, skip, pageSize) {
     // Fetch documents with pagination
     const documents = await collection
       .find(query)
-      .skip(skip)  // Skip documents based on the current page
-      .limit(pageSize)              // Limit the number of documents per page
+      .skip(skip) // Skip documents based on the current page
+      .limit(pageSize) // Limit the number of documents per page
       .toArray();
 
     return documents;
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error("Error connecting to MongoDB:", error);
     throw error;
   }
 }
 
-
 export async function getDocumentById(id) {
-
   try {
     const client = await clientPromise;
 
     const database = client.db(dbNameTexts);
     const collection = database.collection(collectionNameTexts);
 
-    const query = { _id: new ObjectId(id) }
-
+    const query = { _id: new ObjectId(id) };
 
     // Fetch documents with pagination
-    const text = await collection
-      .findOne(query)
-
+    const text = await collection.findOne(query);
 
     return text;
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error("Error connecting to MongoDB:", error);
     throw error;
   }
 }
-
-
 
 // export async function getDocuments(query) {
 //   const client = new MongoClient(uri);
@@ -97,7 +88,6 @@ export async function getDocumentById(id) {
 
 // Function to connect to MongoDB and retrieve Agenda items
 export async function getAgendaItems(query, projection = {}) {
-
   try {
     const client = await clientPromise;
 
@@ -109,11 +99,10 @@ export async function getAgendaItems(query, projection = {}) {
 
     return documents;
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error("Error connecting to MongoDB:", error);
     throw error;
   }
 }
-
 
 export const getExhibitionsByDomain = async (domain, options = {}) => {
   const {
@@ -135,7 +124,7 @@ export const getExhibitionsByDomain = async (domain, options = {}) => {
       domain,
       image_reference: {
         $exists: true,
-        $ne: [] // Exclude empty arrays
+        $ne: [], // Exclude empty arrays
       },
     };
 
@@ -186,21 +175,23 @@ function normalizeCity(city) {
 
   // Normalize the city name
   const normalized = decodedCity
-    .replace(/\d+[A-Z]*\s*\|\s*/i, "")   // Remove leading numbers and pipe separator (e.g., '16E | ')
-    .replace(/\s*\|.*$/, "")             // Remove country or extra details after '|' (e.g., '| FRANCE')
-    .trim();                            // Trim whitespace
+    .replace(/\d+[A-Z]*\s*\|\s*/i, "") // Remove leading numbers and pipe separator (e.g., '16E | ')
+    .replace(/\s*\|.*$/, "") // Remove country or extra details after '|' (e.g., '| FRANCE')
+    .trim(); // Trim whitespace
 
   return normalized;
 }
 
 function escapeRegExp(str) {
   // Escape special regex characters (e.g., ".", "|", "(", etc.)
-  return str.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&');
+  return str.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
 }
 
+// function escapeRegExp(value) {
+//   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// }
 
 export async function getExhibitionsByCity(city) {
-
   try {
     const client = await clientPromise;
 
@@ -214,7 +205,7 @@ export async function getExhibitionsByCity(city) {
 
     if (!normalizedCity) {
       console.error("City name is invalid or could not be normalized.");
-      return [];  // Exit if city normalization failed
+      return []; // Exit if city normalization failed
     }
 
     const escapedCity = escapeRegExp(normalizedCity);
@@ -224,8 +215,8 @@ export async function getExhibitionsByCity(city) {
     // Construct MongoDB query
     const query = {
       city: {
-        $regex: new RegExp(`^${escapedCity}(?=\s*\|.*$|$)`, "i")  // Match the city name and optionally allow extra details after |
-      },       // Match city name (case-insensitive)
+        $regex: new RegExp(`^${escapedCity}(?=\s*\|.*$|$)`, "i"), // Match the city name and optionally allow extra details after |
+      }, // Match city name (case-insensitive)
       date_end_st: { $gte: todayISO }, // End date must be in the future
       $or: [
         { date_begin_st: { $lte: todayISO } }, // If begin date exists, it must be in the past
@@ -263,9 +254,7 @@ export async function getExhibitionsByCity(city) {
 
 //     return list(exhibitions)
 
-
 export async function addExhibition(exhibition) {
-
   try {
     const client = await clientPromise;
 
@@ -275,40 +264,40 @@ export async function addExhibition(exhibition) {
     const result = await collection.insertOne(exhibition);
     return { ...exhibition, _id: result.insertedId.toString() };
   } catch (error) {
-    console.error(`Error inserting exhibition for location  ${exhibition.location}:`, error);
+    console.error(
+      `Error inserting exhibition for location  ${exhibition.location}:`,
+      error,
+    );
     return null;
   }
 }
 
-
 export async function getLocationByDomain(domain) {
-
   try {
     const client = await clientPromise;
 
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
 
-    const location = await collection_locations.findOne({ domain: { $eq: domain } })
+    const location = await collection_locations.findOne({
+      domain: { $eq: domain },
+    });
 
     return location;
-
   } catch (error) {
     console.error(`Error fetching location for domain ${domain}:`, error);
     return null;
   }
 }
 
-
 export async function getLocationBySlug(slug) {
-
   try {
     const client = await clientPromise;
 
     const database = client.db(dbNameAgenda);
     const collection_locations = database.collection(collectionNameLocations);
 
-    const location = await collection_locations.findOne({ domain_slug: slug })
+    const location = await collection_locations.findOne({ domain_slug: slug });
 
     return location;
   } catch (error) {
@@ -318,7 +307,6 @@ export async function getLocationBySlug(slug) {
 }
 
 export async function getLocationById(id) {
-
   try {
     const client = await clientPromise;
 
@@ -333,7 +321,6 @@ export async function getLocationById(id) {
   }
 }
 
-
 export async function getLocations({ onlyWithExhibitions = false } = {}) {
   const client = await clientPromise;
   try {
@@ -347,7 +334,7 @@ export async function getLocations({ onlyWithExhibitions = false } = {}) {
 
     const locations = await collection_locations.find(query).toArray();
 
-    return locations.map(loc => ({
+    return locations.map((loc) => ({
       _id: loc._id,
       domain: loc.domain,
       name: loc.location || loc.originalUrl,
@@ -363,35 +350,35 @@ export async function getLocations({ onlyWithExhibitions = false } = {}) {
   }
 }
 
-
 export const getUniqueCities = async () => {
-  const cities = await db.collection('locations').distinct('city').toArray;
+  const cities = await db.collection("locations").distinct("city").toArray;
   return cities;
 };
-
 
 export async function getExhibitionsForCity(slug) {
   const client = await clientPromise;
   const db = client.db(dbNameAgenda);
 
-  const locations = await db.collection(collectionNameLocations)
-    .find(
-      { slug },
-      { projection: { _id: 1, domain: 1, city: 1 } }
-    )
+  const locations = await db
+    .collection(collectionNameLocations)
+    .find({ slug }, { projection: { _id: 1, domain: 1, city: 1 } })
     .toArray();
 
   if (!locations.length) return { locations: [], exhibitions: [] };
 
   const domains = locations
-    .map(l => l.domain)
-    .filter(d => d && typeof d === "string" && d.includes(".") && !d.startsWith("http"));
+    .map((l) => l.domain)
+    .filter(
+      (d) =>
+        d && typeof d === "string" && d.includes(".") && !d.startsWith("http"),
+    );
 
   if (!domains.length) return { locations, exhibitions: [] };
 
   const todayISO = new Date().toISOString();
 
-  const exhibitions = await db.collection(collectionNameAgenda)
+  const exhibitions = await db
+    .collection(collectionNameAgenda)
     .find({
       domain: { $in: domains },
       image_reference: { $exists: true, $ne: [] },
@@ -399,16 +386,16 @@ export async function getExhibitionsForCity(slug) {
 
       // EXHIBITION DATE LOGIC (your original rules)
       $or: [
-        { date_end_st: { $gte: todayISO } },  // not past
+        { date_end_st: { $gte: todayISO } }, // not past
         { date_begin_st: { $lte: todayISO } }, // already started
-        { date_begin_st: null }
-      ]
+        { date_begin_st: null },
+      ],
     })
     .toArray();
 
   // Deduplicate by _id
   const deduped = Array.from(
-    new Map(exhibitions.map(ex => [ex._id.toString(), ex])).values()
+    new Map(exhibitions.map((ex) => [ex._id.toString(), ex])).values(),
   );
 
   return {
@@ -416,7 +403,6 @@ export async function getExhibitionsForCity(slug) {
     exhibitions: deduped,
   };
 }
-
 
 export async function getLocations_by_city(slug) {
   try {
@@ -428,7 +414,7 @@ export async function getLocations_by_city(slug) {
     // Query to fetch locations where the city matches and project only _id, domain, and city fields
     const locationsCursor = collection_locations.find(
       { slug: slug },
-      { projection: { _id: 1, domain: 1, city: 1, slug: 1 } } // Project only the fields you need
+      { projection: { _id: 1, domain: 1, city: 1, slug: 1 } }, // Project only the fields you need
     );
 
     // Convert cursor to array
@@ -441,9 +427,7 @@ export async function getLocations_by_city(slug) {
   }
 }
 
-
 export async function getCities({ onlyWithExhibitions = false } = {}) {
-
   try {
     const client = await clientPromise;
 
@@ -462,23 +446,159 @@ export async function getCities({ onlyWithExhibitions = false } = {}) {
     // Extract the `city` field from each document and sort alphabetically
     const cityList = cities
       .map((doc) => ({
-        id: doc._id,  // Use the MongoDB `_id` field as the id
+        id: doc._id, // Use the MongoDB `_id` field as the id
         city: doc.city,
         alternatives: doc.alternatives,
         slug: doc.slug,
       }))
       .sort((a, b) => a.city.localeCompare(b.city));
 
-    return cityList;  // Return the array of cities
+    return cityList; // Return the array of cities
   } catch (error) {
-    console.error('Error fetching cities:', error);
+    console.error("Error fetching cities:", error);
     return [];
   }
 }
 
+export async function getCityBySlugOrAlternative(inputSlug) {
+  try {
+    const cities = await getCities({ onlyWithExhibitions: true });
+    const normalized = inputSlug?.toLowerCase?.().trim();
+
+    if (!normalized) return null;
+
+    return (
+      cities.find((doc) => {
+        const slug = doc.slug?.toLowerCase?.();
+        const city = doc.city?.toLowerCase?.();
+        const alternatives = (doc.alternatives || []).map((alt) =>
+          alt.toLowerCase(),
+        );
+
+        return (
+          slug === normalized ||
+          city === normalized ||
+          alternatives.includes(normalized)
+        );
+      }) || null
+    );
+  } catch (error) {
+    console.error("Error fetching city by slug or alternative:", error);
+    return null;
+  }
+}
+
+function escapeRegExp2(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export async function getExhibitionsForMappedCity(cityRecord) {
+  try {
+    const client = await clientPromise;
+    const db = client.db(dbNameAgenda);
+
+    const names = Array.from(
+      new Set(
+        [cityRecord.slug, cityRecord.city, ...(cityRecord.alternatives || [])]
+          .filter(Boolean)
+          .map((value) => value.trim()),
+      ),
+    );
+
+    const locationCityMatchers = names.map((name) => ({
+      city: { $regex: `^${escapeRegExp2(name)}$`, $options: "i" },
+    }));
+
+    const locations = await db
+      .collection(collectionNameLocations)
+      .find(
+        {
+          $or: [
+            {
+              slug: {
+                $regex: `^${escapeRegExp2(cityRecord.slug)}$`,
+                $options: "i",
+              },
+            },
+            ...locationCityMatchers,
+          ],
+        },
+        {
+          projection: { _id: 1, domain: 1, city: 1, slug: 1 },
+        },
+      )
+      .toArray();
+
+    const domains = Array.from(
+      new Set(
+        locations
+          .map((location) => location.domain)
+          .filter(
+            (domain) =>
+              domain &&
+              typeof domain === "string" &&
+              domain.includes(".") &&
+              !domain.startsWith("http"),
+          ),
+      ),
+    );
+
+    const exhibitionCityMatchers = names.map((name) => ({
+      city: { $regex: `^${escapeRegExp2(name)}$`, $options: "i" },
+    }));
+
+    const exhibitionQuery = {
+      $or: [
+        ...(domains.length ? [{ domain: { $in: domains } }] : []),
+        ...exhibitionCityMatchers,
+      ],
+    };
+
+    const withImageQuery = {
+      image_reference: { $exists: true, $type: "array" },
+      "image_reference.0": { $exists: true, $nin: ["", null] },
+    };
+
+    const exhibitionsByDomain = domains.length
+      ? await db
+          .collection(collectionNameAgenda)
+          .find({
+            domain: { $in: domains },
+            ...withImageQuery,
+          })
+          .toArray()
+      : [];
+
+    const exhibitionsByCity = await db
+      .collection(collectionNameAgenda)
+      .find({
+        $or: names.map((name) => ({
+          city: { $regex: `^${escapeRegExp(name)}$`, $options: "i" },
+        })),
+        ...withImageQuery,
+      })
+      .toArray();
+
+    const merged = [...exhibitionsByDomain, ...exhibitionsByCity];
+
+    const seen = new Set();
+    const dedupedExhibitions = merged.filter((item) => {
+      const id =
+        typeof item._id === "string" ? item._id : item._id?.toString?.() || "";
+
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+
+    return { locations, exhibitions: dedupedExhibitions };
+  } catch (error) {
+    console.error("Error in getExhibitionsForMappedCity:", error);
+    return { locations: [], exhibitions: [] };
+  }
+}
 
 export async function createUser(email, locationId) {
-
   try {
     const client = await clientPromise;
 
@@ -491,7 +611,7 @@ export async function createUser(email, locationId) {
       createdAt: new Date(),
       role: "user",
       verified: "false",
-    }
+    };
 
     const result = await users.insertOne(newUser);
     if (result.insertedId) {
@@ -508,9 +628,7 @@ export async function createUser(email, locationId) {
   }
 }
 
-
 export async function findUser(email) {
-
   try {
     const client = await clientPromise;
 
@@ -526,9 +644,7 @@ export async function findUser(email) {
   }
 }
 
-
 export async function updateUserField(email, field, value) {
-
   try {
     const client = await clientPromise;
 
@@ -546,7 +662,6 @@ export async function updateUserField(email, field, value) {
   }
 }
 
-
 export async function createLocation(institutionData) {
   const client = await clientPromise;
   const database = client.db(dbNameAgenda);
@@ -563,9 +678,7 @@ export async function createLocation(institutionData) {
   return result.insertedId;
 }
 
-
 export async function updateLocationField(locationId, field, value) {
-
   const client = await clientPromise;
 
   const database = client.db(dbNameAgenda);
@@ -573,10 +686,9 @@ export async function updateLocationField(locationId, field, value) {
   // const database = client.db(dbNameLocations);
   await collection.updateOne(
     { _id: new ObjectId(locationId) },
-    { $set: { [field]: value } }
+    { $set: { [field]: value } },
   );
 }
-
 
 export async function saveLoginCode(email, code, expires) {
   const client = await clientPromise;
@@ -587,14 +699,11 @@ export async function saveLoginCode(email, code, expires) {
   await loginCodes.updateOne(
     { email },
     { $set: { code, expires } },
-    { upsert: true }
+    { upsert: true },
   );
-
 }
 
-
 export async function checkLoginCode(email, code) {
-
   try {
     const client = await clientPromise;
 
@@ -610,7 +719,10 @@ export async function checkLoginCode(email, code) {
     const isValid = verifyCode(code, login.code);
 
     if (!isValid) {
-      return { valid: false, reason: "Invalid code. Please check your code and try again." };
+      return {
+        valid: false,
+        reason: "Invalid code. Please check your code and try again.",
+      };
     }
 
     const now = new Date();
@@ -625,9 +737,7 @@ export async function checkLoginCode(email, code) {
   }
 }
 
-
 export async function createAuthLog(log) {
-
   try {
     const client = await clientPromise;
 
@@ -635,16 +745,13 @@ export async function createAuthLog(log) {
     const authLogs = database.collection(collectionNameAuthLogs);
 
     await authLogs.insertOne(log);
-
   } catch (error) {
     console.error("Error inserting auth log:", error);
     return { valid: false, reason: "Internal error." };
   }
 }
 
-
 export async function updateImageReference(exhibitionId, imageUrl) {
-
   try {
     const client = await clientPromise;
 
@@ -655,7 +762,7 @@ export async function updateImageReference(exhibitionId, imageUrl) {
 
     const result = await collection.updateOne(
       { _id: objectId },
-      { $push: { image_reference: imageUrl } }
+      { $push: { image_reference: imageUrl } },
     );
 
     console.log("MongoDB update result:", result);
@@ -666,9 +773,7 @@ export async function updateImageReference(exhibitionId, imageUrl) {
   }
 }
 
-
 export async function deleteImageReference(exhibitionId, imagePath) {
-
   try {
     const client = await clientPromise;
 
@@ -681,15 +786,14 @@ export async function deleteImageReference(exhibitionId, imagePath) {
     // Remove the image path from the `image_reference` array
     const result = await collection.updateOne(
       { _id: objectId },
-      { $pull: { image_reference: imagePath } }
+      { $pull: { image_reference: imagePath } },
     );
 
     // Log the result of the operation
-    console.log('MongoDB update result:', result);
+    console.log("MongoDB update result:", result);
 
     if (result.modifiedCount === 0) {
-
-      console.log('Adding a question mark after the extension.')
+      console.log("Adding a question mark after the extension.");
 
       const cleanImagePath = addQuestionMarkIfNeeded(imagePath);
 
@@ -697,25 +801,23 @@ export async function deleteImageReference(exhibitionId, imagePath) {
 
       const result = await collection.updateOne(
         { _id: objectId },
-        { $pull: { image_reference: cleanImagePath } }
+        { $pull: { image_reference: cleanImagePath } },
       );
 
       // Log the result of the operation
-      console.log('MongoDB update result:', result);
+      console.log("MongoDB update result:", result);
 
       if (result.matchedCount === 0) {
-        console.error('No document found with the given exhibitionId.');
+        console.error("No document found with the given exhibitionId.");
       }
     }
 
     return result;
   } catch (error) {
-    console.error('Error removing image reference from MongoDB:', error);
+    console.error("Error removing image reference from MongoDB:", error);
     throw error;
   }
 }
-
-
 
 // export async function getLocations() {
 //   const client = new MongoClient(uri);
