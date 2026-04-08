@@ -7,7 +7,13 @@ Host: https://www.artnowdatabase.eu
 
 # Sitemaps
 Sitemap: https://www.artnowdatabase.eu/api/sitemap
+Sitemap: https://www.artnowdatabase.eu/api/sitemap/en
+Sitemap: https://www.artnowdatabase.eu/api/sitemap/fr
+Sitemap: https://www.artnowdatabase.eu/api/sitemap/nl
+Sitemap: https://www.artnowdatabase.eu/sitemap.xml
 Sitemap: https://www.artnowdatabase.eu/sitemap-en.xml
 Sitemap: https://www.artnowdatabase.eu/sitemap-nl.xml
 Sitemap: https://www.artnowdatabase.eu/sitemap-fr.xml
-Sitemap: https://www.artnowdatabase.eu/api/sitemap-images
+Sitemap: https://www.artnowdatabase.eu/sitemap-images.xml
+Sitemap: https://www.artnowdatabase.eu/sitemap-images-locations.xml
+Sitemap: https://www.artnowdatabase.eu/sitemap-images-cities.xml
