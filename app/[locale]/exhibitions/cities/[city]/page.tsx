@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import AdsColumn from "@/components/AdsColumn";
 import { getValidAds } from "@/lib/ads";
 import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
+import { SEO_CITY_ROUTE_BY_CITY_SLUG } from "@/data/city-seo-config";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -125,6 +126,7 @@ export default async function CityPage({
   params: { locale: string; city: string };
 }) {
   const { locale, city: slug } = params;
+  const seoCityRoute = SEO_CITY_ROUTE_BY_CITY_SLUG[slug.toLowerCase()];
   const messages = await import(
     `../../../../../locales/${locale}/exhibitions.json`
   ).then((m) => m.default);
@@ -139,27 +141,29 @@ export default async function CityPage({
   }));
 
   if (!exhibitions || exhibitions.length === 0) {
-    <main className="flex flex-col items-center p-4 min-h-screen">
-      <div className="mt-20">
-        <h1 className="text-gray-500">{`We couldn't find any exhibitions in ${city}.`}</h1>
-      </div>
-      <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
-        <form action="/" method="GET">
-          <input type="hidden" name="city" value={city} />
-          <button
-            type="submit"
-            className="text-xl w-auto uppercase hover:text-gray-600"
-          >
-            Show on map
-          </button>
-        </form>
-        {/* <a href={`/?city=${city}`}>
+    return (
+      <main className="flex flex-col items-center p-4 min-h-screen">
+        <div className="mt-20">
+          <h1 className="text-gray-500">{`We couldn't find any exhibitions in ${city}.`}</h1>
+        </div>
+        <div className="p-1 lg:w-1/5 h-8 my-20 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center">
+          <form action="/" method="GET">
+            <input type="hidden" name="city" value={city} />
+            <button
+              type="submit"
+              className="text-xl w-auto uppercase hover:text-gray-600"
+            >
+              Show on map
+            </button>
+          </form>
+          {/* <a href={`/?city=${city}`}>
                 <p className="text-xl w-auto uppercase hover:text-gray-600">
                     See the Map
                 </p>
             </a> */}
-      </div>
-    </main>;
+        </div>
+      </main>
+    );
   }
 
   const validCities = ["N/A", "null", "", "-", "Unknown"];
@@ -194,6 +198,16 @@ export default async function CityPage({
             <p className="max-w-3xl mt-4 text-gray-700 text-sm md:text-base">
               {`${messages.cities.page_description.replace(/{{city}}/g, validCity || city)}`}
             </p>
+            {seoCityRoute && (
+              <div className="mt-4">
+                <Link
+                  href={`/${locale}/${seoCityRoute}`}
+                  className="text-sm text-blue-700 hover:underline"
+                >
+                  See a curated overview of exhibitions in {validCity || city} →
+                </Link>
+              </div>
+            )}
           </div>
         ) : (
           <div>

@@ -103,3 +103,21 @@ export const CITY_SEO_CONFIG: Record<string, CitySeoConfig> = {
     ],
   },
 };
+
+export const SEO_CITY_ROUTE_BY_CITY_SLUG: Record<string, string> = {
+  paris: "paris-art-exhibitions",
+  berlin: "berlin-art-exhibitions",
+  amsterdam: "amsterdam-art-exhibitions",
+  brussel: "brussels-art-exhibitions",
+  brussels: "brussels-art-exhibitions",
+  zurich: "zurich-art-exhibitions",
+  zürich: "zurich-art-exhibitions",
+};
+
+export const SEO_CITY_HUB_LINKS = [
+  { route: "paris-art-exhibitions", label: "Paris" },
+  { route: "berlin-art-exhibitions", label: "Berlin" },
+  { route: "amsterdam-art-exhibitions", label: "Amsterdam" },
+  { route: "brussels-art-exhibitions", label: "Brussels" },
+  { route: "zurich-art-exhibitions", label: "Zurich" },
+];

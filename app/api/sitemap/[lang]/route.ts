@@ -129,6 +129,7 @@ export async function GET(
       "/amsterdam-art-exhibitions",
       "/brussels-art-exhibitions",
       "/zurich-art-exhibitions",
+      "/art-exhibitions-in-europe",
     ].map((route) => ({
       url: `${BASE_URL}/${lang}${route}`,
       lastModified: now,

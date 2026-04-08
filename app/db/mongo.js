@@ -564,6 +564,7 @@ export async function getExhibitionsForMappedCity(cityRecord) {
           .collection(collectionNameAgenda)
           .find({
             domain: { $in: domains },
+            show: { $ne: false },
             ...withImageQuery,
           })
           .toArray()
@@ -574,6 +575,7 @@ export async function getExhibitionsForMappedCity(cityRecord) {
       .find({
         $or: names.map((name) => ({
           city: { $regex: `^${escapeRegExp(name)}$`, $options: "i" },
+          show: { $ne: false },
         })),
         ...withImageQuery,
       })
