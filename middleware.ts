@@ -37,8 +37,16 @@ export function middleware(request: NextRequest) {
     "Request from region:",
     request.geo?.region,
     "path:",
-    request.nextUrl.pathname
+    request.nextUrl.pathname,
   );
+
+  if (
+    pathname.startsWith("/sitemap") ||
+    pathname === "/robots.txt" ||
+    pathname.startsWith("/api/sitemap")
+  ) {
+    return NextResponse.next();
+  }
 
   // if (
   //   region === "Île-de-France" ||
@@ -76,9 +84,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === "/sitemap-index.xml" || pathname.startsWith("/sitemap")) {
-    return NextResponse.next();
-  }
+  // if (pathname === "/sitemap-index.xml" || pathname.startsWith("/sitemap")) {
+  //   return NextResponse.next();
+  // }
 
   // 🧼 Dot-slug redirect ONLY if not yet localized
   if (pathname.startsWith("/exhibitions/locations/")) {
@@ -93,7 +101,7 @@ export function middleware(request: NextRequest) {
       console.log("Sanitized slug:", sanitizedSlug);
       const newUrl = new URL(
         `/en/exhibitions/locations/${sanitizedSlug}`,
-        request.url
+        request.url,
       );
       console.log(`Redirecting to: ${newUrl.toString()}`);
       return NextResponse.redirect(newUrl);
@@ -101,7 +109,7 @@ export function middleware(request: NextRequest) {
   }
 
   const localeMatch = pathname.match(
-    /^\/(en|fr|nl)\/exhibitions\/cities\/([^/]+)/
+    /^\/(en|fr|nl)\/exhibitions\/cities\/([^/]+)/,
   );
   if (localeMatch) {
     const locale = localeMatch[1];
@@ -110,7 +118,7 @@ export function middleware(request: NextRequest) {
     if (city !== city.toLowerCase()) {
       const newUrl = new URL(
         `/${locale}/exhibitions/cities/${city.toLowerCase()}`,
-        request.url
+        request.url,
       );
       return NextResponse.redirect(newUrl);
     }

@@ -20,7 +20,7 @@ export async function GET() {
     <lastmod>${now}</lastmod>
   </sitemap>`,
   ).join("")}
-</sitemapindex>`;
+</sitemapindex>`.trim();
 
   return new NextResponse(xml, {
     headers: {
