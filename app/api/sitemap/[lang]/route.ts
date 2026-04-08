@@ -123,7 +123,26 @@ export async function GET(
       alternates: generateLocalizedUrls(route),
     }));
 
-    const allEntries = [...staticRoutes, ...locationEntries, ...cityEntries];
+    const seoCityRoutes = [
+      "/paris-art-exhibitions",
+      "/berlin-art-exhibitions",
+      "/amsterdam-art-exhibitions",
+      "/brussels-art-exhibitions",
+      "/zurich-art-exhibitions",
+    ].map((route) => ({
+      url: `${BASE_URL}/${lang}${route}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: generateLocalizedUrls(route),
+    }));
+
+    const allEntries = [
+      ...staticRoutes,
+      ...locationEntries,
+      ...cityEntries,
+      ...seoCityRoutes,
+    ];
     const xml = generateSitemapXml(allEntries);
 
     return new NextResponse(xml, {
