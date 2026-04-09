@@ -10,7 +10,7 @@ export const CITY_SEO_CONFIG: Record<string, CitySeoConfig> = {
   paris: {
     displayName: "Paris",
     introSecondParagraph:
-      "From major museums and foundations to contemporary art centers and galleries, Paris offers a dense and constantly changing exhibition landscape. This page highlights a selection of notable shows currently on view or opening soon.",
+      "Paris has a dense and constantly evolving exhibition landscape, with institutions such as the Centre Pompidou, Palais de Tokyo, and the Fondation Louis Vuitton, alongside a wide network of galleries and contemporary art spaces.",
     priorityDomains: [
       "centrepompidou.fr",
       "palaisdetokyo.com",
@@ -31,7 +31,7 @@ export const CITY_SEO_CONFIG: Record<string, CitySeoConfig> = {
   berlin: {
     displayName: "Berlin",
     introSecondParagraph:
-      "Berlin has one of Europe’s most active contemporary art scenes, spanning major museums, kunsthalles, and a dense network of galleries and project spaces.",
+      "Berlin has one of Europe’s most active contemporary art scenes, anchored by institutions within the Staatliche Museen zu Berlin and venues such as Hamburger Bahnhof and KW Institute for Contemporary Art, alongside a dense network of galleries and project spaces.",
     priorityDomains: [
       "smb.museum",
       "kw-berlin.de",
@@ -50,7 +50,7 @@ export const CITY_SEO_CONFIG: Record<string, CitySeoConfig> = {
   amsterdam: {
     displayName: "Amsterdam",
     introSecondParagraph:
-      "Amsterdam offers a strong mix of modern and contemporary art, with major museums alongside experimental institutions and gallery spaces.",
+      "Amsterdam offers a strong mix of modern and contemporary art, with institutions such as the Stedelijk Museum alongside experimental art spaces and galleries.",
     priorityDomains: [
       "stedelijk.nl",
       "eye.nl",
@@ -70,7 +70,7 @@ export const CITY_SEO_CONFIG: Record<string, CitySeoConfig> = {
   brussels: {
     displayName: "Brussels",
     introSecondParagraph:
-      "Brussels combines major museums with a strong contemporary gallery scene, making it an important hub for modern and contemporary art in Europe.",
+      "Brussels combines major museums such as BOZAR and WIELS with a strong contemporary gallery scene, making it an important hub for modern and contemporary art in Europe.",
     priorityDomains: [
       "kanal.brussels",
       "bozar.be",
@@ -88,7 +88,7 @@ export const CITY_SEO_CONFIG: Record<string, CitySeoConfig> = {
   zurich: {
     displayName: "Zurich",
     introSecondParagraph:
-      "Zurich has a compact but influential contemporary art scene, with leading institutions and internationally active galleries.",
+      "Zurich has a compact but influential contemporary art scene, with institutions such as Kunsthaus Zürich and Migros Museum alongside internationally active galleries.",
     priorityDomains: [
       "kunsthaus.ch",
       "migrosmuseum.ch",
@@ -121,3 +121,7 @@ export const SEO_CITY_HUB_LINKS = [
   { route: "brussels-art-exhibitions", label: "Brussels" },
   { route: "zurich-art-exhibitions", label: "Zurich" },
 ];
+
+export const THIS_WEEK_CITY_ROUTE_BY_CITY_SLUG: Record<string, string> = {
+  paris: "paris-art-exhibitions/this-week",
+};

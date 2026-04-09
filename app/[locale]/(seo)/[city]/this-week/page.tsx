@@ -1,13 +1,12 @@
+import Image from "next/image";
+import Link from "next/link";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
 import {
   getCityBySlugOrAlternative,
   getExhibitionsForMappedCity,
 } from "@/db/mongo";
-import Image from "next/image";
-import Link from "next/link";
-import { Metadata } from "next";
-import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
-import { notFound } from "next/navigation";
-import { CITY_SEO_CONFIG } from "@/data/city-seo-config";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -25,73 +24,52 @@ type Exhibition = {
   image_reference?: string[];
   exhibition_url?: string;
   url?: string;
+  domain?: string;
 };
 
 type CitySeoConfig = {
   displayName: string;
-  introSecondParagraph?: string;
+  thisWeekIntro?: string;
   priorityDomains?: string[];
   priorityLocationKeywords?: string[];
-  cityAliases?: string[];
 };
 
-type CityRecord = {
-  id: string;
-  city: string;
-  alternatives?: string[];
-  slug: string;
+const CITY_SEO_CONFIG: Record<string, CitySeoConfig> = {
+  paris: {
+    displayName: "Paris",
+    thisWeekIntro:
+      "Discover modern and contemporary art exhibitions currently on view this week in Paris, including major museum, foundation, and gallery shows.",
+    priorityDomains: [
+      "centrepompidou.fr",
+      "palaisdetokyo.com",
+      "mam.paris.fr",
+      "fondationlouisvuitton.fr",
+      "grandpalais.fr",
+    ],
+    priorityLocationKeywords: [
+      "centre pompidou",
+      "palais de tokyo",
+      "musée d'art moderne de paris",
+      "musee d'art moderne de paris",
+      "fondation louis vuitton",
+      "grand palais",
+    ],
+  },
 };
-
-// function getCitySlugFromRoute(routeSlug: string) {
-//   return routeSlug.replace(/-art-exhibitions$/, "").toLowerCase();
-// }
-
-// async function getCityRecordBySeoRoute(routeSlug?: string) {
-//   if (!routeSlug) return null;
-
-//   const parsedSlug = routeSlug
-//     .replace(/-art-exhibitions$/, "")
-//     .toLowerCase()
-//     .trim();
-//   if (!parsedSlug) return null;
-
-//   const cities = await getCities({ onlyWithExhibitions: true });
-
-//   const match = cities.find((item) => {
-//     const slug = item.slug?.toLowerCase?.();
-//     const city = item.city?.toLowerCase?.();
-//     const alternatives = (item.alternatives || []).map((alt: string) =>
-//       alt.toLowerCase(),
-//     );
-
-//     return (
-//       slug === parsedSlug ||
-//       city === parsedSlug ||
-//       alternatives.includes(parsedSlug)
-//     );
-//   });
-
-//   return match || null;
-// }
-
-//
 
 function getSeoBaseSlug(routeSlug?: string) {
   if (!routeSlug) return null;
   if (!routeSlug.endsWith("-art-exhibitions")) return null;
-
   return routeSlug
     .replace(/-art-exhibitions$/, "")
     .toLowerCase()
     .trim();
 }
 
-function parseCityRoute(routeSlug?: string) {
-  if (!routeSlug) return null;
-
-  if (!routeSlug.endsWith("-art-exhibitions")) return null;
-
-  return routeSlug.replace(/-art-exhibitions$/, "").toLowerCase();
+function parseDate(dateStr?: string) {
+  if (!dateStr) return null;
+  const date = new Date(dateStr);
+  return isNaN(date.getTime()) ? null : date;
 }
 
 function formatDate(dateStr?: string) {
@@ -102,12 +80,6 @@ function formatDate(dateStr?: string) {
   return `${day}-${month}-${year}`;
 }
 
-function parseDate(dateStr?: string) {
-  if (!dateStr) return null;
-  const date = new Date(dateStr);
-  return isNaN(date.getTime()) ? null : date;
-}
-
 function isValidExhibitionRange(exhibition: Exhibition) {
   const startDate = parseDate(exhibition.date_begin_st);
   const endDate = parseDate(exhibition.date_end_st);
@@ -115,23 +87,37 @@ function isValidExhibitionRange(exhibition: Exhibition) {
   return startDate <= endDate;
 }
 
-function isCurrentOrUpcoming(exhibition: Exhibition) {
+function isOnViewThisWeek(exhibition: Exhibition) {
   if (!isValidExhibitionRange(exhibition)) return false;
 
-  const today = new Date();
-  const endDate = parseDate(exhibition.date_end_st)!;
-
-  return today <= endDate;
-}
-
-function isCurrent(exhibition: Exhibition) {
-  if (!isValidExhibitionRange(exhibition)) return false;
-
-  const today = new Date();
+  const now = new Date();
   const startDate = parseDate(exhibition.date_begin_st)!;
   const endDate = parseDate(exhibition.date_end_st)!;
 
-  return today >= startDate && today <= endDate;
+  return now >= startDate && now <= endDate;
+}
+
+function hasImage(exhibition: Exhibition) {
+  return (
+    Array.isArray(exhibition.image_reference) &&
+    exhibition.image_reference.length > 0 &&
+    !!exhibition.image_reference[0]
+  );
+}
+
+function stripHtml(html?: string) {
+  if (!html) return "";
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getDescriptionPreview(html?: string, maxLength = 180) {
+  const text = stripHtml(html);
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}…`;
 }
 
 function getInstitutionScore(
@@ -144,7 +130,10 @@ function getInstitutionScore(
   let score = 0;
 
   config?.priorityDomains?.forEach((domain, index) => {
-    if (url.includes(domain.toLowerCase())) {
+    if (
+      url.includes(domain.toLowerCase()) ||
+      (exhibition.domain || "").toLowerCase().includes(domain.toLowerCase())
+    ) {
       score = Math.max(score, 100 - index * 5);
     }
   });
@@ -158,22 +147,7 @@ function getInstitutionScore(
   return score;
 }
 
-function stripHtml(html?: string) {
-  if (!html) return "";
-  return html
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function getDescriptionPreview(html?: string, maxLength = 220) {
-  const text = stripHtml(html);
-  if (!text) return "";
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength).trim()}…`;
-}
-
-function sortExhibitionsForSeo(
+function sortExhibitionsForThisWeek(
   exhibitions: Exhibition[],
   config?: CitySeoConfig,
 ) {
@@ -183,25 +157,20 @@ function sortExhibitionsForSeo(
 
     if (scoreA !== scoreB) return scoreB - scoreA;
 
-    const currentA = isCurrent(a) ? 1 : 0;
-    const currentB = isCurrent(b) ? 1 : 0;
+    const endA = parseDate(a.date_end_st)?.getTime() ?? Infinity;
+    const endB = parseDate(b.date_end_st)?.getTime() ?? Infinity;
 
-    if (currentA !== currentB) return currentB - currentA;
+    if (endA !== endB) return endA - endB;
 
     const startA = parseDate(a.date_begin_st)?.getTime() ?? Infinity;
     const startB = parseDate(b.date_begin_st)?.getTime() ?? Infinity;
 
-    if (startA !== startB) return startA - startB;
-
-    const endA = parseDate(a.date_end_st)?.getTime() ?? Infinity;
-    const endB = parseDate(b.date_end_st)?.getTime() ?? Infinity;
-
-    return endA - endB;
+    return startA - startB;
   });
 }
 
 function getMetadataDescription(cityName: string) {
-  return `Discover current and upcoming modern and contemporary art exhibitions in ${cityName}. Browse exhibition dates, venues, images, and direct links on Art Now Database.`;
+  return `Discover modern and contemporary art exhibitions on view this week in ${cityName}. Browse current shows, venues, images, and direct links on Art Now Database.`;
 }
 
 export async function generateMetadata({
@@ -212,26 +181,22 @@ export async function generateMetadata({
   const { locale, city: routeCity } = params;
 
   const baseSlug = getSeoBaseSlug(routeCity);
+  if (!baseSlug) return {};
 
-  if (!baseSlug) {
-    return {};
-  }
+  // Launch only for Paris for now
+  if (baseSlug !== "paris") return {};
 
   const cityRecord = await getCityBySlugOrAlternative(baseSlug);
-
-  if (!cityRecord) {
-    return {};
-  }
+  if (!cityRecord) return {};
 
   const canonicalSlug = cityRecord.slug.toLowerCase();
   const config = CITY_SEO_CONFIG[canonicalSlug];
+  if (!config) return {};
 
-  if (!config) {
-    return {};
-  }
-
-  const serverSideExhibitions = await getExhibitionsForMappedCity(cityRecord);
-  const exhibitions: Exhibition[] = serverSideExhibitions.exhibitions || [];
+  const result = await getExhibitionsForMappedCity(cityRecord);
+  const exhibitions: Exhibition[] = (result.exhibitions || [])
+    .filter(hasImage)
+    .filter(isOnViewThisWeek);
 
   const cityName = cityRecord.city || config.displayName;
   const exhibitionWithImage = exhibitions.find(
@@ -241,19 +206,18 @@ export async function generateMetadata({
   const optimizedUrl = image ? getOptimizedSrc(image) : undefined;
 
   const baseUrl = "https://www.artnowdatabase.eu";
-  const canonicalUrl = `${baseUrl}/${locale}/${canonicalSlug}-art-exhibitions`;
-  const title = `${cityName} art exhibitions | Modern & contemporary art`;
+  const canonicalUrl = `${baseUrl}/${locale}/${canonicalSlug}-art-exhibitions/this-week`;
+  const title = `${cityName} art exhibitions this week | Modern & contemporary art`;
 
   return {
     title,
     description: getMetadataDescription(cityName),
     keywords: [
-      `${cityName} art exhibitions`,
-      `${cityName} contemporary art`,
-      `${cityName} modern art`,
-      `art exhibitions in ${cityName}`,
-      `${cityName} museums`,
-      `${cityName} galleries`,
+      `${cityName} art exhibitions this week`,
+      `${cityName} exhibitions this week`,
+      `${cityName} contemporary art this week`,
+      `what's on in ${cityName} this week`,
+      `${cityName} museums this week`,
     ].join(", "),
     alternates: {
       canonical: canonicalUrl,
@@ -271,7 +235,7 @@ export async function generateMetadata({
                 url: optimizedUrl,
                 width: 1200,
                 height: 630,
-                alt: `${cityName} art exhibitions`,
+                alt: `${cityName} art exhibitions this week`,
               },
             ],
           }
@@ -291,7 +255,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function SeoCityPage({
+export default async function ThisWeekSeoCityPage({
   params,
 }: {
   params: { locale: string; city: string };
@@ -299,85 +263,78 @@ export default async function SeoCityPage({
   const { locale, city: routeCity } = params;
 
   const baseSlug = getSeoBaseSlug(routeCity);
+  if (!baseSlug) notFound();
 
-  if (!baseSlug) {
-    notFound();
-  }
+  // Paris only for now
+  if (baseSlug !== "paris") notFound();
 
   const cityRecord = await getCityBySlugOrAlternative(baseSlug);
-
-  if (!cityRecord) {
-    notFound();
-  }
+  if (!cityRecord) notFound();
 
   const canonicalSlug = cityRecord.slug.toLowerCase();
   const config = CITY_SEO_CONFIG[canonicalSlug];
+  if (!config) notFound();
 
-  if (!config) {
-    notFound();
-  }
-
-  const serverSideExhibitions = await getExhibitionsForMappedCity(cityRecord);
-  const exhibitions: Exhibition[] = serverSideExhibitions.exhibitions || [];
+  const result = await getExhibitionsForMappedCity(cityRecord);
+  const exhibitions: Exhibition[] = result.exhibitions || [];
 
   const cityName = cityRecord.city || config.displayName;
 
-  const currentAndUpcoming = exhibitions.filter(isCurrentOrUpcoming);
-  const sorted = sortExhibitionsForSeo(currentAndUpcoming, config);
-  const featured = sorted.slice(0, 24);
+  const onViewThisWeek = sortExhibitionsForThisWeek(
+    exhibitions.filter(hasImage).filter(isOnViewThisWeek),
+    config,
+  );
+
+  const featured = onViewThisWeek.slice(0, 24);
 
   return (
     <main className="min-h-screen mt-20 px-4 py-8">
       <div className="mx-auto max-w-6xl">
         <header className="mb-10">
           <h1 className="text-3xl md:text-5xl font-semibold text-gray-800">
-            {cityName} art exhibitions
+            {cityName} art exhibitions this week
           </h1>
 
           <p className="mt-4 max-w-3xl text-base md:text-lg text-gray-700">
-            Discover current and upcoming modern and contemporary art
-            exhibitions in {cityName}, with dates, venues, and direct links for
-            more information.
+            {config.thisWeekIntro ||
+              `Discover modern and contemporary art exhibitions currently on view this week in ${cityName}.`}
           </p>
 
-          {config.introSecondParagraph && (
-            <p className="mt-4 max-w-3xl text-gray-700">
-              {config.introSecondParagraph}
-            </p>
-          )}
+          <p className="mt-4 max-w-3xl text-gray-700">
+            This page focuses on exhibitions currently on view, helping visitors
+            quickly find what is happening in {cityName} right now.
+          </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href={`/${locale}?city=${encodeURIComponent(cityName)}`}
-              className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >
               Explore {cityName} on the map
             </Link>
             <Link
-              href={`/${locale}/exhibitions/cities/${canonicalSlug}`}
+              href={`/${locale}/${canonicalSlug}-art-exhibitions`}
               className="rounded bg-[#87bdd8] px-4 py-2 text-sm text-white hover:bg-blue-800"
             >
               View all {cityName} exhibitions
             </Link>
-            {canonicalSlug === "paris" && (
-              <Link
-                href={`/${locale}/${canonicalSlug}-art-exhibitions/this-week`}
-                className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-              >
-                See what’s on this week
-              </Link>
-            )}
+
+            <Link
+              href={`/${locale}/exhibitions/cities/${canonicalSlug}`}
+              className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >
+              Browse the full {cityName} city page
+            </Link>
           </div>
         </header>
 
         <section className="mb-10">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Current and upcoming exhibitions in {cityName}
+            On view now in {cityName}
           </h2>
           <p className="mt-3 max-w-3xl text-gray-700">
-            This selection prioritizes notable venues and institutions when
-            available, while also highlighting other current and upcoming shows
-            in the city.
+            The selection below prioritizes notable institutions and currently
+            open exhibitions with images and direct links for more information.
           </p>
         </section>
 
@@ -387,7 +344,7 @@ export default async function SeoCityPage({
               No current exhibitions found
             </h2>
             <p className="mt-3 text-gray-700">
-              We could not find current or upcoming exhibitions in {cityName} at
+              We could not find exhibitions currently on view in {cityName} at
               the moment. Please check again soon, or use the full city page and
               map to explore more listings.
             </p>
@@ -399,9 +356,6 @@ export default async function SeoCityPage({
                 ? getOptimizedSrc(exhibition.image_reference[0])
                 : null;
 
-              const startDate = parseDate(exhibition.date_begin_st);
-              const endDate = parseDate(exhibition.date_end_st);
-              const current = isCurrent(exhibition);
               const institutionScore = getInstitutionScore(exhibition, config);
               const preview = getDescriptionPreview(exhibition.description);
 
@@ -431,16 +385,9 @@ export default async function SeoCityPage({
 
                   <div className="flex flex-1 flex-col">
                     <div className="mb-2 flex flex-wrap gap-2">
-                      {current && (
-                        <span className="rounded bg-green-100 px-2 py-1 text-xs text-green-800">
-                          On view now
-                        </span>
-                      )}
-                      {!current && startDate && (
-                        <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800">
-                          Upcoming
-                        </span>
-                      )}
+                      <span className="rounded bg-green-100 px-2 py-1 text-xs text-green-800">
+                        On view now
+                      </span>
                       {institutionScore >= 85 && (
                         <span className="rounded bg-slate-100 px-2 py-1 text-xs text-slate-700">
                           Major venue
@@ -461,18 +408,11 @@ export default async function SeoCityPage({
                       </div>
                     )}
 
-                    <div className="mt-3 text-sm text-gray-700">
-                      {startDate && endDate ? (
-                        current ? (
-                          <p>Until {formatDate(exhibition.date_end_st)}</p>
-                        ) : (
-                          <p>
-                            {formatDate(exhibition.date_begin_st)} –{" "}
-                            {formatDate(exhibition.date_end_st)}
-                          </p>
-                        )
-                      ) : null}
-                    </div>
+                    {exhibition.date_end_st && (
+                      <div className="mt-3 text-sm text-gray-700">
+                        <p>Until {formatDate(exhibition.date_end_st)}</p>
+                      </div>
+                    )}
 
                     {preview && (
                       <p className="mt-4 text-sm text-gray-700">{preview}</p>

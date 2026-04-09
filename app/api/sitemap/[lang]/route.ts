@@ -125,6 +125,7 @@ export async function GET(
 
     const seoCityRoutes = [
       "/paris-art-exhibitions",
+      "/paris-art-exhibitions/this-week",
       "/berlin-art-exhibitions",
       "/amsterdam-art-exhibitions",
       "/brussels-art-exhibitions",

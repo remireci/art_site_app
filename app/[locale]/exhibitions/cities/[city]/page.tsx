@@ -4,7 +4,10 @@ import { Metadata } from "next";
 import AdsColumn from "@/components/AdsColumn";
 import { getValidAds } from "@/lib/ads";
 import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
-import { SEO_CITY_ROUTE_BY_CITY_SLUG } from "@/data/city-seo-config";
+import {
+  SEO_CITY_ROUTE_BY_CITY_SLUG,
+  THIS_WEEK_CITY_ROUTE_BY_CITY_SLUG,
+} from "@/data/city-seo-config";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +22,13 @@ type Exhibition = {
   city?: string;
   description?: string;
 };
+
+function normalizeCitySlugForSeo(slug: string) {
+  const lower = slug.toLowerCase();
+  if (lower === "brussel") return "brussels";
+  if (lower === "zürich") return "zurich";
+  return lower;
+}
 
 export async function generateMetadata({
   params,
@@ -126,7 +136,6 @@ export default async function CityPage({
   params: { locale: string; city: string };
 }) {
   const { locale, city: slug } = params;
-  const seoCityRoute = SEO_CITY_ROUTE_BY_CITY_SLUG[slug.toLowerCase()];
   const messages = await import(
     `../../../../../locales/${locale}/exhibitions.json`
   ).then((m) => m.default);
@@ -139,6 +148,9 @@ export default async function CityPage({
     link: ad.link,
     title: ad.title,
   }));
+  const normalizedSlug = normalizeCitySlugForSeo(slug);
+  const seoCityRoute = SEO_CITY_ROUTE_BY_CITY_SLUG[normalizedSlug];
+  const thisWeekRoute = THIS_WEEK_CITY_ROUTE_BY_CITY_SLUG[normalizedSlug];
 
   if (!exhibitions || exhibitions.length === 0) {
     return (
@@ -198,7 +210,52 @@ export default async function CityPage({
             <p className="max-w-3xl mt-4 text-gray-700 text-sm md:text-base">
               {`${messages.cities.page_description.replace(/{{city}}/g, validCity || city)}`}
             </p>
-            {seoCityRoute && (
+
+            <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-4">
+                <Link
+                  href={`/${locale}?city=${city}`}
+                  className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                >
+                  {/* {exhibitions.length > 0
+                  ? messages.exploreMoreExhibitions.replace(
+                      "{{city}}",
+                      validCity || city,
+                    )
+                  : messages.exploreExhibitions.replace(
+                      "{{city}}",
+                      city ||
+                        slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1),
+                    )} */}
+                  Explore {city} on the map
+                </Link>
+              </div>
+              {seoCityRoute && (
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <div>
+                    <Link
+                      href={`/${locale}/${seoCityRoute}`}
+                      className="rounded bg-[#87bdd8] px-4 py-2 text-sm text-white hover:bg-blue-800"
+                    >
+                      See a curated overview of exhibitions in{" "}
+                      {validCity || city}{" "}
+                    </Link>
+                  </div>
+                  <div>
+                    {thisWeekRoute && (
+                      <Link
+                        href={`/${locale}/${thisWeekRoute}`}
+                        className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                      >
+                        See what’s on this week in {validCity || city}
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* {seoCityRoute && (
               <div className="mt-4">
                 <Link
                   href={`/${locale}/${seoCityRoute}`}
@@ -206,8 +263,16 @@ export default async function CityPage({
                 >
                   See a curated overview of exhibitions in {validCity || city} →
                 </Link>
+                {thisWeekRoute && (
+                  <Link
+                    href={`/${locale}/${thisWeekRoute}`}
+                    className="text-sm text-blue-700 hover:underline"
+                  >
+                    See what’s on this week in {validCity || city} →
+                  </Link>
+                )}
               </div>
-            )}
+            )} */}
           </div>
         ) : (
           <div>
@@ -226,7 +291,7 @@ export default async function CityPage({
           </div>
         )}
 
-        <div className="w-auto p-2 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center mt-10">
+        {/* <div className="w-auto p-2 bg-[#87bdd8] hover:bg-blue-800 text-sm text-slate-100 rounded flex items-center justify-center mt-10">
           <Link href={`/${locale}?city=${city}`} className="text-sm">
             {exhibitions.length > 0
               ? messages.exploreMoreExhibitions.replace(
@@ -238,9 +303,9 @@ export default async function CityPage({
                   city || slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1),
                 )}
           </Link>
-        </div>
+        </div> */}
 
-        <div className="mt-12">
+        <div className="mt-20">
           <h2 className="uppercase text-2xl tracking-widest">{`${messages.cities.actual}`}</h2>
         </div>
 
