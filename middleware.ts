@@ -28,16 +28,19 @@ export function middleware(request: NextRequest) {
     request.headers.get("x-forwarded-for") ??
     request.headers.get("x-vercel-forwarded-for");
   const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
-  const country = request.geo?.country || "unknown"; // Vercel provides this (e.g., 'CN', 'US')
+  const country = request.geo?.country || "unknown";
   const userAgent = request.headers.get("user-agent") || "";
 
-  // 2. IMMEDIATE BLOCK LOGIC
-  // We check for 'CN' (China).
-  // We allow 'Googlebot' so your SEO doesn't die.
-  if (country === "CN" && !userAgent.toLowerCase().includes("googlebot")) {
+  // Define the "Good Bot" whitelist
+  const isGoodBot =
+    /googlebot|bingbot|yandexbot|baiduspider|facebot|facebookexternalhit|linkedinbot/i.test(
+      userAgent,
+    );
+
+  // Block CN and SG unless they are verified search/social bots
+  if ((country === "CN" || country === "SG") && !isGoodBot) {
     return new NextResponse("Access Denied", { status: 403 });
   }
-
   // 3. Technical routes bypass (Keep this high up too)
   if (
     pathname.startsWith("/sitemap") ||
