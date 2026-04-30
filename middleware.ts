@@ -22,10 +22,31 @@ const intlMiddleware = createMiddleware({
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // 1. Get identifiers
   const forwarded =
     request.headers.get("x-forwarded-for") ??
     request.headers.get("x-vercel-forwarded-for");
   const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
+  const country = request.geo?.country || "unknown"; // Vercel provides this (e.g., 'CN', 'US')
+  const userAgent = request.headers.get("user-agent") || "";
+
+  // 2. IMMEDIATE BLOCK LOGIC
+  // We check for 'CN' (China).
+  // We allow 'Googlebot' so your SEO doesn't die.
+  if (country === "CN" && !userAgent.toLowerCase().includes("googlebot")) {
+    return new NextResponse("Access Denied", { status: 403 });
+  }
+
+  // 3. Technical routes bypass (Keep this high up too)
+  if (
+    pathname.startsWith("/sitemap") ||
+    pathname === "/robots.txt" ||
+    pathname.startsWith("/api/sitemap")
+  ) {
+    return NextResponse.next();
+  }
+
   const region =
     request.geo?.region ||
     request.headers.get("x-vercel-ip-country-region") ||
@@ -39,14 +60,6 @@ export function middleware(request: NextRequest) {
     "path:",
     request.nextUrl.pathname,
   );
-
-  if (
-    pathname.startsWith("/sitemap") ||
-    pathname === "/robots.txt" ||
-    pathname.startsWith("/api/sitemap")
-  ) {
-    return NextResponse.next();
-  }
 
   // if (
   //   region === "Île-de-France" ||
