@@ -3,7 +3,7 @@ import { getAgendaItems, addExhibition } from "../../db/mongo.js";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { location: string } }
+  { params }: { params: { location: string } },
 ) {
   try {
     const { searchParams } = new URL(req.url);
@@ -70,7 +70,7 @@ export async function GET(
     console.error("Error fetching exhibitions:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       if (!data[field]) {
         return NextResponse.json(
           { error: `Missing required field: ${field}` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
     console.error("Error adding exhibition:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

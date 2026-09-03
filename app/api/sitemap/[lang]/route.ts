@@ -114,7 +114,7 @@ export async function GET(
       "/exhibitions/locations",
       "/advertising",
       "/on-the-map",
-      "/texts",
+      // "/texts",
     ].map((route) => ({
       url: `${BASE_URL}/${lang}${route}`,
       lastModified: now,
