@@ -30,6 +30,25 @@ function normalizeCitySlugForSeo(slug: string) {
   return lower;
 }
 
+export async function getCanonicalCityName(
+  slug: string,
+  exhibitions: any[],
+): Promise<string> {
+  // 1. Try finding a clean city string from exhibitions
+  const invalidValues = ["N/A", "null", "undefined", "", "-", "Unknown"];
+  const validFromExhibition = exhibitions?.find(
+    (e) => e.city && !invalidValues.includes(String(e.city).trim()),
+  )?.city;
+
+  if (validFromExhibition) return validFromExhibition;
+
+  // 2. Fallback: Format slug ("st-gallen" -> "St. Gallen" or "St Gallen")
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -51,7 +70,8 @@ export async function generateMetadata({
 
   const serverSideExhibitions = await getExhibitionsForCity(slug);
   const exhibitions = serverSideExhibitions.exhibitions;
-  const cityName = exhibitions[0]?.city;
+  // const cityName = exhibitions[0]?.city;
+  const cityName = await getCanonicalCityName(slug, exhibitions);
 
   // Get the first exhibition with an image in this city
   const exhibitionWithImage = exhibitions.find(
@@ -140,8 +160,10 @@ export default async function CityPage({
     `../../../../../locales/${locale}/exhibitions.json`
   ).then((m) => m.default);
   const serverSideExhibitions = await getExhibitionsForCity(slug);
+
   const exhibitions = serverSideExhibitions.exhibitions;
-  const city = exhibitions[0]?.city;
+  // const city = exhibitions[0]?.city;
+  const city = await getCanonicalCityName(slug, exhibitions);
   const rawAds = await getValidAds();
   const ads: Ad[] = rawAds.map((ad) => ({
     image_url: ad.image_url,
@@ -201,7 +223,7 @@ export default async function CityPage({
             <h1>
               {/* <Modal url={data[0].url} location={data[0].location} /> */}
               {/* Display city only if it's valid */}
-              {validCity && (
+              {city && (
                 <span className="text-xl md:text-2xl text-gray-600 uppercase">
                   {`${messages.cities.page_title} ${city}`}
                 </span>

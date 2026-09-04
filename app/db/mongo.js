@@ -446,7 +446,7 @@ export async function getCities({ onlyWithExhibitions = false } = {}) {
     // Extract the `city` field from each document and sort alphabetically
     const cityList = cities
       .map((doc) => ({
-        id: doc._id, // Use the MongoDB `_id` field as the id
+        id: doc._id.toString(), // Use the MongoDB `_id` field as the id
         city: doc.city,
         alternatives: doc.alternatives,
         slug: doc.slug,
