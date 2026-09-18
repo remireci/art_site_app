@@ -17,7 +17,7 @@ type AlternateUrl = {
 
 type SitemapEntry = {
   url: string;
-  lastModified: string;
+  // lastModified: string;
   changeFrequency: string;
   priority: number;
   alternates: AlternateUrl[];
@@ -39,8 +39,7 @@ function generateSitemapXml(entries: SitemapEntry[]) {
     .map(
       (entry) => `
     <url>
-      <loc>${entry.url}</loc>
-      <lastmod>${entry.lastModified}</lastmod>
+      <loc>${entry.url}</loc>      
       <changefreq>${entry.changeFrequency}</changefreq>
       <priority>${entry.priority}</priority>
       ${entry.alternates
@@ -88,7 +87,7 @@ export async function GET(
         const basePath = `/exhibitions/locations/${location.domain_slug}`;
         return {
           url: `${BASE_URL}/${lang}${basePath}`,
-          lastModified: now,
+          // lastModified: now,
           changeFrequency: "weekly",
           priority: 0.8,
           alternates: generateLocalizedUrls(basePath),
@@ -101,7 +100,7 @@ export async function GET(
         const basePath = `/exhibitions/cities/${city.slug}`;
         return {
           url: `${BASE_URL}/${lang}${basePath}`,
-          lastModified: now,
+          // lastModified: now,
           changeFrequency: "weekly",
           priority: 0.8,
           alternates: generateLocalizedUrls(basePath),
@@ -117,23 +116,23 @@ export async function GET(
       // "/texts",
     ].map((route) => ({
       url: `${BASE_URL}/${lang}${route}`,
-      lastModified: now,
+      // lastModified: now,
       changeFrequency: "weekly",
       priority: 1,
       alternates: generateLocalizedUrls(route),
     }));
 
     const seoCityRoutes = [
-      "/paris-art-exhibitions",
-      "/paris-art-exhibitions/this-week",
-      "/berlin-art-exhibitions",
-      "/amsterdam-art-exhibitions",
-      "/brussels-art-exhibitions",
-      "/zurich-art-exhibitions",
+      // "/paris-art-exhibitions",
+      // "/paris-art-exhibitions/this-week",
+      // "/berlin-art-exhibitions",
+      // "/amsterdam-art-exhibitions",
+      // "/brussels-art-exhibitions",
+      // "/zurich-art-exhibitions",
       "/art-exhibitions-in-europe",
     ].map((route) => ({
       url: `${BASE_URL}/${lang}${route}`,
-      lastModified: now,
+      // lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
       alternates: generateLocalizedUrls(route),

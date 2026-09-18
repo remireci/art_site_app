@@ -1,0 +1,9 @@
+.filter[data-filter="museum_institution"]
+  [data-venue-group]:not([data-venue-group="museum_institution"]) {
+  display: none;
+}
+
+.filter[data-filter="gallery_art_space"]
+  [data-venue-group]:not([data-venue-group="gallery_art_space"]) {
+  display: none;
+}

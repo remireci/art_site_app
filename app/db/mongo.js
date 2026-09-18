@@ -3,7 +3,29 @@ import { MongoClient, ObjectId } from "mongodb";
 import { cache } from "react";
 import clientPromise from "@/lib/mongoClient";
 
-// Connection URI, replace with your actual MongoDB connection string
+/**
+ * @typedef {"gallery_art_space" | "museum_institution"} VenueGroup
+ */
+
+/**
+ * @typedef {Object} ExhibitionDoc
+ * @property {*} _id
+ * @property {string=} domain
+ * @property {string=} title
+ * @property {string=} location
+ * @property {string=} city
+ * @property {string=} description
+ * @property {string=} artists
+ * @property {string=} date_begin_st
+ * @property {string=} date_end_st
+ * @property {string[]=} image_reference
+ * @property {string=} exhibition_url
+ * @property {string=} url
+ * @property {boolean=} show
+ * @property {VenueGroup|null=} venue_group
+ */
+
+// Connection URI
 const uri = process.env.MONGODB_URI;
 
 if (!uri) throw new Error("MongoDB uri is not defined");
@@ -227,7 +249,39 @@ export async function getExhibitionsByCity(city) {
 
     const exhibitions = await collection.find(query).toArray();
 
+    console.log("the number of exhibitions", exhibitions.length);
+
     return exhibitions;
+
+    const MIN_EXHIBITION_DURATION_DAYS = 5;
+    const DAY_MS = 24 * 60 * 60 * 1000;
+
+    const filteredExhibitions = exhibitions.filter((exhibition) => {
+      if (!exhibition.date_begin_st || !exhibition.date_end_st) {
+        return false;
+      }
+
+      const startDate = new Date(exhibition.date_begin_st);
+      const endDate = new Date(exhibition.date_end_st);
+
+      if (
+        Number.isNaN(startDate.getTime()) ||
+        Number.isNaN(endDate.getTime())
+      ) {
+        return false;
+      }
+
+      // Also catches corrupted/inverted dates
+      if (endDate < startDate) {
+        return false;
+      }
+
+      const durationDays = (endDate.getTime() - startDate.getTime()) / DAY_MS;
+
+      return durationDays >= MIN_EXHIBITION_DURATION_DAYS;
+    });
+
+    return filteredExhibitions;
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     throw error;
@@ -355,16 +409,112 @@ export const getUniqueCities = async () => {
   return cities;
 };
 
+// export async function getExhibitionsForCity(slug) {
+//   const client = await clientPromise;
+//   const db = client.db(dbNameAgenda);
+
+//   const locations = await db
+//     .collection(collectionNameLocations)
+//     .find({ slug }, { projection: { _id: 1, domain: 1, city: 1 } })
+//     .toArray();
+
+//   if (!locations.length) return { locations: [], exhibitions: [] };
+
+//   const domains = locations
+//     .map((l) => l.domain)
+//     .filter(
+//       (d) =>
+//         d && typeof d === "string" && d.includes(".") && !d.startsWith("http"),
+//     );
+
+//   if (!domains.length) return { locations, exhibitions: [] };
+
+//   const todayISO = new Date().toISOString();
+
+//   const exhibitions = await db
+//     .collection(collectionNameAgenda)
+//     .find({
+//       domain: { $in: domains },
+//       image_reference: { $exists: true, $ne: [] },
+//       show: { $ne: false },
+
+//       // EXHIBITION DATE LOGIC (your original rules)
+//       $or: [
+//         { date_end_st: { $gte: todayISO } }, // not past
+//         { date_begin_st: { $lte: todayISO } }, // already started
+//         { date_begin_st: null },
+//       ],
+//     })
+//     .toArray();
+
+//   // Deduplicate by _id
+//   const deduped = Array.from(
+//     new Map(exhibitions.map((ex) => [ex._id.toString(), ex])).values(),
+//   );
+
+//   return {
+//     locations,
+//     exhibitions: deduped,
+//   };
+// }
+
+// function to remove events with a duration less than 5 days
+const MIN_EXHIBITION_DURATION_DAYS = 5;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function hasExhibitionDuration(exhibition) {
+  if (!exhibition.date_begin_st || !exhibition.date_end_st) {
+    return false;
+  }
+
+  const startDate = new Date(exhibition.date_begin_st);
+  const endDate = new Date(exhibition.date_end_st);
+
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    return false;
+  }
+
+  if (endDate < startDate) {
+    return false;
+  }
+
+  const durationMs = endDate.getTime() - startDate.getTime();
+
+  return durationMs >= MIN_EXHIBITION_DURATION_DAYS * DAY_MS;
+}
+
+/**
+ * @param {string} slug
+ * @returns {Promise<{
+ *   locations: any[],
+ *   exhibitions: ExhibitionDoc[]
+ * }>}
+ */
 export async function getExhibitionsForCity(slug) {
   const client = await clientPromise;
   const db = client.db(dbNameAgenda);
 
   const locations = await db
     .collection(collectionNameLocations)
-    .find({ slug }, { projection: { _id: 1, domain: 1, city: 1 } })
+    .find(
+      { slug },
+      {
+        projection: {
+          _id: 1,
+          domain: 1,
+          city: 1,
+          venue_group: 1,
+        },
+      },
+    )
     .toArray();
 
-  if (!locations.length) return { locations: [], exhibitions: [] };
+  if (!locations.length) {
+    return {
+      locations: [],
+      exhibitions: [],
+    };
+  }
 
   const domains = locations
     .map((l) => l.domain)
@@ -373,29 +523,51 @@ export async function getExhibitionsForCity(slug) {
         d && typeof d === "string" && d.includes(".") && !d.startsWith("http"),
     );
 
-  if (!domains.length) return { locations, exhibitions: [] };
+  if (!domains.length) {
+    return {
+      locations,
+      exhibitions: [],
+    };
+  }
+
+  const venueGroupByDomain = new Map(
+    locations
+      .filter((location) => location.domain)
+      .map((location) => [location.domain, location.venue_group]),
+  );
+
+  console.log("venue group map", Object.fromEntries(venueGroupByDomain));
 
   const todayISO = new Date().toISOString();
 
-  const exhibitions = await db
+  const exhibitionsFromDb = await db
     .collection(collectionNameAgenda)
     .find({
       domain: { $in: domains },
       image_reference: { $exists: true, $ne: [] },
       show: { $ne: false },
 
-      // EXHIBITION DATE LOGIC (your original rules)
       $or: [
-        { date_end_st: { $gte: todayISO } }, // not past
-        { date_begin_st: { $lte: todayISO } }, // already started
+        { date_end_st: { $gte: todayISO } },
+        { date_begin_st: { $lte: todayISO } },
         { date_begin_st: null },
       ],
     })
     .toArray();
 
-  // Deduplicate by _id
+  const exhibitions = exhibitionsFromDb.filter(hasExhibitionDuration);
+
+  /** @type {ExhibitionDoc[]} */
   const deduped = Array.from(
-    new Map(exhibitions.map((ex) => [ex._id.toString(), ex])).values(),
+    new Map(
+      exhibitions.map((exhibition) => [
+        exhibition._id.toString(),
+        {
+          ...exhibition,
+          venue_group: venueGroupByDomain.get(exhibition.domain) ?? null,
+        },
+      ]),
+    ).values(),
   );
 
   return {

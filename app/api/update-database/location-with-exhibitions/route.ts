@@ -40,7 +40,7 @@ export async function GET() {
           console.error(`Error for domain ${location.domain}:`, error);
           return null;
         }
-      })
+      }),
     );
 
     const results = await Promise.all(updatePromises);
@@ -66,8 +66,8 @@ export async function GET() {
         await db.collection("Locations").bulkWrite(chunk);
         console.log(
           `Processed chunk ${i / chunkSize + 1} of ${Math.ceil(
-            bulkOps.length / chunkSize
-          )}`
+            bulkOps.length / chunkSize,
+          )}`,
         );
       }
     }
@@ -81,7 +81,7 @@ export async function GET() {
     console.error("Update failed:", error);
     return NextResponse.json(
       { error: "Failed to update exhibitions", details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -61,6 +61,8 @@ export default async function HomePage({ params }) {
         ? { cache: "no-store" }
         : { next: { revalidate: 3600 } };
 
+    console.log("Fetching:", URL);
+
     const locationsResponse = await fetch(
       `${URL}/api/map/locations`,
       cacheOption,
