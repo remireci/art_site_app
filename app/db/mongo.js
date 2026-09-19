@@ -530,13 +530,15 @@ export async function getExhibitionsForCity(slug) {
     };
   }
 
+  const cities = [
+    ...new Set(locations.map((location) => location.city).filter(Boolean)),
+  ];
+
   const venueGroupByDomain = new Map(
     locations
       .filter((location) => location.domain)
       .map((location) => [location.domain, location.venue_group]),
   );
-
-  console.log("venue group map", Object.fromEntries(venueGroupByDomain));
 
   const todayISO = new Date().toISOString();
 
@@ -544,6 +546,7 @@ export async function getExhibitionsForCity(slug) {
     .collection(collectionNameAgenda)
     .find({
       domain: { $in: domains },
+      city: { $in: cities },
       image_reference: { $exists: true, $ne: [] },
       show: { $ne: false },
 
