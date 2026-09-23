@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import type { MapLocation, ExhibitionGroup } from "@/lib/map/getMapData";
-
+import MapGetLocation from "../showmap/MapGetLocations";
 import EmbedGetLocation from "@/components/embed/EmbedGetLocations";
 
 const DynamicMap = dynamic(() => import("@/components/showmap/MapTest"), {
@@ -75,7 +75,7 @@ export default function EmbedMapClient({
 
       <div className="absolute top-3 left-14 z-[1000]">
         <div className="rounded bg-[#87bdd8] px-3 py-2 text-sm text-white shadow-md hover:bg-blue-800">
-          <EmbedGetLocation locale={locale} partner={partner} city={city} />
+          <MapGetLocation locale={locale} partner={partner} city={city} />
         </div>
       </div>
 

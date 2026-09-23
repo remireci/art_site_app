@@ -496,12 +496,10 @@ const Search = ({
                                                                         {`${result.title}`}
                                                                     </a>
                                                                 )} */}
-                                  <p
-                                    className="mt-2 text-sm"
-                                    dangerouslySetInnerHTML={{
-                                      __html: `&#8702; ${formatDate(result.date_end_st)}`,
-                                    }}
-                                  />
+                                  <p className="mt-2 text-sm">
+                                    &#8702;{" "}
+                                    {formatDate(result.date_end_st, locale)}
+                                  </p>
                                   <a
                                     href={URL}
                                     target="_blank"
@@ -570,12 +568,10 @@ const Search = ({
                                                                         {`${result.title}`}
                                                                     </a>
                                                                 )} */}
-                                  <p
-                                    className="mt-2 text-sm"
-                                    dangerouslySetInnerHTML={{
-                                      __html: `&#8702; ${formatDate(result.date_end_st)}`,
-                                    }}
-                                  />
+                                  <p className="mt-2 text-sm">
+                                    &#8702;{" "}
+                                    {formatDate(result.date_end_st, locale)}
+                                  </p>
                                   <a
                                     href={URL}
                                     target="_blank"
