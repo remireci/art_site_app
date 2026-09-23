@@ -30,6 +30,14 @@
     "searchPlaceholder": "Rechercher des lieux...",
     "meta-title": "Expositions d'art",
     "meta-description": "Découvrez les expositions d'art moderne et contemporain à venir à",
-    "meta-keywords": "expositions d'art, art contemporain, art moderne, galerie, musée, espace artistique"
+    "meta-keywords": "expositions d'art, art contemporain, art moderne, galerie, musée, espace artistique",
+    "visitWebsite": "Visiter le site",
+    "exploreCityOnMap": "Explorer {{city}} sur la carte",
+    "onNow": "À voir actuellement",
+    "until": "Jusqu’au",
+    "comingSoon": "Prochainement",
+    "noCurrentExhibitions": "Il n’y a actuellement aucune exposition à voir à {{venue}}.",
+    "recentPast": "Expositions récentes terminées",
+    "ended": "Terminée le"
   }
 }

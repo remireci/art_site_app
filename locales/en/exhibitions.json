@@ -28,6 +28,14 @@
     "searchPlaceholder": "Search venues...",
     "meta_title": "Art Exhibitions",
     "meta_description": "Explore upcoming modern and contemporary art exhibitions at",
-    "meta_keywords": "art exhibitions, contemporary art, modern art, gallery, museum, art space"
+    "meta_keywords": "art exhibitions, contemporary art, modern art, gallery, museum, art space",
+    "visitWebsite": "Visit website",
+    "exploreCityOnMap": "Explore {{city}} on the map",
+    "onNow": "On now",
+    "until": "Until",
+    "comingSoon": "Coming soon",
+    "noCurrentExhibitions": "There are currently no exhibitions on view at {{venue}}.",
+    "recentPast": "Recent past exhibitions",
+    "ended": "Ended"
   }
 }

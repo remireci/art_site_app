@@ -2,6 +2,7 @@ import { getExhibitionsByDomain, getLocationBySlug } from "@/db/mongo";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { formatDate } from "@/utils/formatDate";
+import { getTodayDateKey } from "@/utils/getTodayDateKey";
 import Modal from "../../../../components/LocationModal";
 import { Metadata } from "next";
 import AdsColumn from "@/components/AdsColumn";
@@ -145,6 +146,33 @@ export default async function LocationPage({
   //     includeFuture: false,
   // });
   // And then the user can click 'archived exhibitions' to make them appear on the page?
+
+  const today = getTodayDateKey();
+
+  const validExhibitions = exhibitions.filter(
+    (exhibition) =>
+      exhibition.date_begin_st &&
+      exhibition.date_end_st &&
+      exhibition.date_begin_st <= exhibition.date_end_st,
+  );
+
+  const currentExhibitions = validExhibitions
+    .filter(
+      (exhibition) =>
+        exhibition.date_begin_st <= today && exhibition.date_end_st >= today,
+    )
+    .sort((a, b) => (a.date_end_st ?? "").localeCompare(b.date_end_st ?? ""));
+
+  const upcomingExhibitions = validExhibitions
+    .filter((exhibition) => exhibition.date_begin_st > today)
+    .sort((a, b) =>
+      (a.date_begin_st ?? "").localeCompare(b.date_begin_st ?? ""),
+    );
+
+  const pastExhibitions = validExhibitions
+    .filter((exhibition) => exhibition.date_end_st < today)
+    .sort((a, b) => (b.date_end_st ?? "").localeCompare(a.date_end_st ?? ""));
+
   const rawAds = await getValidAds();
   const ads: Ad[] = rawAds.map((ad) => ({
     image_url: ad.image_url,
@@ -162,217 +190,332 @@ export default async function LocationPage({
     return notFound();
   }
 
+  // return (
+  //   <div className="relative flex flex-col items-center p-4 min-h-screen">
+  //     {exhibitions.length > 0 &&
+  //     exhibitions[0]?.url &&
+  //     exhibitions[0]?.location ? (
+  //       <Link
+  //         href={exhibitions[0].url}
+  //         className="w-full sm:w-auto px-1 py-1 mt-10 font-medium bg-slate-500 hover:bg-slate-400 text-sm text-slate-100 rounded flex items-center justify-center text-center cursor-pointer"
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //       >
+  //         <h1>
+  //           {exhibitions[0].location}
+  //           {exhibitions[0].city && (
+  //             <span>
+  //               {" - "}
+  //               {exhibitions[0].city.charAt(0).toUpperCase() +
+  //                 exhibitions[0].city.slice(1).toLowerCase()}
+  //             </span>
+  //           )}
+  //         </h1>
+  //       </Link>
+  //     ) : (
+  //       <p className="text-gray-500">No data available</p>
+  //     )}
+
+  //     <div className="hidden md:w-2/3 lg:w-1/3 text-slate-200 flex-col justify-start">
+  //       <div className="mt-20">
+  //         {exhibitions.length > 0 && (
+  //           <p className="mt-4">{institution?.description}</p>
+  //         )}
+  //       </div>
+  //     </div>
+
+  //     {/* <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 gap-6 w-full lg:w-1/2"> */}
+  //     <div className="mt-12">
+  //       <h2 className="uppercase text-2xl tracking-widest">{`${messages.cities.actual}`}</h2>
+  //     </div>
+
+  const venueName =
+    institution?.name ||
+    exhibitions[0]?.location ||
+    location.replace(/-/g, " ");
+
   return (
-    <div className="relative flex flex-col items-center p-4 min-h-screen">
-      {exhibitions.length > 0 &&
-      exhibitions[0]?.url &&
-      exhibitions[0]?.location ? (
-        <Link
-          href={exhibitions[0].url}
-          className="w-full sm:w-auto px-1 py-1 mt-10 font-medium bg-slate-500 hover:bg-slate-400 text-sm text-slate-100 rounded flex items-center justify-center text-center cursor-pointer"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h1>
-            {exhibitions[0].location}
-            {exhibitions[0].city && (
-              <span>
-                {" - "}
-                {exhibitions[0].city.charAt(0).toUpperCase() +
-                  exhibitions[0].city.slice(1).toLowerCase()}
-              </span>
-            )}
-          </h1>
-        </Link>
-      ) : (
-        <p className="text-gray-500">No data available</p>
-      )}
-
-      <div className="hidden md:w-2/3 lg:w-1/3 text-slate-200 flex-col justify-start">
-        <div className="mt-20">
-          {exhibitions.length > 0 && (
-            <p className="mt-4">{institution?.description}</p>
+    <div className="main-container min-h-screen mt-20 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-5xl mx-auto">
+        {/* HEADER */}
+        <header className="w-full max-w-3xl mx-auto">
+          {city && (
+            <p className="text-sm uppercase tracking-widest text-gray-400 mb-2">
+              {city}
+            </p>
           )}
-        </div>
-      </div>
 
-      {/* <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 gap-6 w-full lg:w-1/2"> */}
-      <div className="mt-12">
-        <h2 className="uppercase text-2xl tracking-widest">{`${messages.cities.actual}`}</h2>
-      </div>
+          <h1 className="text-2xl md:text-3xl text-gray-700 font-semibold">
+            {venueName}
+          </h1>
 
-      <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 gap-6 w-full lg:w-1/2">
-        {[...exhibitions]
-          .sort((a, b) => {
-            const dateA = new Date(a.date_end_st ?? "");
-            const dateB = new Date(b.date_end_st ?? "");
-            const timeA = isNaN(dateA.getTime()) ? Infinity : dateA.getTime();
-            const timeB = isNaN(dateB.getTime()) ? Infinity : dateB.getTime();
-            return timeA - timeB;
-          })
-          .map((exhibition: any, index: number) => {
-            const today = new Date();
-            const startDate = new Date(exhibition.date_begin_st);
-            const endDate = new Date(exhibition.date_end_st);
-            if (
-              exhibition.image_reference &&
-              today < endDate &&
-              startDate < endDate
-            ) {
-              const optimizedUrl = getOptimizedSrc(
-                exhibition.image_reference[0],
-              );
+          {/* {institution?.description && (
+            <p className="mt-4 text-gray-700 text-sm md:text-base">
+              {institution.description}
+            </p>
+          )} */}
 
-              return (
-                <li
-                  key={exhibition._id}
-                  className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[260px] my-4"
-                >
-                  {exhibition.description && (
-                    <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-y-auto overflow-x-hidden mb-12 pointer-events-auto">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: exhibition.description,
-                        }}
-                      />
-                    </div>
-                  )}
+          <div className="mt-6 flex flex-wrap gap-3">
+            {exhibitions[0]?.url && (
+              <Link
+                href={exhibitions[0].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >
+                {messages.locations.visitWebsite}
+              </Link>
+            )}
 
-                  {exhibition.description && (
-                    <div className="absolute top-0 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
-                      {messages.description}
-                    </div>
-                  )}
+            {city && (
+              <Link
+                href={`/${locale}?city=${city}`}
+                className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >
+                {messages.locations.exploreCityOnMap.replace(
+                  "{{city}}",
+                  validCity || city,
+                )}
+              </Link>
+            )}
+          </div>
+        </header>
 
-                  <div className="flex flex-col mt-2 space-y-2">
-                    <h3 className="text-sm italic">{exhibition.title}</h3>
-                    {startDate > today ? (
-                      <p className="mt-2 text-xs">
-                        {formatDate(exhibition.date_begin_st)} –{" "}
-                        {formatDate(exhibition.date_end_st)}
-                      </p>
-                    ) : (
-                      <p className="mt-2 text-xs">
-                        &#8702; {formatDate(exhibition.date_end_st)}
-                      </p>
+        {/* CURRENT EXHIBITIONS */}
+        <section
+          id="on-now"
+          className="w-full max-w-3xl mx-auto mt-20 scroll-mt-24"
+        >
+          <h2 className="text-center uppercase text-xl md:text-2xl tracking-widest">
+            {messages.locations.onNow}
+          </h2>
+
+          {currentExhibitions.length > 0 ? (
+            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-12 gap-x-6 gap-y-8 w-full">
+              {currentExhibitions.map((exhibition: any, index: number) => {
+                const optimizedUrl = exhibition.image_reference?.[0]
+                  ? getOptimizedSrc(exhibition.image_reference[0])
+                  : null;
+
+                return (
+                  <li
+                    key={exhibition._id.toString()}
+                    className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[320px]"
+                  >
+                    {exhibition.description && (
+                      <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-y-auto overflow-x-hidden mb-12 pointer-events-auto">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: exhibition.description,
+                          }}
+                        />
+                      </div>
                     )}
-                  </div>
-                  {/* <h3 className="text-sm">{exhibition.city}</h3> */}
-                  {exhibition.image_reference && (
-                    <div className="flex flex-col space-y-4">
-                      {/* <a href={exhibition.url} target="_blank" rel="noopener noreferrer" className="relative group"> */}
-                      <Image
-                        priority={index === 0}
-                        loading={index === 0 ? "eager" : "lazy"}
-                        unoptimized
-                        src={optimizedUrl}
-                        alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
-                        width={150}
-                        height={50}
-                        className="rounded-lg"
-                      />
-                      {/* <span className="absolute top-0 right-0 bg-gray-900 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
-                                                Open external site
-                                            </span> */}
-                      {/* </a> */}
-                    </div>
-                  )}
-                  {exhibition.artists && exhibition.artists !== "N/A" && (
-                    <p className="text-xs">{exhibition.artists}</p>
-                  )}
-                  {exhibition.location && exhibition.location !== "N/A" && (
-                    <p className="text-xs">{exhibition.location}</p>
-                  )}
-                  <div className="text-sm bg-slate-200 rounded-md z-20 p-1">
-                    <Link
-                      href={exhibition.exhibition_url || exhibition.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {messages.moreInfo}
-                    </Link>
-                  </div>
-                </li>
-              );
-            }
-          })}
-      </ul>
 
-      <div className="mt-48">
-        <h2 className="uppercase text-2xl tracking-widest">{`${messages.cities.past}`}</h2>
-      </div>
-      <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-20 gap-6 w-full lg:w-1/2">
-        {[...exhibitions]
-          .sort((a, b) => {
-            const dateA = new Date(a.date_end_st ?? "");
-            const dateB = new Date(b.date_end_st ?? "");
-            const timeA = isNaN(dateA.getTime()) ? Infinity : dateA.getTime();
-            const timeB = isNaN(dateB.getTime()) ? Infinity : dateB.getTime();
-            return timeB - timeA;
-          })
-          .map((exhibition: any, index: number) => {
-            const today = new Date();
-            const startDate = new Date(exhibition.date_begin_st);
-            const endDate = new Date(exhibition.date_end_st);
-            if (today > endDate && startDate < endDate) {
-              return (
-                <li
-                  key={exhibition._id}
-                  className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[260px] my-4"
-                >
-                  {exhibition.description && (
-                    <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-y-auto overflow-x-hidden mb-12 pointer-events-auto">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: exhibition.description,
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  {exhibition.description && (
-                    <div className="absolute top-0 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
-                      {messages.description}
-                    </div>
-                  )}
-
-                  <div className="flex flex-col mt-2 space-y-2">
-                    <h3 className="text-sm italic">{exhibition.title}</h3>
-                    {startDate > today ? (
-                      <p className="mt-2 text-xs">
-                        ({formatDate(exhibition.date_begin_st)} –{" "}
-                        {formatDate(exhibition.date_end_st)})
-                      </p>
-                    ) : (
-                      <p className="mt-2 text-xs">
-                        ({formatDate(exhibition.date_end_st)})
-                      </p>
+                    {exhibition.description && (
+                      <div className="absolute top-0 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                        {messages.description}
+                      </div>
                     )}
-                  </div>
-                  {/* <h3 className="text-sm">{exhibition.city}</h3> */}
 
-                  {exhibition.artists && exhibition.artists !== "N/A" && (
-                    <p className="text-xs">{exhibition.artists}</p>
-                  )}
-                  {exhibition.location && exhibition.location !== "N/A" && (
-                    <p className="text-xs">{exhibition.location}</p>
-                  )}
-                  <div className="text-sm bg-slate-200 rounded-md z-20 p-1">
-                    <Link
-                      href={exhibition.exhibition_url || exhibition.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {messages.moreInfo}
-                    </Link>
-                  </div>
-                </li>
-              );
-            }
-          })
-          .filter(Boolean)
-          .slice(0, 30)}
-      </ul>
+                    <div className="flex flex-col mt-2 space-y-2">
+                      <h3 className="text-sm italic">{exhibition.title}</h3>
+
+                      <p className="mt-2 text-xs">
+                        {messages.locations.until}{" "}
+                        {formatDate(exhibition.date_end_st, locale)}
+                      </p>
+                    </div>
+
+                    {optimizedUrl && (
+                      <div className="flex flex-col space-y-4 mt-4">
+                        <Image
+                          priority={index === 0}
+                          loading={index === 0 ? "eager" : "lazy"}
+                          unoptimized
+                          src={optimizedUrl}
+                          alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
+                          width={280}
+                          height={180}
+                          className="rounded-lg object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {exhibition.artists && exhibition.artists !== "N/A" && (
+                      <p className="text-xs mt-3">{exhibition.artists}</p>
+                    )}
+
+                    <div className="text-sm bg-slate-200 rounded-md z-20 p-1 mt-4">
+                      <Link
+                        href={exhibition.exhibition_url || exhibition.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {messages.moreInfo}
+                      </Link>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="mt-10 text-sm text-gray-500 text-center">
+              {messages.locations.noCurrentExhibitions.replace(
+                "{{venue}}",
+                venueName,
+              )}
+            </p>
+          )}
+        </section>
+
+        {/* UPCOMING EXHIBITIONS */}
+        {upcomingExhibitions.length > 0 && (
+          <section
+            id="coming-soon"
+            className="w-full max-w-3xl mx-auto mt-12 pt-12 border-t border-gray-200 scroll-mt-24"
+          >
+            <h2 className="text-center uppercase text-xl md:text-2xl tracking-widest">
+              {messages.locations.comingSoon}
+            </h2>
+
+            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-12 gap-x-6 gap-y-8 w-full">
+              {upcomingExhibitions.map((exhibition: any, index: number) => {
+                const optimizedUrl = exhibition.image_reference?.[0]
+                  ? getOptimizedSrc(exhibition.image_reference[0])
+                  : null;
+
+                return (
+                  <li
+                    key={exhibition._id.toString()}
+                    className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[320px]"
+                  >
+                    {exhibition.description && (
+                      <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-y-auto overflow-x-hidden mb-12 pointer-events-auto">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: exhibition.description,
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {exhibition.description && (
+                      <div className="absolute top-0 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                        {messages.description}
+                      </div>
+                    )}
+
+                    <div className="flex flex-col mt-2 space-y-2">
+                      <h3 className="text-sm italic">{exhibition.title}</h3>
+
+                      <p className="mt-2 text-xs">
+                        {formatDate(exhibition.date_begin_st, locale)} –{" "}
+                        {formatDate(exhibition.date_end_st, locale)}
+                      </p>
+                    </div>
+
+                    {optimizedUrl && (
+                      <div className="flex flex-col space-y-4 mt-4">
+                        <Image
+                          loading="lazy"
+                          unoptimized
+                          src={optimizedUrl}
+                          alt={`${exhibition.title} at ${exhibition.location}, ${exhibition.city}`}
+                          width={280}
+                          height={180}
+                          className="rounded-lg object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {exhibition.artists && exhibition.artists !== "N/A" && (
+                      <p className="text-xs mt-3">{exhibition.artists}</p>
+                    )}
+
+                    <div className="text-sm bg-slate-200 rounded-md z-20 p-1 mt-4">
+                      <Link
+                        href={exhibition.exhibition_url || exhibition.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {messages.moreInfo}
+                      </Link>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+      </div>
+
+      {pastExhibitions.length > 0 && (
+        <section
+          id="past-exhibitions"
+          className="w-full max-w-3xl mx-auto mt-32 mb-24 scroll-mt-24"
+        >
+          <details>
+            <summary className="cursor-pointer text-center text-sm md:text-base text-gray-500 uppercase tracking-widest">
+              {messages.locations.recentPast}
+            </summary>
+
+            <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-10 gap-x-6 gap-y-8 w-full">
+              {pastExhibitions.slice(0, 20).map((exhibition: any) => {
+                const optimizedUrl = exhibition.image_reference?.[0]
+                  ? getOptimizedSrc(exhibition.image_reference[0])
+                  : null;
+
+                return (
+                  <li
+                    key={exhibition._id.toString()}
+                    className="relative group flex flex-col justify-between items-center text-center border p-4 rounded-lg shadow h-full w-full max-w-[280px]"
+                  >
+                    {exhibition.description && (
+                      <div className="absolute z-10 inset-0 bg-white/90 backdrop-blur-sm text-gray-800 text-sm p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-y-auto overflow-x-hidden mb-12 pointer-events-auto">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: exhibition.description,
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {exhibition.description && (
+                      <div className="absolute top-0 left-0 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md shadow-md block xl:hidden pointer-events-none">
+                        {messages.description}
+                      </div>
+                    )}
+
+                    <div className="flex flex-col mt-2 space-y-2">
+                      <h3 className="text-sm italic">{exhibition.title}</h3>
+
+                      <p className="mt-2 text-xs text-gray-500">
+                        {messages.locations.ended}{" "}
+                        {formatDate(exhibition.date_end_st, locale)}
+                      </p>
+                    </div>
+
+                    {exhibition.artists && exhibition.artists !== "N/A" && (
+                      <p className="text-xs mt-3">{exhibition.artists}</p>
+                    )}
+
+                    <div className="text-sm bg-slate-200 rounded-md z-20 p-1 mt-4">
+                      <Link
+                        href={exhibition.exhibition_url || exhibition.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {messages.moreInfo}
+                      </Link>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        </section>
+      )}
 
       <div className="px-5 w-auto h-8 mt-40 mb-20 bg-[#87bdd8] hover:bg-blue-300 text-sm text-slate-100 rounded flex items-center justify-center">
         <Link

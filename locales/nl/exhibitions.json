@@ -28,6 +28,14 @@
     "searchPlaceholder": "Zoek locaties...",
     "meta_title": "Kunsttentoonstellingen",
     "meta_description": "Ontdek lopende tentoonstellingen van moderne en hedendaagse kunst in",
-    "meta_keywords": "kunsttentoonstellingen, hedendaagse kunst, moderne kunst, galerie, museum, kunstlocatie"
+    "meta_keywords": "kunsttentoonstellingen, hedendaagse kunst, moderne kunst, galerie, museum, kunstlocatie",
+    "visitWebsite": "Bezoek website",
+    "exploreCityOnMap": "Bekijk {{city}} op de kaart",
+    "onNow": "Nu te zien",
+    "until": "Tot",
+    "comingSoon": "Binnenkort",
+    "noCurrentExhibitions": "Er zijn momenteel geen tentoonstellingen te zien bij {{venue}}.",
+    "recentPast": "Recente afgelopen tentoonstellingen",
+    "ended": "Afgelopen op"
   }
 }

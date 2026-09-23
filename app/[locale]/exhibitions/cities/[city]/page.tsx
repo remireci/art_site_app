@@ -1,6 +1,7 @@
 import { getExhibitionsForCity } from "@/db/mongo";
 import Image from "next/image";
 import { Metadata } from "next";
+import { formatDate } from "@/utils/formatDate";
 import AdsColumn from "@/components/AdsColumn";
 import { getValidAds } from "@/lib/ads";
 import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
@@ -282,13 +283,13 @@ export default async function CityPage({
     (exhibition) => exhibition.city && !validCities.includes(exhibition.city),
   )?.city;
 
-  const formatDate = (dateStr: string) => {
-    if (!dateStr || typeof dateStr !== "string" || !dateStr.includes("-")) {
-      return "Invalid Date"; // or return an empty string, or handle as needed
-    }
-    const [year, month, day] = dateStr.split("-");
-    return `${day}-${month}-${year}`;
-  };
+  // const formatDate = (dateStr: string) => {
+  //   if (!dateStr || typeof dateStr !== "string" || !dateStr.includes("-")) {
+  //     return "Invalid Date"; // or return an empty string, or handle as needed
+  //   }
+  //   const [year, month, day] = dateStr.split("-");
+  //   return `${day}-${month}-${year}`;
+  // };
 
   return (
     <div className="main-container flex flex-wrap min-h-screen overflow-auto mt-20">
@@ -444,7 +445,7 @@ export default async function CityPage({
                         <h3 className="text-sm italic">{exhibition.title}</h3>
 
                         <p className="mt-2 text-xs">
-                          Until {formatDate(exhibition.date_end_st)}
+                          Until {formatDate(exhibition.date_end_st, locale)}
                         </p>
                       </div>
 
@@ -535,8 +536,8 @@ export default async function CityPage({
                             </h3>
 
                             <p className="mt-2 text-xs">
-                              {formatDate(exhibition.date_begin_st!)} –{" "}
-                              {formatDate(exhibition.date_end_st!)}
+                              {formatDate(exhibition.date_begin_st!, locale)} –{" "}
+                              {formatDate(exhibition.date_end_st!, locale)}
                             </p>
                           </div>
 
@@ -628,7 +629,7 @@ export default async function CityPage({
                       <h3 className="text-sm italic">{exhibition.title}</h3>
 
                       <p className="mt-2 text-xs">
-                        Ended {formatDate(exhibition.date_end_st!)}
+                        Ended {formatDate(exhibition.date_end_st!, locale)}
                       </p>
 
                       {exhibition.location && exhibition.location !== "N/A" && (

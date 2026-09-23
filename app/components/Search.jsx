@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { formatDate } from "../utils/formatDate";
+import { formatDate } from "@/utils/formatDate";
 import SearchList from "./SearchList";
 import SearchMap from "./SearchMap";
 import ImageDisplay from "./ImageDisplay";
@@ -286,6 +286,7 @@ const Search = ({
                         searchQuery={query}
                         locations={locations}
                         groupedExhibitions={exhibitions}
+                        locale={locale}
                       />
                     </div>
                   </div>
@@ -503,7 +504,7 @@ const Search = ({
                                   <p
                                     className="mt-2 text-sm"
                                     dangerouslySetInnerHTML={{
-                                      __html: `&#8702; ${formatDate(result.date_end_st)}`,
+                                      __html: `&#8702; ${(formatDate(result.date_end_st), locale)}`,
                                     }}
                                   />
                                   <a
@@ -577,7 +578,7 @@ const Search = ({
                                   <p
                                     className="mt-2 text-sm"
                                     dangerouslySetInnerHTML={{
-                                      __html: `&#8702; ${formatDate(result.date_end_st)}`,
+                                      __html: `&#8702; ${(formatDate(result.date_end_st), locale)}`,
                                     }}
                                   />
                                   <a

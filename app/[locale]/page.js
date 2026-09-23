@@ -4,6 +4,7 @@ import { shuffleArray } from "../utils/shuffleArray";
 import { getTranslations } from "next-intl/server";
 import { getValidAds } from "@/lib/ads";
 import Link from "next/link";
+import { getMapData } from "@/lib/map/getMapData";
 // export const runtime = 'edge';
 
 function getRandomSubset(arr, count) {
@@ -87,12 +88,17 @@ export default async function HomePage({ params }) {
       throw new Error("Failed to fetch data");
     }
 
-    const locations = await locationsResponse.json();
-    const exhibitions = await exhibitionsResponse.json();
-
+    const {
+      locations: filteredLocations,
+      exhibitions: uniqueGroups,
+      rawExhibitions: exhibitions,
+    } = await getMapData();
     // console.log("Sample locations data:", locations.slice(0, 10));
     console.log("Total number of displayed exhibitions:", exhibitions.length);
-    console.log("Total number of displayed locations:", locations.length);
+    console.log(
+      "Total number of displayed locations:",
+      filteredLocations.length,
+    );
 
     // const civa = exhibitions.filter(exh => exh.domain === "civa.brussels");
     // console.log(civa);
@@ -106,12 +112,6 @@ export default async function HomePage({ params }) {
         .toLowerCase()
         .split(/\s+/) // Split by whitespace
         .filter((word) => word.length >= 4); // Keep words with at least 4 characters
-
-    const filteredLocations = locations.filter((location) =>
-      exhibitions.some(
-        (exhibition) => extractDomain(exhibition.url) === location.domain,
-      ),
-    );
 
     const locationsMap = filteredLocations.reduce((map, location) => {
       // Store array of locations per domain for multi-location case
@@ -151,21 +151,6 @@ export default async function HomePage({ params }) {
       // Push the exhibition directly into the array
       groupedExhibitions[groupKey].exhibitions.push(exhibition);
     }
-
-    const uniqueGroups = Object.values(groupedExhibitions).map((group) => {
-      const titleMap = {};
-      return {
-        ...group,
-        exhibitions: group.exhibitions.filter((exhibition) => {
-          const normalizedTitle = exhibition.title.toLowerCase().trim();
-          if (!titleMap[normalizedTitle]) {
-            titleMap[normalizedTitle] = true;
-            return true;
-          }
-          return false;
-        }),
-      };
-    });
 
     // Now you can get your unique exhibitions if needed
     const uniqueExhibitions = uniqueGroups.flatMap(
