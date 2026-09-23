@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aurelia Hotels — Art & Culture</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: #292929;
+        background: #f8f7f3;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 26px 6%;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .brand {
+        font-family: Georgia, serif;
+        font-size: 23px;
+        letter-spacing: 3px;
+      }
+
+      nav {
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: #555;
+      }
+
+      .hero {
+        padding: 80px 6% 65px;
+        max-width: 1100px;
+      }
+
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 11px;
+        color: #777;
+      }
+
+      h1,
+      h2 {
+        font-family: Georgia, serif;
+        font-weight: normal;
+      }
+
+      h1 {
+        font-size: clamp(42px, 6vw, 74px);
+        line-height: 1.05;
+        max-width: 850px;
+      }
+
+      .intro,
+      .description {
+        max-width: 650px;
+        line-height: 1.7;
+        color: #555;
+      }
+
+      .culture {
+        background: white;
+        padding: 60px 6% 90px;
+      }
+
+      .culture-inner {
+        max-width: 1250px;
+        margin: auto;
+      }
+
+      h2 {
+        font-size: 38px;
+        margin-bottom: 12px;
+      }
+
+      .cities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 30px 0 22px;
+      }
+
+      .city-button {
+        border: 1px solid #aaa;
+        background: white;
+        padding: 9px 15px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .city-button.active {
+        background: #333;
+        color: white;
+        border-color: #333;
+      }
+
+      .property-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #777;
+      }
+
+      .map-wrapper {
+        width: 100%;
+        height: 650px;
+        overflow: hidden;
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .caption,
+      footer {
+        font-size: 11px;
+        color: #888;
+      }
+
+      footer {
+        padding: 50px 6%;
+      }
+
+      @media (max-width: 650px) {
+        nav {
+          display: none;
+        }
+
+        .hero {
+          padding: 55px 4% 45px;
+        }
+
+        .culture {
+          padding: 45px 4% 60px;
+        }
+
+        .map-wrapper {
+          height: 520px;
+        }
+
+        .city-button {
+          flex: 1 1 calc(50% - 8px);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="brand">AURELIA HOTELS</div>
+      <nav>STAY · EAT · DISCOVER · ABOUT</nav>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">European stays · Local culture</div>
+
+      <h1>Stay in the city.<br />Discover what is happening now.</h1>
+
+      <p class="intro">
+        Each Aurelia hotel is connected to the cultural life of its city.
+        Discover current modern and contemporary art exhibitions during your
+        stay.
+      </p>
+    </section>
+
+    <section class="culture">
+      <div class="culture-inner">
+        <div class="eyebrow">Aurelia City Guide</div>
+        <h2>Art around you</h2>
+
+        <p class="description">
+          Explore current exhibitions in museums, galleries and art institutions
+          near our European hotels. Select a city below.
+        </p>
+
+        <div class="cities">
+          <button
+            class="city-button active"
+            data-city="Brussels"
+            data-property="Aurelia Brussels"
+          >
+            Brussels
+          </button>
+
+          <button
+            class="city-button"
+            data-city="Amsterdam"
+            data-property="Aurelia Amsterdam"
+          >
+            Amsterdam
+          </button>
+
+          <button
+            class="city-button"
+            data-city="Paris"
+            data-property="Aurelia Paris"
+          >
+            Paris
+          </button>
+
+          <button
+            class="city-button"
+            data-city="Berlin"
+            data-property="Aurelia Berlin"
+          >
+            Berlin
+          </button>
+        </div>
+
+        <p class="property-label" id="property-label">
+          Aurelia Brussels · Cultural guide
+        </p>
+
+        <div class="map-wrapper">
+          <iframe
+            id="art-map"
+            src="/embed/en/map?city=Brussels&partner=aurelia-demo"
+            allow="geolocation"
+            title="Current art exhibitions"
+          ></iframe>
+        </div>
+
+        <p class="caption">
+          Live exhibition information provided by Art Now Database.
+        </p>
+      </div>
+    </section>
+
+    <footer>Aurelia Hotels · Brussels · Amsterdam · Paris · Berlin</footer>
+
+    <script>
+      const iframe = document.getElementById("art-map");
+      const propertyLabel = document.getElementById("property-label");
+      const buttons = document.querySelectorAll(".city-button");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const city = button.dataset.city;
+          const property = button.dataset.property;
+
+          iframe.src =
+            `/embed/en/map?city=${encodeURIComponent(city)}` +
+            `&partner=aurelia-demo`;
+
+          propertyLabel.textContent = `${property} · Cultural guide`;
+
+          buttons.forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>

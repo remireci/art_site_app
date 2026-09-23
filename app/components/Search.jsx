@@ -276,21 +276,16 @@ const Search = ({
                             )} */}
               {/* Show text or agenda results based on activeTab */}
               {activeTab === "map" && (
-                <ul className="w-full bg-slate-200 z-5 p-4 rounded text-xs">
-                  <div className="flex flex-col items-center mt-8 space-y-6">
-                    <div className="w-35 bg-[#87bdd8] hover:bg-blue-800 p-1 rounded text-slate-100">
-                      <GetLocation />
-                    </div>
-                    <div>
-                      <DynamicMap
-                        searchQuery={query}
-                        locations={locations}
-                        groupedExhibitions={exhibitions}
-                        locale={locale}
-                      />
-                    </div>
+                <div className="w-full bg-slate-200 z-5 p-4 rounded text-xs">
+                  <div className="w-full mt-4">
+                    <DynamicMap
+                      searchQuery={query}
+                      locations={locations}
+                      groupedExhibitions={exhibitions}
+                      locale={locale}
+                    />
                   </div>
-                </ul>
+                </div>
               )}
               {/* 
                             <div className={activeTab === 'map' ? '' : 'hidden'}>
@@ -504,7 +499,7 @@ const Search = ({
                                   <p
                                     className="mt-2 text-sm"
                                     dangerouslySetInnerHTML={{
-                                      __html: `&#8702; ${(formatDate(result.date_end_st), locale)}`,
+                                      __html: `&#8702; ${formatDate(result.date_end_st)}`,
                                     }}
                                   />
                                   <a
@@ -578,7 +573,7 @@ const Search = ({
                                   <p
                                     className="mt-2 text-sm"
                                     dangerouslySetInnerHTML={{
-                                      __html: `&#8702; ${(formatDate(result.date_end_st), locale)}`,
+                                      __html: `&#8702; ${formatDate(result.date_end_st)}`,
                                     }}
                                   />
                                   <a

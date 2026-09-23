@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from "react-leaflet";
 import { useLocation } from "@/context/LocationContext";
+import MapGetLocation from "@/components/showmap/MapGetLocations";
 import GetLocation from "../GetLocation";
 import debounce from "../../utils/debounce";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
@@ -258,14 +259,14 @@ const MapTest = React.memo(
     }, [searchQuery]);
 
     return (
-      <div className={embedded ? "h-full w-full" : ""}>
+      <div
+        className={
+          embedded ? "relative h-full w-full" : "relative h-[60vh] w-full"
+        }
+      >
         {isMapReady && (
           <MapContainer
-            className={
-              embedded
-                ? "h-full w-full"
-                : "h-[60vh] w-[80vw] md:w-[60vw] lg:w-[65vw] xl:w-[38vw]"
-            }
+            className="h-full w-full"
             center={coord}
             zoom={13}
             scrollWheelZoom={true}
@@ -427,6 +428,14 @@ const MapTest = React.memo(
             </>
           </MapContainer>
         )}
+        <div className="absolute top-3 left-14 z-[1000] rounded bg-[#87bdd8] px-3 py-2 text-sm text-white shadow-md hover:bg-blue-800">
+          <MapGetLocation
+            locale={locale}
+            partner={partner}
+            city={searchQuery}
+            trackAnalytics={embedded}
+          />
+        </div>
       </div>
     );
   },

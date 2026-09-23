@@ -120,11 +120,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
-        <script
+        {/* <script
           defer
           src="https://umami-loopbaantest-bitter-flower-1931.fly.dev/script.js"
           data-website-id="3619ca21-8cc6-4766-97a3-0266e8e0d441"
-        ></script>
+        ></script> */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={addJsonLd()}
