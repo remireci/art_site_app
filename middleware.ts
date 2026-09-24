@@ -89,7 +89,7 @@ export function middleware(request: NextRequest) {
   const PUBLIC_FILE =
     /\.(js|css|png|jpg|jpeg|gif|svg|webp|ico|eot|otf|ttf|woff|woff2|json)$/;
 
-  if (pathname.startsWith("/embed/") || pathname.startsWith("/demo-hotel/")) {
+  if (pathname.startsWith("/embed/") || pathname.startsWith("/demos/")) {
     return NextResponse.next();
   }
   // Bypass static files and internal routes

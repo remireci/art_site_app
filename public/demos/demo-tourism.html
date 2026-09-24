@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>City Art Guide — Tourism Demo</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: #252525;
+        background: #f7f6f2;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 26px 6%;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .brand {
+        font-family: Georgia, serif;
+        font-size: 23px;
+        letter-spacing: 3px;
+      }
+
+      nav {
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: #555;
+      }
+
+      .hero {
+        padding: 70px 6% 55px;
+        max-width: 1100px;
+      }
+
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 11px;
+        color: #777;
+      }
+
+      h1,
+      h2 {
+        font-family: Georgia, serif;
+        font-weight: normal;
+      }
+
+      h1 {
+        font-size: clamp(42px, 6vw, 72px);
+        line-height: 1.05;
+        margin: 15px 0 22px;
+      }
+
+      .intro {
+        max-width: 680px;
+        font-size: 17px;
+        line-height: 1.7;
+        color: #555;
+      }
+
+      .content {
+        background: white;
+        padding: 55px 6% 90px;
+      }
+
+      .inner {
+        max-width: 1250px;
+        margin: auto;
+      }
+
+      h2 {
+        font-size: 38px;
+        margin: 0 0 10px;
+      }
+
+      .description {
+        max-width: 700px;
+        line-height: 1.6;
+        color: #666;
+      }
+
+      .cities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 30px 0 28px;
+      }
+
+      .city-button {
+        border: 1px solid #aaa;
+        background: white;
+        padding: 9px 16px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .city-button:hover {
+        background: #eee;
+      }
+
+      .city-button.active {
+        background: #333;
+        color: white;
+        border-color: #333;
+      }
+
+      .map-wrapper {
+        width: 100%;
+        height: 650px;
+        overflow: hidden;
+        background: #eee;
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .caption {
+        margin-top: 12px;
+        font-size: 11px;
+        color: #888;
+      }
+
+      footer {
+        padding: 45px 6%;
+        font-size: 12px;
+        color: #777;
+      }
+
+      @media (max-width: 650px) {
+        nav {
+          display: none;
+        }
+
+        .hero,
+        .content {
+          padding-left: 4%;
+          padding-right: 4%;
+        }
+
+        .map-wrapper {
+          height: 520px;
+        }
+
+        .city-button {
+          flex: 1 1 calc(50% - 8px);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="brand">CITY ART GUIDE</div>
+      <nav>DISCOVER · CULTURE · PLAN YOUR VISIT</nav>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">Modern & contemporary art</div>
+
+      <h1 id="hero-title">Discover art in Brussels</h1>
+
+      <p class="intro" id="hero-intro">
+        Explore exhibitions currently on view across Brussels — from major
+        museums to galleries, foundations and independent art institutions.
+      </p>
+    </section>
+
+    <section class="content">
+      <div class="inner">
+        <div class="eyebrow">Choose your destination</div>
+
+        <div class="cities">
+          <button class="city-button active" data-city="Brussels">
+            Brussels
+          </button>
+
+          <button class="city-button" data-city="Paris">Paris</button>
+
+          <button class="city-button" data-city="Amsterdam">Amsterdam</button>
+
+          <button class="city-button" data-city="Berlin">Berlin</button>
+
+          <button class="city-button" data-city="Antwerp">Antwerp</button>
+
+          <button class="city-button" data-city="Düsseldorf">Düsseldorf</button>
+        </div>
+
+        <h2 id="map-title">What's on now in Brussels</h2>
+
+        <p class="description" id="map-description">
+          Browse current exhibitions throughout the city. Select a marker for
+          exhibition details and venue information.
+        </p>
+
+        <div class="map-wrapper">
+          <iframe
+            id="art-map"
+            src="/embed/en/map?city=Brussels&partner=tourism-demo"
+            allow="geolocation"
+            title="Current art exhibitions"
+          ></iframe>
+        </div>
+
+        <p class="caption">
+          Live exhibition information provided by Art Now Database.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      Demonstration of an embeddable cultural map for destination websites.
+    </footer>
+
+    <script>
+      const iframe = document.getElementById("art-map");
+      const heroTitle = document.getElementById("hero-title");
+      const heroIntro = document.getElementById("hero-intro");
+      const mapTitle = document.getElementById("map-title");
+
+      const buttons = document.querySelectorAll(".city-button");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const city = button.dataset.city;
+
+          iframe.src =
+            `/embed/en/map?city=${encodeURIComponent(city)}` +
+            `&partner=tourism-demo`;
+
+          heroTitle.textContent = `Discover art in ${city}`;
+
+          heroIntro.textContent =
+            `Explore exhibitions currently on view across ${city} — ` +
+            `from major museums to galleries, foundations and independent ` +
+            `art institutions.`;
+
+          mapTitle.textContent = `What's on now in ${city}`;
+
+          buttons.forEach((item) => {
+            item.classList.remove("active");
+          });
+
+          button.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>
