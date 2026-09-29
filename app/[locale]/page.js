@@ -7,6 +7,8 @@ import Link from "next/link";
 import { getMapData } from "@/lib/map/getMapData";
 // export const runtime = 'edge';
 
+export const revalidate = 300;
+
 function getRandomSubset(arr, count) {
   const shuffled = [...arr]; // avoid mutating the original array
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -57,21 +59,21 @@ export default async function HomePage({ params }) {
   const initialSearchTerm = initialSearchTerms[indexInitialSearch];
 
   try {
-    const cacheOption =
-      process.env.NODE_ENV === "development"
-        ? { cache: "no-store" }
-        : { next: { revalidate: 3600 } };
+    // const cacheOption =
+    //   process.env.NODE_ENV === "development"
+    //     ? { cache: "no-store" }
+    //     : { next: { revalidate: 3600 } };
 
-    console.log("Fetching:", URL);
+    // console.log("Fetching:", URL);
 
-    const locationsResponse = await fetch(
-      `${URL}/api/map/locations`,
-      cacheOption,
-    );
-    const exhibitionsResponse = await fetch(
-      `${URL}/api/exhibitions`,
-      cacheOption,
-    );
+    // const locationsResponse = await fetch(
+    //   `${URL}/api/map/locations`,
+    //   cacheOption,
+    // );
+    // const exhibitionsResponse = await fetch(
+    //   `${URL}/api/exhibitions`,
+    //   cacheOption,
+    // );
 
     const ads = await getValidAds();
 
@@ -84,9 +86,9 @@ export default async function HomePage({ params }) {
 
     // console.log("the randomized", randomized);
 
-    if (!locationsResponse.ok || !exhibitionsResponse.ok) {
-      throw new Error("Failed to fetch data");
-    }
+    // if (!locationsResponse.ok || !exhibitionsResponse.ok) {
+    //   throw new Error("Failed to fetch data");
+    // }
 
     const {
       locations: filteredLocations,

@@ -38,7 +38,7 @@ export async function getMapData() {
   const cacheOption =
     process.env.NODE_ENV === "development"
       ? { cache: "no-store" as const }
-      : { next: { revalidate: 3600 } };
+      : { next: { revalidate: 300 } };
 
   const [locationsResponse, exhibitionsResponse] = await Promise.all([
     fetch(`${BASE_URL}/api/map/locations`, cacheOption),

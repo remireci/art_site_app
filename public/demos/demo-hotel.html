@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aurelia Hotels — Art & Culture</title>
+
+    <title>Hotel Art & Culture Demo</title>
 
     <style>
       * {
@@ -35,6 +36,14 @@
         font-size: 12px;
         letter-spacing: 1px;
         color: #555;
+      }
+
+      .concept-label {
+        margin-top: 4px;
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: #999;
+        text-transform: uppercase;
       }
 
       .hero {
@@ -98,6 +107,10 @@
         font-size: 13px;
       }
 
+      .city-button:hover {
+        background: #eee;
+      }
+
       .city-button.active {
         background: #333;
         color: white;
@@ -159,74 +172,56 @@
 
   <body>
     <header>
-      <div class="brand">AURELIA HOTELS</div>
+      <div>
+        <div class="brand" id="brand-name">HOTEL GROUP</div>
+        <div class="concept-label" id="concept-label">
+          Concept demonstration
+        </div>
+      </div>
+
       <nav>STAY · EAT · DISCOVER · ABOUT</nav>
     </header>
 
     <section class="hero">
       <div class="eyebrow">European stays · Local culture</div>
 
-      <h1>Stay in the city.<br />Discover what is happening now.</h1>
+      <h1 id="hero-title">
+        Stay in Brussels.<br />
+        Discover what is happening now.
+      </h1>
 
-      <p class="intro">
-        Each Aurelia hotel is connected to the cultural life of its city.
-        Discover current modern and contemporary art exhibitions during your
+      <p class="intro" id="hero-intro">
+        Explore current modern and contemporary art exhibitions during your
         stay.
       </p>
     </section>
 
     <section class="culture">
       <div class="culture-inner">
-        <div class="eyebrow">Aurelia City Guide</div>
+        <div class="eyebrow" id="guide-label">Hotel City Guide</div>
+
         <h2>Art around you</h2>
 
-        <p class="description">
+        <p class="description" id="culture-description">
           Explore current exhibitions in museums, galleries and art institutions
-          near our European hotels. Select a city below.
+          near your hotel.
         </p>
 
         <div class="cities">
-          <button
-            class="city-button active"
-            data-city="Brussels"
-            data-property="Aurelia Brussels"
-          >
-            Brussels
-          </button>
+          <button class="city-button" data-city="Brussels">Brussels</button>
 
-          <button
-            class="city-button"
-            data-city="Amsterdam"
-            data-property="Aurelia Amsterdam"
-          >
-            Amsterdam
-          </button>
+          <button class="city-button" data-city="Amsterdam">Amsterdam</button>
 
-          <button
-            class="city-button"
-            data-city="Paris"
-            data-property="Aurelia Paris"
-          >
-            Paris
-          </button>
+          <button class="city-button" data-city="Paris">Paris</button>
 
-          <button
-            class="city-button"
-            data-city="Berlin"
-            data-property="Aurelia Berlin"
-          >
-            Berlin
-          </button>
+          <button class="city-button" data-city="Berlin">Berlin</button>
         </div>
 
-        <p class="property-label" id="property-label">
-          Aurelia Brussels · Cultural guide
-        </p>
+        <p class="property-label" id="property-label"></p>
 
         <div class="map-wrapper">
           <iframe
             id="art-map"
-            src="/embed/en/map?city=Brussels&partner=aurelia-demo"
             allow="geolocation"
             title="Current art exhibitions"
           ></iframe>
@@ -238,26 +233,73 @@
       </div>
     </section>
 
-    <footer>Aurelia Hotels · Brussels · Amsterdam · Paris · Berlin</footer>
+    <footer id="footer-text">
+      Concept demonstration powered by Art Now Database
+    </footer>
 
     <script>
+      const params = new URLSearchParams(window.location.search);
+
+      const initialCity = params.get("city") || "Brussels";
+      const brand = params.get("brand") || "Hotel Group";
+      const partner = params.get("partner") || "demo-hotel";
+      const locale = params.get("locale") || "en";
+
       const iframe = document.getElementById("art-map");
       const propertyLabel = document.getElementById("property-label");
+      const brandName = document.getElementById("brand-name");
+      const conceptLabel = document.getElementById("concept-label");
+      const heroTitle = document.getElementById("hero-title");
+      const heroIntro = document.getElementById("hero-intro");
+      const guideLabel = document.getElementById("guide-label");
+      const cultureDescription = document.getElementById("culture-description");
+      const footerText = document.getElementById("footer-text");
+
       const buttons = document.querySelectorAll(".city-button");
 
+      function showCity(city) {
+        iframe.src =
+          `/embed/${encodeURIComponent(locale)}/map` +
+          `?city=${encodeURIComponent(city)}` +
+          `&partner=${encodeURIComponent(partner)}`;
+
+        propertyLabel.textContent = `${brand} · ${city} · Cultural guide`;
+
+        heroTitle.innerHTML = `Stay in ${city}.<br>Discover what is happening now.`;
+
+        heroIntro.textContent =
+          `Explore current modern and contemporary art exhibitions in ${city} — ` +
+          `from major museums to galleries, foundations and independent art spaces.`;
+
+        buttons.forEach((button) => {
+          button.classList.toggle("active", button.dataset.city === city);
+        });
+      }
+
+      // Configure the prospect
+      document.title = `${brand} — Art & Culture Demo`;
+
+      brandName.textContent = brand.toUpperCase();
+
+      conceptLabel.textContent = params.has("brand")
+        ? `Concept demonstration for ${brand}`
+        : "Concept demonstration";
+
+      guideLabel.textContent = `${brand} City Guide`;
+
+      cultureDescription.textContent =
+        `Explore current exhibitions in museums, galleries and art institutions ` +
+        `around ${brand} properties. Select a city below.`;
+
+      footerText.textContent = `${brand} · Concept demonstration powered by Art Now Database`;
+
+      // Load the selected city once
+      showCity(initialCity);
+
+      // Allow city switching
       buttons.forEach((button) => {
         button.addEventListener("click", () => {
-          const city = button.dataset.city;
-          const property = button.dataset.property;
-
-          iframe.src =
-            `/embed/en/map?city=${encodeURIComponent(city)}` +
-            `&partner=aurelia-demo`;
-
-          propertyLabel.textContent = `${property} · Cultural guide`;
-
-          buttons.forEach((item) => item.classList.remove("active"));
-          button.classList.add("active");
+          showCity(button.dataset.city);
         });
       });
     </script>
