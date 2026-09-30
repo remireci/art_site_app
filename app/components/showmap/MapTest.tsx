@@ -283,7 +283,9 @@ const MapTest = React.memo(
     return (
       <div
         className={
-          embedded ? "relative h-full w-full" : "relative h-[60vh] w-full"
+          embedded
+            ? "relative h-full w-full"
+            : "relative h-[80dvh] sm:h-[75vh] md:h-[70vh] lg:h-[60vh] w-full"
         }
       >
         {isMapReady && (
