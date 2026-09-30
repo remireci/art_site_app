@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { MapLocation, ExhibitionGroup } from "@/lib/map/getMapData";
 import MapGetLocation from "../showmap/MapGetLocations";
 import EmbedGetLocation from "@/components/embed/EmbedGetLocations";

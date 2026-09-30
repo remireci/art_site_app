@@ -50,7 +50,10 @@ type LocationWithMarker = LocationMarker & {
   domain: MapLocation["domain"];
   name: MapLocation["name"];
   domain_slug: MapLocation["domain_slug"];
+  venue_group?: MapLocation["venue_group"];
 };
+
+type VenueFilter = "all" | "museum_institution" | "gallery_art_space";
 
 const MapTest = React.memo(
   ({
@@ -97,6 +100,8 @@ const MapTest = React.memo(
     >([]);
     const [shouldCenter, setShouldCenter] = useState(false);
     const [isMapReady, setIsMapReady] = useState(false);
+
+    const [venueFilter, setVenueFilter] = useState<VenueFilter>("all");
 
     useEffect(() => {
       if (!searchQuery) {
@@ -182,6 +187,7 @@ const MapTest = React.memo(
             domain: location.domain,
             name: location.name,
             domain_slug: location.domain_slug,
+            venue_group: location.venue_group,
           });
         }
       });
@@ -202,6 +208,7 @@ const MapTest = React.memo(
           domain: location.domain,
           name: location.name,
           domain_slug: location.domain_slug,
+          venue_group: location.venue_group,
         }));
 
       // Update state only if locations actually change
@@ -258,6 +265,21 @@ const MapTest = React.memo(
       fetchLocation();
     }, [searchQuery]);
 
+    const visibleLocations = filteredLocations.filter((location) => {
+      if (venueFilter === "all") {
+        return true;
+      }
+
+      if (venueFilter === "museum_institution") {
+        return location.venue_group === "museum_institution";
+      }
+
+      // Missing venue_group counts as gallery/art space
+      return (
+        !location.venue_group || location.venue_group === "gallery_art_space"
+      );
+    });
+
     return (
       <div
         className={
@@ -297,7 +319,7 @@ const MapTest = React.memo(
               </Marker>
             )}
             <>
-              {filteredLocations.map((location) => {
+              {visibleLocations.map((location) => {
                 // Find matching exhibition groups
                 const locationGroups = Object.values(groupedExhibitions).filter(
                   (group) => {
@@ -428,13 +450,47 @@ const MapTest = React.memo(
             </>
           </MapContainer>
         )}
-        <div className="absolute top-3 left-14 z-[1000] rounded bg-[#87bdd8] px-3 py-2 text-sm text-white shadow-md hover:bg-blue-800">
-          <MapGetLocation
-            locale={locale}
-            partner={partner}
-            city={searchQuery}
-            trackAnalytics={embedded}
-          />
+        <div className="absolute top-3 left-14 z-[1000]">
+          <div className="rounded bg-[#87bdd8] px-2 py-1 text-sm text-white shadow-md hover:bg-blue-800">
+            <MapGetLocation
+              locale={locale}
+              partner={partner}
+              city={searchQuery}
+              trackAnalytics={embedded}
+            />
+          </div>
+          <div className="flex overflow-hidden rounded bg-gray-100 shadow-md">
+            <button
+              onClick={() => setVenueFilter("all")}
+              className={`px-2 py-1 text-xs border rounded border-slate-300 hover:bg-slate-300 ${
+                venueFilter === "all" ? "bg-slate-700 text-white" : ""
+              }`}
+            >
+              All
+            </button>
+
+            <button
+              onClick={() => setVenueFilter("museum_institution")}
+              className={`px-2 py-1 text-xs border rounded border-slate-300 hover:bg-slate-300 ${
+                venueFilter === "museum_institution"
+                  ? "bg-slate-700 text-white"
+                  : ""
+              }`}
+            >
+              Museums
+            </button>
+
+            <button
+              onClick={() => setVenueFilter("gallery_art_space")}
+              className={`px-2 py-1 text-xs border rounded border-slate-300 hover:bg-slate-300 ${
+                venueFilter === "gallery_art_space"
+                  ? "bg-slate-700 text-white"
+                  : ""
+              }`}
+            >
+              Galleries & art spaces
+            </button>
+          </div>
         </div>
       </div>
     );

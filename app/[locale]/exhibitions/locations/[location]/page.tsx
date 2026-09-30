@@ -138,6 +138,7 @@ export default async function LocationPage({
     includePast: true,
     includeFuture: true,
   });
+
   // @TODO We could refactor the mongo function, to retrieve only axhibitions from the past
   // const archivedData = await getExhibitionsByDomain(domain, {
   //     includeHidden: false,
@@ -149,18 +150,41 @@ export default async function LocationPage({
 
   const today = getTodayDateKey();
 
-  const validExhibitions = exhibitions.filter(
-    (exhibition) =>
-      exhibition.date_begin_st &&
-      exhibition.date_end_st &&
-      exhibition.date_begin_st <= exhibition.date_end_st,
-  );
+  const validExhibitions = exhibitions.filter((exhibition) => {
+    const hasBegin = Boolean(exhibition.date_begin_st);
+    const hasEnd = Boolean(exhibition.date_end_st);
+
+    // If both dates exist, ensure they are in chronological order
+    if (hasBegin && hasEnd) {
+      return exhibition.date_begin_st <= exhibition.date_end_st;
+    }
+
+    // If begin date is missing, keep it only if the end date is today or in the future
+    if (!hasBegin && hasEnd) {
+      return exhibition.date_end_st >= today;
+    }
+
+    return false;
+  });
 
   const currentExhibitions = validExhibitions
-    .filter(
-      (exhibition) =>
-        exhibition.date_begin_st <= today && exhibition.date_end_st >= today,
-    )
+    .filter((exhibition) => {
+      const begin = exhibition.date_begin_st;
+      const end = exhibition.date_end_st;
+
+      // If both exist, standard check: it has started and hasn't ended
+      if (begin && end) {
+        return begin <= today && end >= today;
+      }
+
+      // If begin is missing, it's considered current as long as it hasn't ended yet
+      // (validExhibitions already filtered for end >= today)
+      if (!begin && end) {
+        return end >= today;
+      }
+
+      return false;
+    })
     .sort((a, b) => (a.date_end_st ?? "").localeCompare(b.date_end_st ?? ""));
 
   const upcomingExhibitions = validExhibitions

@@ -397,6 +397,7 @@ export async function getLocations({ onlyWithExhibitions = false } = {}) {
       latitude: loc.coordinates?.latitude ?? null,
       longitude: loc.coordinates?.longitude ?? null,
       hasMultipleLocations: loc.hasMultipleLocations ?? false,
+      venue_group: loc.venue_group ?? null,
     }));
   } catch (error) {
     console.error("Error fetching locations:", error);

@@ -7,6 +7,7 @@ export type MapLocation = {
   name: string;
   domain_slug: string;
   hasMultipleLocations?: boolean;
+  venue_group?: "museum_institution" | "gallery_art_space";
 };
 
 export type MapExhibition = {
