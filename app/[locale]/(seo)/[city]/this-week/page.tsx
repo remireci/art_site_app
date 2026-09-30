@@ -176,7 +176,7 @@ function stripHtml(html?: string) {
     .trim();
 }
 
-function getDescriptionPreview(html?: string, maxLength = 180) {
+function getDescriptionPreview(html?: string, maxLength = 1080) {
   const text = stripHtml(html);
 
   if (!text) return "";
