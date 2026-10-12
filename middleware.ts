@@ -28,7 +28,8 @@ export function middleware(request: NextRequest) {
     request.headers.get("x-forwarded-for") ??
     request.headers.get("x-vercel-forwarded-for");
   const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
-  const country = request.geo?.country || "unknown";
+  // const country = request.geo?.country || "unknown";
+  const country = request.headers.get("x-vercel-ip-country") ?? "unknown";
   const userAgent = request.headers.get("user-agent") || "";
 
   // Define the "Good Bot" whitelist
@@ -147,9 +148,13 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next|api|favicon.ico).*)",
-    "/exhibitions/locations/:slug*", // helps target this route
-    "/exhibitions/locations/(.*)", // <-- explicitly match everything here
-  ],
+  matcher: ["/:path*"],
 };
+
+// export const config = {
+//   matcher: [
+//     "/((?!_next|api|favicon.ico).*)",
+//     "/exhibitions/locations/:slug*", // helps target this route
+//     "/exhibitions/locations/(.*)", // <-- explicitly match everything here
+//   ],
+// };
