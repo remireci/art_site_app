@@ -73,11 +73,11 @@ export default function EmbedMapClient({
         partner={partner}
       />
 
-      <div className="absolute top-3 left-14 z-[1000]">
+      {/* <div className="absolute top-3 left-14 z-[1000]">
         <div className="rounded bg-[#87bdd8] px-3 py-2 text-sm text-white shadow-md hover:bg-blue-800">
           <MapGetLocation locale={locale} partner={partner} city={city} />
         </div>
-      </div>
+      </div> */}
 
       <a
         href={`https://www.artnowdatabase.eu/${locale}`}
