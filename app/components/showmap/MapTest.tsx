@@ -443,6 +443,7 @@ const MapTest = React.memo(
                           exhibitionsInLocation={exhibitionsInLocation}
                           slug={location.domain_slug}
                           locale={locale}
+                          embedded={embedded}
                         />
                       </div>
                     </Popup>

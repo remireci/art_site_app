@@ -1,4 +1,5 @@
 import Search from "../components/Search";
+import ExploreNavigation from "@/components/ExploreNavigation";
 import { extractDomain } from "../utils/extractDomain";
 import { shuffleArray } from "../utils/shuffleArray";
 import { getTranslations } from "next-intl/server";
@@ -166,32 +167,39 @@ export default async function HomePage({ params }) {
 
     return (
       <div>
-        <div className="flex-1 relative hidden lg:block flex-col justify-center items-right z-30">
-          <section className="absolute top-10 lg:right-0 xl:left-0 w-1/4 xl:w-1/5 text-xs text-slate-600 font-light lg:pl-10 lg:pr-0 lg:py-20 xl:pl-4 xl:pr-24 xl:py-10">
+        {/* Desktop introduction */}
+        <div className="relative z-30 hidden lg:block">
+          <section
+            className="
+          absolute top-10
+          lg:right-0 xl:left-0
+          w-1/4 xl:w-1/5
+          px-4
+          lg:py-20 xl:py-10
+          text-xs font-light text-slate-600
+        "
+          >
             <h1>{t("introduction")}</h1>
+
             <p>{t("description1")}</p>
             <p>{t("description2")}</p>
 
-            <div className="mt-20 mb-1 text-xs text-slate-600 font-light flex justify-start items-center">
-              <p>Browse exhibitions by city or location.</p>
-            </div>
-            <div className="mt-1 mb-20 text-sm text-slate-600 font-light flex gap-4">
-              <Link
-                className="underline underline-offset-4 hover:text-slate-800"
-                href="/exhibitions/cities"
-              >
-                Cities
-              </Link>
-              <Link
-                className="underline underline-offset-4 hover:text-slate-800"
-                href="/exhibitions/locations"
-              >
-                Locations
-              </Link>
+            <div className="mt-12">
+              <ExploreNavigation locale={locale} />
             </div>
           </section>
         </div>
+
+        {/* Search and results */}
         <div className="relative z-10">
+          <div className="grid grid-cols-1 gap-x-4 px-5 pt-8 md:grid-cols-3 md:px-0 lg:hidden">
+            <div className="mb-10 min-w-0 md:col-span-2 md:px-3">
+              <div className="rounded-lg bg-slate-50 px-3 py-3">
+                <ExploreNavigation locale={locale} />
+              </div>
+            </div>
+          </div>
+
           <Search
             initialList={randomExhibitions}
             initialLocations={filteredLocations}
@@ -199,25 +207,6 @@ export default async function HomePage({ params }) {
             locale={locale}
             ads={ads}
           />
-          <div className="lg:hidden">
-            <div className="mt-0 mb-1 text-xs text-slate-600 font-light flex gap-4 justify-center items-center">
-              <p>Browse exhibitions by city or location.</p>
-            </div>
-            <div className="justify-center items-center mt-1 mb-20 text-sm text-slate-600 font-light flex gap-4">
-              <Link
-                className="underline underline-offset-4 hover:text-slate-800"
-                href="/exhibitions/cities"
-              >
-                Cities
-              </Link>
-              <Link
-                className="underline underline-offset-4 hover:text-slate-800"
-                href="/exhibitions/locations"
-              >
-                Locations
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
     );

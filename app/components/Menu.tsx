@@ -1,53 +1,124 @@
-"use client"
-// import React, { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+"use client";
+
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { Map } from "lucide-react";
+
 import LocaleSwitcher from "./LocaleSwitcher";
-import { useTranslations, useLocale } from "next-intl";
 import UserMenuButtonWrapper from "./UserMenuButtonWrapper";
-import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
 
-const Menu = () => {
-    const t = useTranslations();
-    const locale = useLocale();
-    const router = useRouter();
+interface MenuProps {
+  onNavigate?: () => void;
+}
 
+export default function Menu({ onNavigate }: MenuProps) {
+  const locale = useLocale();
+  const t = useTranslations();
 
-    return (
-        <div className="flex flex-col justify-end">
-            <nav className="flex items-center text-sm md:text-lg space-x-6 md:space-x-8 my-4 text-slate-500 hover:text-gray-600">
-                <Link href={`/${locale}/on-the-map`}>
-                    <h2 className='text-center text-sm font-light underline'>{t("homepage.on-the-map")}</h2>
-                </Link>
+  const discoverLinks = [
+    { label: "Exhibition map", href: `/${locale}/map` },
+    { label: "Cities", href: `/${locale}/exhibitions/cities` },
+    { label: "Locations", href: `/${locale}/exhibitions/locations` },
+  ];
 
-                <Link href={`/${locale}/advertising`}>
-                    <h2 className='text-center text-sm font-light underline'>{t("homepage.advertising")}</h2>
-                </Link>
-                {/* <Button variant="ghost" size="icon" asChild>
-                    <Link href="/auth/signin">
-                        <User className="h-5 w-5" />
-                        <span className="sr-only">Account</span>
-                    </Link>
-                </Button> */}
+  const aboutLinks = [
+    {
+      label: t("homepage.on-the-map"),
+      href: `/${locale}/on-the-map`,
+    },
+    {
+      label: t("homepage.advertising"),
+      href: `/${locale}/advertising`,
+    },
+  ];
 
-                <UserMenuButtonWrapper
-                />
-                {/* <Link href="/account?message=wishlist"> */}
-                <div className="relative hover:text-gray-600 cursor-pointer"
-                >
-                    <LocaleSwitcher />
-                </div>
-                {/* </Link> */}
-                {/* <button
-                    className="relative hover:text-gray-400"
-                >
+  const linkStyle =
+    "text-sm font-light text-slate-600 underline-offset-4 hover:underline hover:text-slate-900 transition-colors";
 
-                </button> */}
-            </nav>
+  return (
+    <nav aria-label="Main navigation" className="text-slate-600">
+      {/* Mobile navigation */}
+      <div className="flex flex-col gap-5 px-5 py-5 lg:hidden">
+        <div>
+          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-400">
+            Discover art
+          </p>
 
-        </div >
-    );
-};
+          <div className="flex flex-col items-start gap-3">
+            {discoverLinks.map((link, index) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={onNavigate}
+                className={linkStyle}
+              >
+                {index === 0 ? (
+                  <span className="flex items-center gap-2 font-medium">
+                    <Map size={16} strokeWidth={1.5} />
+                    {link.label}
+                  </span>
+                ) : (
+                  link.label
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
 
-export default Menu;
+        <div className="border-t border-slate-200 pt-4">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-400">
+            About ArtNowDatabase
+          </p>
+
+          <div className="flex flex-col items-start gap-3">
+            {aboutLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={onNavigate}
+                className={linkStyle}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-5 border-t border-slate-200 pt-3">
+          <UserMenuButtonWrapper />
+          <LocaleSwitcher />
+        </div>
+      </div>
+
+      {/* Desktop navigation */}
+      <div className="hidden lg:flex flex-wrap items-center gap-x-5 gap-y-2">
+        <Link
+          href={`/${locale}/map`}
+          className={`${linkStyle} flex items-center gap-1 font-medium`}
+        >
+          <Map size={16} strokeWidth={1.5} />
+          Exhibition map
+        </Link>
+
+        <Link href={`/${locale}/exhibitions/cities`} className={linkStyle}>
+          Cities
+        </Link>
+
+        <Link href={`/${locale}/exhibitions/locations`} className={linkStyle}>
+          Locations
+        </Link>
+
+        <span className="mx-1 h-5 border-l border-slate-300" />
+
+        {aboutLinks.map((link) => (
+          <Link key={link.href} href={link.href} className={linkStyle}>
+            {link.label}
+          </Link>
+        ))}
+
+        <UserMenuButtonWrapper />
+        <LocaleSwitcher />
+      </div>
+    </nav>
+  );
+}

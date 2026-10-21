@@ -9,6 +9,7 @@ interface MapProps {
   slug: string;
   locale: string;
   partner?: string;
+  embedded?: boolean;
 }
 
 type Exhibition = {
@@ -29,6 +30,7 @@ const ExhibitionCarousel = ({
   slug,
   locale,
   partner,
+  embedded = false,
 }: MapProps) => {
   const BASE_URL =
     process.env.NODE_ENV === "production"
@@ -77,9 +79,16 @@ const ExhibitionCarousel = ({
   return (
     <div className="w-[200px] min-h-[280px]">
       {exhibitionsInLocation.map((exhibition, index) => {
-        const URL = slug
+        const artNowUrl = slug
           ? `${BASE_URL}/${locale}/exhibitions/locations/${slug}`
           : exhibition.url;
+
+        const externalUrl =
+          exhibition.exhibition_url && exhibition.exhibition_url !== "N/A"
+            ? exhibition.exhibition_url
+            : exhibition.url;
+
+        const URL = embedded ? externalUrl : artNowUrl;
 
         // const imageName = exhibition.image_reference[0].split('?')[0].split('agenda/')[1];
 

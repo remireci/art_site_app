@@ -1,35 +1,44 @@
 // api/search.js
-import { NextRequest, NextResponse } from 'next/server';
-import { getDocuments, getAgendaItems } from '../../db/mongo.js';
+import { NextRequest, NextResponse } from "next/server";
+import { getDocuments, getAgendaItems } from "../../db/mongo.js";
 
 const getSentenceWithTerm = (text, searchTerm) => {
-
   // Remove brackets from the search term
-  const cleanedSearchTerm = searchTerm.replace(/[()""]/g, '');
+  const cleanedSearchTerm = searchTerm.replace(/[()""]/g, "");
   // Split the text into sentences based on dots "."
-  const cleanedText = text.replace(/<\/?p>/g, '');
+  const cleanedText = text.replace(/<\/?p>/g, "");
   const sentences = cleanedText.split(/\.|!|\?/);
 
   // Find the index of the sentence containing the search term
-  const searchTermIndex = sentences.findIndex(sentence => sentence.toLowerCase().includes(cleanedSearchTerm.toLowerCase()));
+  const searchTermIndex = sentences.findIndex((sentence) =>
+    sentence.toLowerCase().includes(cleanedSearchTerm.toLowerCase()),
+  );
 
   // Function to add dots to a sentence
-  const addDots = sentence => sentence.trim() + '.';
+  const addDots = (sentence) => sentence.trim() + ".";
 
   // Get the sentence containing the search term
-  const searchTermSentence = searchTermIndex !== -1 ? sentences[searchTermIndex] : '';
+  const searchTermSentence =
+    searchTermIndex !== -1 ? sentences[searchTermIndex] : "";
 
   // Get the sentence before the search term
-  const sentenceBefore = searchTermIndex !== -1 && searchTermIndex > 0 ? sentences[searchTermIndex - 1] : '';
+  const sentenceBefore =
+    searchTermIndex !== -1 && searchTermIndex > 0
+      ? sentences[searchTermIndex - 1]
+      : "";
 
   // Get the sentence after the search term
-  const sentenceAfter = searchTermIndex !== -1 && searchTermIndex < sentences.length - 1 ? sentences[searchTermIndex + 1] : '';
+  const sentenceAfter =
+    searchTermIndex !== -1 && searchTermIndex < sentences.length - 1
+      ? sentences[searchTermIndex + 1]
+      : "";
 
   // Combine the sentences with dots
-  const combinedSentences = [sentenceBefore, searchTermSentence, sentenceAfter].map(addDots).join(' ');
+  const combinedSentences = [sentenceBefore, searchTermSentence, sentenceAfter]
+    .map(addDots)
+    .join(" ");
 
   return combinedSentences;
-
 
   // Return the sentence containing the search term
   // return searchTermIndex !== -1 ? sentences[searchTermIndex].trim() : '';
@@ -39,65 +48,72 @@ const getSentenceWithTerm = (text, searchTerm) => {
 const normalizeDate = (dateStr) => {
   // If the date string contains '/', replace it with ' '
 
-  if (dateStr.includes('/')) {
-    const [day, month, year] = dateStr.split('/');
-    const monthName = new Date(`${month}/01/${year}`).toLocaleString('en', { month: 'long' });
+  if (dateStr.includes("/")) {
+    const [day, month, year] = dateStr.split("/");
+    const monthName = new Date(`${month}/01/${year}`).toLocaleString("en", {
+      month: "long",
+    });
     return `${day} ${monthName.toLowerCase()} ${year}`;
   }
 
   // If the date string contains month abbreviation, replace it with full month name
   const monthAbbreviations = {
-    'jan': 'january',
-    'feb': 'february',
-    'mar': 'march',
-    'apr': 'april',
-    'may': 'may',
-    'jun': 'june',
-    'jul': 'july',
-    'aug': 'august',
-    'sep': 'september',
-    'oct': 'october',
-    'nov': 'november',
-    'dec': 'december'
+    jan: "january",
+    feb: "february",
+    mar: "march",
+    apr: "april",
+    may: "may",
+    jun: "june",
+    jul: "july",
+    aug: "august",
+    sep: "september",
+    oct: "october",
+    nov: "november",
+    dec: "december",
   };
-  const regex = new RegExp(Object.keys(monthAbbreviations).join('|'), 'gi');
-  return dateStr.replace(regex, match => monthAbbreviations[match.toLowerCase()]);
+  const regex = new RegExp(Object.keys(monthAbbreviations).join("|"), "gi");
+  return dateStr.replace(
+    regex,
+    (match) => monthAbbreviations[match.toLowerCase()],
+  );
 };
-
 
 const compareAgendaItems = (item1, item2) => {
   // Compare titles based on partial matches
 
-  const words1 = item1.title.split(' ').filter(word => word.length >= 4);
-  const words2 = item2.title.split(' ').filter(word => word.length >= 4);
+  const words1 = item1.title.split(" ").filter((word) => word.length >= 4);
+  const words2 = item2.title.split(" ").filter((word) => word.length >= 4);
 
-  const partialWordMatch = words1.some(word1 => {
-    return words2.some(word2 => {
+  const partialWordMatch = words1.some((word1) => {
+    return words2.some((word2) => {
       return word1.toLowerCase() === word2.toLowerCase();
     });
   });
 
   // Compare date_end and location
-  const dateMatch = normalizeDate(item1.date_end_st) === normalizeDate(item2.date_end_st);
+  const dateMatch =
+    normalizeDate(item1.date_end_st) === normalizeDate(item2.date_end_st);
 
-  const locations1 = item1.location.split(' ').filter(word => word.length >= 4);
-  const locations2 = item2.location.split(' ').filter(word => word.length >= 4);
+  const locations1 = item1.location
+    .split(" ")
+    .filter((word) => word.length >= 4);
+  const locations2 = item2.location
+    .split(" ")
+    .filter((word) => word.length >= 4);
 
-  const partialLocationMatch = locations1.some(location1 => {
-    return locations2.some(location2 => {
+  const partialLocationMatch = locations1.some((location1) => {
+    return locations2.some((location2) => {
       return location1.toLowerCase() === location2.toLowerCase();
     });
   });
 
   // Return true if all conditions are met
   return partialWordMatch && dateMatch && partialLocationMatch;
-}
-
+};
 
 export async function GET(req, res) {
-
   const { searchParams } = new URL(req.url);
-  const query = searchParams.get('terms');
+  const query = searchParams.get("terms");
   const queryTerms = query ? query.match(/(?:[^\s"]+|"[^"]*")/g) || [] : [];
 
   try {
@@ -181,8 +197,15 @@ export async function GET(req, res) {
     //   }
     // });
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize time to midnight
+    // const today = new Date();
+    // today.setHours(0, 0, 0, 0); // Normalize time to midnight
+
+    const todayString = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Europe/Brussels",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
 
     // If queryTerms is empty, return early or skip the search
     if (queryTerms.length === 0) {
@@ -196,23 +219,23 @@ export async function GET(req, res) {
 
         const textSearch = isExactPhrase
           ? {
-            $or: [
-              { title: new RegExp(term.replace(/"/g, ""), "i") },
-              { subtitle: new RegExp(term.replace(/"/g, ""), "i") },
-              { text: new RegExp(term.replace(/"/g, ""), "i") },
-              { url: new RegExp(term.replace(/"/g, ""), "i") },
-              { city: new RegExp(term.replace(/"/g, ""), "i") },
-            ]
-          }
+              $or: [
+                { title: new RegExp(term.replace(/"/g, ""), "i") },
+                { subtitle: new RegExp(term.replace(/"/g, ""), "i") },
+                { text: new RegExp(term.replace(/"/g, ""), "i") },
+                { url: new RegExp(term.replace(/"/g, ""), "i") },
+                { city: new RegExp(term.replace(/"/g, ""), "i") },
+              ],
+            }
           : {
-            $or: [
-              { title: { $regex: term, $options: "i" } },
-              { location: { $regex: term, $options: "i" } },
-              { artists: { $regex: term, $options: "i" } },
-              { url: { $regex: term, $options: "i" } },
-              { city: { $regex: term, $options: "i" } },
-            ]
-          };
+              $or: [
+                { title: { $regex: term, $options: "i" } },
+                { location: { $regex: term, $options: "i" } },
+                { artists: { $regex: term, $options: "i" } },
+                { url: { $regex: term, $options: "i" } },
+                { city: { $regex: term, $options: "i" } },
+              ],
+            };
 
         return {
           $and: [
@@ -220,34 +243,34 @@ export async function GET(req, res) {
             {
               image_reference: {
                 $exists: true,
-                $ne: [] // Exclude empty arrays
-              }
+                $ne: [], // Exclude empty arrays
+              },
             },
             textSearch, // Apply text search
             {
               date_end_st: {
-                $gte: today.toISOString().split("T")[0], // YYYY-MM-DD string
+                $gte: todayString, // YYYY-MM-DD string
                 $lt: "2048-06-16", // sanity upper bound
                 $regex: /^\d{4}-\d{2}-\d{2}$/, // ensure valid date format
-              }
+              },
             },
             {
               $or: [
                 {
                   date_begin_st: {
-                    $lte: today.toISOString().split("T")[0],
+                    $lte: todayString,
                     $regex: /^\d{4}-\d{2}-\d{2}$/,
-                  }
+                  },
                 },
                 { date_begin_st: { $eq: null } },
                 { date_begin_st: { $exists: false } },
                 { date_begin_st: "" },
-              ]
-            }
-          ]
+              ],
+            },
+          ],
         };
       })
-      .filter(condition => condition !== null); // Remove any invalid or empty conditions
+      .filter((condition) => condition !== null); // Remove any invalid or empty conditions
 
     // If no valid conditions, return early or set a fallback query
     if (agendaConditions.length === 0) {
@@ -255,7 +278,10 @@ export async function GET(req, res) {
     }
 
     // Now safely pass the query to MongoDB
-    const agendaResults = await getAgendaItems({ $and: agendaConditions }, { url: 1, text: 1 });
+    const agendaResults = await getAgendaItems(
+      { $and: agendaConditions },
+      { url: 1, text: 1 },
+    );
 
     // console.log("the agenda results", agendaResults);
 
@@ -277,17 +303,21 @@ export async function GET(req, res) {
     const combinedResults = [...articleResults, ...agendaResults];
 
     // Map each result to include information about its source
-    const data = combinedResults.map(result => ({
+    const data = combinedResults.map((result) => ({
       url: result.url,
-      snippet: result.hasOwnProperty('date_end_st') ? '' : getSentenceWithTerm(result.text, queryTerms[0]), // Assuming only the first search term for simplicity
-      source: result.hasOwnProperty('date_end_st') ? 'agenda' : 'articles', // Assuming agenda items have a property named 'date_end'
-      ...result // Spread all fields from the result object
+      snippet: result.hasOwnProperty("date_end_st")
+        ? ""
+        : getSentenceWithTerm(result.text, queryTerms[0]), // Assuming only the first search term for simplicity
+      source: result.hasOwnProperty("date_end_st") ? "agenda" : "articles", // Assuming agenda items have a property named 'date_end'
+      ...result, // Spread all fields from the result object
     }));
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
-    console.error('Error searching texts:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Error searching texts:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
-

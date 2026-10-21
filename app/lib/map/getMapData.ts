@@ -51,7 +51,16 @@ export async function getMapData() {
   }
 
   const locations: MapLocation[] = await locationsResponse.json();
-  const exhibitions: MapExhibition[] = await exhibitionsResponse.json();
+  const today = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Europe/Brussels",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+
+  const exhibitions: MapExhibition[] = (
+    await exhibitionsResponse.json()
+  ).filter((exhibition: MapExhibition) => exhibition.date_end_st >= today);
 
   const filteredLocations = locations.filter((location) =>
     exhibitions.some(
