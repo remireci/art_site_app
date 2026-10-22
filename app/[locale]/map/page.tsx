@@ -46,10 +46,16 @@ export default async function MapPage({ params, searchParams }: PageProps) {
     nl: "Kunsttentoonstellingen op de kaart",
   };
 
+  const titles: Record<string, string> = {
+    en: "Art Exhibitions Map – Museums & Galleries in Europe",
+    fr: "Carte des expositions d'art – Musées et galeries en Europe",
+    nl: "Kaart met kunsttentoonstellingen – Musea en galeries in Europa",
+  };
+
   const descriptions: Record<string, string> = {
-    en: "Explore museums, galleries and current art exhibitions across Europe. Search for a city or navigate the interactive map to discover exhibitions near you.",
-    fr: "Explorez les musées, galeries et expositions d'art en Europe. Recherchez une ville ou parcourez la carte interactive.",
-    nl: "Ontdek musea, galerieën en actuele kunsttentoonstellingen in Europa. Zoek een stad of verken de interactieve kaart.",
+    en: "Discover current and upcoming art exhibitions across Europe. Explore museums and galleries on an interactive map, or search by city to find exhibitions near you.",
+    fr: "Découvrez les expositions d'art en cours et à venir en Europe. Explorez les musées et galeries sur une carte interactive ou recherchez une ville.",
+    nl: "Ontdek actuele en toekomstige kunsttentoonstellingen in Europa. Verken musea en galeries op een interactieve kaart of zoek op stad.",
   };
 
   return (

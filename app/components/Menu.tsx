@@ -40,6 +40,13 @@ export default function Menu({ onNavigate }: MenuProps) {
       {/* Mobile navigation */}
       <div className="flex flex-col gap-5 px-5 py-5 lg:hidden">
         <div>
+          <Link
+            href={`/${locale}`}
+            onClick={onNavigate}
+            className="text-sm font-medium text-slate-700 hover:text-slate-900 hover:underline underline-offset-4"
+          >
+            Home
+          </Link>
           <p className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-400">
             Discover art
           </p>

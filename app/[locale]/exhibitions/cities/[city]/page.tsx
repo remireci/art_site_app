@@ -313,19 +313,9 @@ export default async function CityPage({
             <div className="mt-4 flex flex-wrap gap-3">
               <div className="mt-4">
                 <Link
-                  href={`/${locale}?city=${city}`}
-                  className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                  href={`/${locale}/map?city=${encodeURIComponent(city)}`}
+                  className="inline-flex items-center rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-slate-100"
                 >
-                  {/* {exhibitions.length > 0
-                  ? messages.exploreMoreExhibitions.replace(
-                      "{{city}}",
-                      validCity || city,
-                    )
-                  : messages.exploreExhibitions.replace(
-                      "{{city}}",
-                      city ||
-                        slug.slice(0, 1).toLocaleUpperCase() + slug.slice(1),
-                    )} */}
                   Explore {city} on the map
                 </Link>
               </div>
@@ -598,14 +588,14 @@ export default async function CityPage({
           )}
         </VenueFilter>
 
-        <div className="mt-12">
+        {/* <div className="mt-12">
           <h2 className="uppercase text-2xl tracking-widest">{`${messages.cities.past}`}</h2>
-        </div>
+        </div> */}
         {pastExhibitions.length > 0 && (
           <section id="past-exhibitions" className="w-full scroll-mt-24">
             <details className="mt-12 w-full">
-              <summary className="cursor-pointer text-lg text-gray-600 uppercase tracking-widest text-center">
-                Recent past exhibitions
+              <summary className="cursor-pointer text-center text-sm md:text-base text-gray-500 uppercase tracking-widest">
+                {messages.cities.past}
               </summary>
 
               <ul className="grid grid-cols-1 md:grid-cols-2 justify-items-center mt-8 mb-20 w-full gap-x-6 gap-y-8">
