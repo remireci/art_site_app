@@ -10,25 +10,46 @@ type PageProps = {
   searchParams?: { city?: string | string[] };
 };
 
+const headings: Record<string, string> = {
+  en: "Art exhibitions on the map",
+  fr: "Les expositions d'art sur la carte",
+  nl: "Kunsttentoonstellingen op de kaart",
+};
+
+const titles: Record<string, string> = {
+  en: "Art Exhibitions Map – Museums & Galleries in Europe",
+  fr: "Carte des expositions d'art – Musées et galeries en Europe",
+  nl: "Kaart met kunsttentoonstellingen – Musea en galeries in Europa",
+};
+
+const descriptions: Record<string, string> = {
+  en: "Discover current and upcoming art exhibitions across Europe. Explore museums and galleries on an interactive map, or search by city to find exhibitions near you.",
+  fr: "Découvrez les expositions d'art en cours et à venir en Europe. Explorez les musées et galeries sur une carte interactive ou recherchez une ville.",
+  nl: "Ontdek actuele en toekomstige kunsttentoonstellingen in Europa. Verken musea en galeries op een interactieve kaart of zoek op stad.",
+};
+
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const descriptions: Record<string, string> = {
-    en: "Explore current art exhibitions, museums and galleries on an interactive map.",
-    fr: "Découvrez les expositions d'art, musées et galeries sur une carte interactive.",
-    nl: "Ontdek actuele kunsttentoonstellingen, musea en galerieën op een interactieve kaart.",
-  };
+  const locale = params.locale;
 
   return {
-    title: "Art Exhibitions Map | ArtNowDatabase",
-    description: descriptions[params.locale] ?? descriptions.en,
+    title: titles[locale] ?? titles.en,
+    description: descriptions[locale] ?? descriptions.en,
+
     alternates: {
-      canonical: `https://www.artnowdatabase.eu/${params.locale}/map`,
+      canonical: `https://www.artnowdatabase.eu/${locale}/map`,
       languages: {
         en: "https://www.artnowdatabase.eu/en/map",
         fr: "https://www.artnowdatabase.eu/fr/map",
         nl: "https://www.artnowdatabase.eu/nl/map",
+        "x-default": "https://www.artnowdatabase.eu/en/map",
       },
+    },
+
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }
@@ -37,26 +58,9 @@ export default async function MapPage({ params, searchParams }: PageProps) {
   const { locations, exhibitions } = await getMapData();
 
   const locale = params.locale;
+
   const initialCity =
     typeof searchParams?.city === "string" ? searchParams.city : "";
-
-  const headings: Record<string, string> = {
-    en: "Art exhibitions on the map",
-    fr: "Les expositions d'art sur la carte",
-    nl: "Kunsttentoonstellingen op de kaart",
-  };
-
-  const titles: Record<string, string> = {
-    en: "Art Exhibitions Map – Museums & Galleries in Europe",
-    fr: "Carte des expositions d'art – Musées et galeries en Europe",
-    nl: "Kaart met kunsttentoonstellingen – Musea en galeries in Europa",
-  };
-
-  const descriptions: Record<string, string> = {
-    en: "Discover current and upcoming art exhibitions across Europe. Explore museums and galleries on an interactive map, or search by city to find exhibitions near you.",
-    fr: "Découvrez les expositions d'art en cours et à venir en Europe. Explorez les musées et galeries sur une carte interactive ou recherchez une ville.",
-    nl: "Ontdek actuele en toekomstige kunsttentoonstellingen in Europa. Verken musea en galeries op een interactieve kaart of zoek op stad.",
-  };
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-8">
@@ -64,6 +68,7 @@ export default async function MapPage({ params, searchParams }: PageProps) {
         <h1 className="mb-3 text-2xl font-light text-slate-700">
           {headings[locale] ?? headings.en}
         </h1>
+
         <p className="max-w-3xl text-sm text-slate-600">
           {descriptions[locale] ?? descriptions.en}
         </p>

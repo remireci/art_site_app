@@ -18,8 +18,8 @@ type AlternateUrl = {
 type SitemapEntry = {
   url: string;
   // lastModified: string;
-  changeFrequency: string;
-  priority: number;
+  // changeFrequency: string;
+  // priority: number;
   alternates: AlternateUrl[];
 };
 
@@ -31,6 +31,15 @@ type CityLike = {
   slug?: string;
 };
 
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 function generateSitemapXml(entries: SitemapEntry[]) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -39,13 +48,11 @@ function generateSitemapXml(entries: SitemapEntry[]) {
     .map(
       (entry) => `
     <url>
-      <loc>${entry.url}</loc>      
-      <changefreq>${entry.changeFrequency}</changefreq>
-      <priority>${entry.priority}</priority>
+      <loc>${escapeXml(entry.url)}</loc>
       ${entry.alternates
         .map(
           (alt: AlternateUrl) =>
-            `<xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${alt.loc}" />`,
+            `<xhtml:link rel="alternate" hreflang="${escapeXml(alt.hreflang)}" href="${escapeXml(alt.loc)}" />`,
         )
         .join("\n")}
     </url>`,
@@ -109,6 +116,7 @@ export async function GET(
 
     const staticRoutes: SitemapEntry[] = [
       "",
+      "/map",
       "/exhibitions/cities",
       "/exhibitions/locations",
       "/advertising",
