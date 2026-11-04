@@ -2,6 +2,16 @@ import { getCities } from "../../../db/mongo.js";
 import { Metadata } from "next";
 import Link from "next/link";
 import CityListSearch from "@/components/CityListSearch";
+import { unstable_setRequestLocale } from "next-intl/server";
+import { locales } from "../../../../i18n.config";
+
+// Regenerate at most once every 24 hours, on request
+export const revalidate = 86400;
+
+// Generate only these three localized directory pages
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 interface LocationsListPageProps {
   params: {
@@ -48,6 +58,8 @@ export async function generateMetadata({
 
 export default async function CityList({ params }: LocationsListPageProps) {
   const { locale } = params;
+
+  unstable_setRequestLocale(locale);
 
   const cities: Array<any> = await getCities({ onlyWithExhibitions: true });
 

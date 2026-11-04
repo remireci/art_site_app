@@ -23,24 +23,24 @@ const intlMiddleware = createMiddleware({
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. Get identifiers
-  const forwarded =
-    request.headers.get("x-forwarded-for") ??
-    request.headers.get("x-vercel-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
-  const country = request.geo?.country || "unknown";
-  const userAgent = request.headers.get("user-agent") || "";
+  // // 1. Get identifiers
+  // const forwarded =
+  //   request.headers.get("x-forwarded-for") ??
+  //   request.headers.get("x-vercel-forwarded-for");
+  // const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
+  // const country = request.geo?.country || "unknown";
+  // const userAgent = request.headers.get("user-agent") || "";
 
-  // Define the "Good Bot" whitelist
-  const isGoodBot =
-    /googlebot|bingbot|yandexbot|baiduspider|facebot|facebookexternalhit|linkedinbot/i.test(
-      userAgent,
-    );
+  // // Define the "Good Bot" whitelist
+  // const isGoodBot =
+  //   /googlebot|bingbot|yandexbot|baiduspider|facebot|facebookexternalhit|linkedinbot/i.test(
+  //     userAgent,
+  //   );
 
-  // Block CN and SG unless they are verified search/social bots
-  if ((country === "CN" || country === "SG") && !isGoodBot) {
-    return new NextResponse("Access Denied", { status: 403 });
-  }
+  // // Block CN and SG unless they are verified search/social bots
+  // if ((country === "CN" || country === "SG") && !isGoodBot) {
+  //   return new NextResponse("Access Denied", { status: 403 });
+  // }
   // 3. Technical routes bypass (Keep this high up too)
   if (
     pathname.startsWith("/sitemap") ||
@@ -56,13 +56,13 @@ export function middleware(request: NextRequest) {
     "unknown-region";
   const url = request.nextUrl.pathname;
 
-  console.log(`Request from IP ${ip}, region ${region}, path ${url}`);
-  console.log(
-    "Request from region:",
-    request.geo?.region,
-    "path:",
-    request.nextUrl.pathname,
-  );
+  // console.log(`Request from IP ${ip}, region ${region}, path ${url}`);
+  // console.log(
+  //   "Request from region:",
+  //   request.geo?.region,
+  //   "path:",
+  //   request.nextUrl.pathname,
+  // );
 
   // if (
   //   region === "Île-de-France" ||
@@ -112,17 +112,12 @@ export function middleware(request: NextRequest) {
     const slug = pathname.split("/exhibitions/locations/")[1];
     const decodedSlug = decodeURIComponent(slug ?? "");
 
-    console.log("pathname:", pathname);
-    console.log("decoded slug:", decodeURIComponent(slug ?? ""));
-
     if (decodedSlug.includes(".")) {
       const sanitizedSlug = decodedSlug.replace(/\./g, "-");
-      console.log("Sanitized slug:", sanitizedSlug);
       const newUrl = new URL(
         `/en/exhibitions/locations/${sanitizedSlug}`,
         request.url,
       );
-      console.log(`Redirecting to: ${newUrl.toString()}`);
       return NextResponse.redirect(newUrl);
     }
   }
@@ -148,8 +143,13 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next|api|favicon.ico).*)",
-    "/exhibitions/locations/:slug*", // helps target this route
-    "/exhibitions/locations/(.*)", // <-- explicitly match everything here
+    // Run middleware only on actual application pages.
+    // Exclude API, internal routes, embeds, demos,
+    // sitemaps, metadata files and static resources.
+    "/((?!api|_next|_vercel|embed|demos|pages|sitemap|robots\\.txt|favicon\\.ico|.*\\..*).*)",
+
+    // Preserve your special handling for unlocalized
+    // exhibition-location URLs containing dots.
+    "/exhibitions/locations/:slug*",
   ],
 };

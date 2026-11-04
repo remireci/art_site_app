@@ -55,13 +55,13 @@ const Onthemap = async ({
 }) => {
   const { locale } = params;
   const t = await getTranslations("on-the-map");
-  const rawAds = await getValidAds();
+  // const rawAds = await getValidAds();
 
-  const ads: Ad[] = rawAds.map((ad) => ({
-    image_url: ad.image_url,
-    link: ad.link,
-    title: ad.title,
-  }));
+  // const ads: Ad[] = rawAds.map((ad) => ({
+  //   image_url: ad.image_url,
+  //   link: ad.link,
+  //   title: ad.title,
+  // }));
 
   console.log("locale", locale);
 
@@ -166,7 +166,7 @@ const Onthemap = async ({
         {/* <div className="w-1/3 px-1 my-1 sm:w-full sm:px-1 sm:my-1 md:w-1/2 md:px-1 md:my-1 lg:w-1/3 lg:px-1 lg:my-1 xl:w-1/3 "></div> */}
       </div>
       <div className="ads-container flex flex-col items-center w-full px-1 my-1 sm:px-1 sm:my-1 md:px-1 md:my-1 md:w-1/3 lg:px-1 lg:my-1 xl:w-2/5">
-        <AdsColumn ads={ads} />
+        {/* <AdsColumn ads={ads} /> */}
       </div>
     </div>
   );

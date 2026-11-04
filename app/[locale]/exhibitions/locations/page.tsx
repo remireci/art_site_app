@@ -2,6 +2,16 @@ import { getLocations } from "../../../db/mongo.js";
 import Link from "next/link";
 import { Metadata } from "next";
 import LocationListSearch from "@/components/LocationListSearch";
+import { unstable_setRequestLocale } from "next-intl/server";
+import { locales } from "../../../../i18n.config";
+
+// Regenerate at most once every 24 hours, on request
+export const revalidate = 86400;
+
+// Generate only these three localized directory pages
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 interface LocationsListPageProps {
   params: {
@@ -40,6 +50,8 @@ export default async function LocationsListPage({
   params,
 }: LocationsListPageProps) {
   const { locale } = params;
+
+  unstable_setRequestLocale(locale);
 
   const locations: Array<any> = await getLocations({
     onlyWithExhibitions: true,

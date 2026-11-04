@@ -1,4 +1,6 @@
 import { extractDomain } from "@/utils/extractDomain";
+import { getLocations, getAgendaItems } from "@/db/mongo";
+import { getPublicExhibitionFilter } from "@/lib/map/getPublicExhibitionFilter";
 
 export type MapLocation = {
   latitude: number;
@@ -30,27 +32,39 @@ export type ExhibitionGroup = {
   exhibitions: MapExhibition[];
 };
 
-const BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://www.artnowdatabase.eu"
-    : "http://localhost:3000";
-
 export async function getMapData() {
-  const cacheOption =
-    process.env.NODE_ENV === "development"
-      ? { cache: "no-store" as const }
-      : { next: { revalidate: 300 } };
-
-  const [locationsResponse, exhibitionsResponse] = await Promise.all([
-    fetch(`${BASE_URL}/api/map/locations`, cacheOption),
-    fetch(`${BASE_URL}/api/exhibitions`, cacheOption),
+  const [locationDocs, exhibitionDocs] = await Promise.all([
+    getLocations({ onlyWithExhibitions: true }),
+    getAgendaItems(getPublicExhibitionFilter(), {
+      title: 1,
+      location: 1,
+      url: 1,
+      image_reference: 1,
+    }),
   ]);
 
-  if (!locationsResponse.ok || !exhibitionsResponse.ok) {
-    throw new Error("Failed to fetch map data");
+  if (!Array.isArray(locationDocs) || !Array.isArray(exhibitionDocs)) {
+    throw new Error("Failed to load map data from MongoDB");
   }
 
-  const locations: MapLocation[] = await locationsResponse.json();
+  // Preserve the output of /api/map/locations:
+  // - exclude locations named "N/A"
+  // - remove MongoDB _id
+  // - convert values into plain JSON data
+  const locations: MapLocation[] = JSON.parse(
+    JSON.stringify(
+      locationDocs
+        .filter((location) => location.name !== "N/A")
+        .map(({ _id, ...location }) => location),
+    ),
+  );
+
+  // Preserve the JSON serialization previously performed
+  // by NextResponse.json() and response.json().
+  const sourceExhibitions: MapExhibition[] = JSON.parse(
+    JSON.stringify(exhibitionDocs),
+  );
+
   const today = new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Europe/Brussels",
     year: "numeric",
@@ -58,9 +72,9 @@ export async function getMapData() {
     day: "2-digit",
   }).format(new Date());
 
-  const exhibitions: MapExhibition[] = (
-    await exhibitionsResponse.json()
-  ).filter((exhibition: MapExhibition) => exhibition.date_end_st >= today);
+  const exhibitions: MapExhibition[] = sourceExhibitions.filter(
+    (exhibition) => exhibition.date_end_st >= today,
+  );
 
   const filteredLocations = locations.filter((location) =>
     exhibitions.some(

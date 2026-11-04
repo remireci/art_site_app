@@ -9,7 +9,18 @@ import AdsColumn from "@/components/AdsColumn";
 import { getValidAds } from "@/lib/ads";
 import { convertToDomain } from "@/utils/convertToDomain";
 import { getOptimizedSrc } from "@/utils/getOptimizedSrc";
+import { unstable_setRequestLocale } from "next-intl/server";
+import { locales } from "../../../../../i18n.config";
 import Link from "next/link";
+
+export const revalidate = 43200;
+export const dynamicParams = true;
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({
+    locale,
+  }));
+}
 
 // app/[locale]/exhibitions/locations/[location]/page.tsx
 
@@ -125,6 +136,7 @@ export default async function LocationPage({
   params: { locale: string; location: string };
 }) {
   const { locale, location } = params;
+  unstable_setRequestLocale(locale);
   const messages = await import(
     `../../../../../locales/${locale}/exhibitions.json`
   ).then((m) => m.default);
@@ -197,12 +209,12 @@ export default async function LocationPage({
     .filter((exhibition) => exhibition.date_end_st < today)
     .sort((a, b) => (b.date_end_st ?? "").localeCompare(a.date_end_st ?? ""));
 
-  const rawAds = await getValidAds();
-  const ads: Ad[] = rawAds.map((ad) => ({
-    image_url: ad.image_url,
-    link: ad.link,
-    title: ad.title,
-  }));
+  // const rawAds = await getValidAds();
+  // const ads: Ad[] = rawAds.map((ad) => ({
+  //   image_url: ad.image_url,
+  //   link: ad.link,
+  //   title: ad.title,
+  // }));
 
   const validCities = ["N/A", "null", "", "-", "Unknown"];
 

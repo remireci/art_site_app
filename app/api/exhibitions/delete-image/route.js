@@ -3,11 +3,11 @@ import { deleteImageReference } from "@/db/mongo";
 import { createClient } from "@supabase/supabase-js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
-// Supabase client setup
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_API_KEY
-);
+// // Supabase client setup
+// const supabase = createClient(
+//   process.env.NEXT_PUBLIC_SUPABASE_URL,
+//   process.env.NEXT_PUBLIC_SUPABASE_API_KEY
+// );
 
 // Cloudflare R2 setup
 const cloudflareClient = new S3Client({
@@ -48,7 +48,7 @@ export async function POST(req) {
     if (!imagePath || !exhibitionId) {
       return NextResponse.json(
         { error: "File path is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -62,37 +62,39 @@ export async function POST(req) {
       console.error("Failed to delete image reference in MongoDB");
       return NextResponse.json(
         { error: "Failed to delete image reference in MongoDB" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    if (imagePath.includes("supabase.co/storage")) {
-      // Supabase deletion
-      const newFilePath = imagePath.replace(
-        /^https?:\/\/[^/]+\/storage\/v1\/object\/public\/[^/]+\//,
-        ""
-      );
+    // if (imagePath.includes("supabase.co/storage")) {
+    //   // Supabase deletion
+    //   const newFilePath = imagePath.replace(
+    //     /^https?:\/\/[^/]+\/storage\/v1\/object\/public\/[^/]+\//,
+    //     ""
+    //   );
 
-      console.log("Deleting from Supabase:", newFilePath);
+    //   console.log("Deleting from Supabase:", newFilePath);
 
-      const { data, error } = await supabase.storage
-        .from("Exhibition")
-        .remove([newFilePath]);
+    //   const { data, error } = await supabase.storage
+    //     .from("Exhibition")
+    //     .remove([newFilePath]);
 
-      if (error) {
-        console.error("Error deleting file from Supabase:", error);
-        return NextResponse.json(
-          { error: "Failed to delete file from Supabase" },
-          { status: 500 }
-        );
-      }
+    //   if (error) {
+    //     console.error("Error deleting file from Supabase:", error);
+    //     return NextResponse.json(
+    //       { error: "Failed to delete file from Supabase" },
+    //       { status: 500 }
+    //     );
+    //   }
 
-      console.log("File successfully deleted from Supabase:", data);
-      return NextResponse.json(
-        { success: true, mongoRef, supabaseData: data },
-        { status: 200 }
-      );
-    } else if (imagePath.includes("r2.dev")) {
+    //   console.log("File successfully deleted from Supabase:", data);
+    //   return NextResponse.json(
+    //     { success: true, mongoRef, supabaseData: data },
+    //     { status: 200 }
+    //   );
+    // } else
+
+    if (imagePath.includes("r2.dev")) {
       // Cloudflare R2 deletion
       console.log("Deleting from Cloudflare:", imagePath);
 
@@ -101,7 +103,7 @@ export async function POST(req) {
       if (!cloudflareSuccess) {
         return NextResponse.json(
           { error: "Failed to delete file from Cloudflare" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -111,13 +113,13 @@ export async function POST(req) {
     console.error("Unknown storage provider for image:", imagePath);
     return NextResponse.json(
       { error: "Unknown storage provider" },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     console.error("Error removing image:", error);
     return NextResponse.json(
       { error: "Failed to remove image" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

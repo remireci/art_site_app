@@ -7,6 +7,7 @@ import CookieBanner from "../components/CookieBanner";
 import Footer from "../components/Footer";
 // import CookieConsentPopup from './components/CookieConsentPopup';
 import { NextIntlClientProvider } from "next-intl";
+import { locales, type Locale } from "../../i18n.config";
 import { unstable_setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import ChunkErrorHandler from "./ChunkErrorHandler";
@@ -90,6 +91,11 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }>) {
+  if (!locales.includes(locale as Locale)) {
+    notFound();
+  }
+
+  unstable_setRequestLocale(locale);
   let messages;
   try {
     const commonMessages = (await import(`../../locales/${locale}/common.json`))
@@ -120,11 +126,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
-        <script
+        {/* <script
           defer
           src="https://umami-loopbaantest-bitter-flower-1931.fly.dev/script.js"
           data-website-id="3619ca21-8cc6-4766-97a3-0266e8e0d441"
-        ></script>
+        ></script> */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={addJsonLd()}

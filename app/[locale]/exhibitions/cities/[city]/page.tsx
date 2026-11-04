@@ -9,15 +9,16 @@ import { getCanonicalCityName } from "@/utils/getCanonicalCityName";
 import VenueFilter from "@/components/VenueFilter";
 import { interleaveByVenue } from "@/utils/interleaveByVenue";
 import { getDisplayVenueGroup } from "@/utils/getDisplayVenueGroup";
+import { unstable_setRequestLocale } from "next-intl/server";
+import { locales } from "../../../../../i18n.config";
 // import {
 //   SEO_CITY_ROUTE_BY_CITY_SLUG,
 //   THIS_WEEK_CITY_ROUTE_BY_CITY_SLUG,
 // } from "@/data/city-seo-config";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-export const revalidate = 0;
+export const revalidate = 43200;
+export const dynamicParams = true;
 
 type Exhibition = {
   _id: string | { toString: () => string };
@@ -41,6 +42,13 @@ function normalizeCitySlugForSeo(slug: string) {
   if (lower === "brussel") return "brussels";
   if (lower === "zürich") return "zurich";
   return lower;
+}
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({
+    locale,
+    city: "brussels",
+  }));
 }
 
 export async function generateMetadata({
@@ -152,9 +160,13 @@ export default async function CityPage({
   params: { locale: string; city: string };
 }) {
   const { locale, city: slug } = params;
+
+  unstable_setRequestLocale(locale);
+
   const messages = await import(
     `../../../../../locales/${locale}/exhibitions.json`
   ).then((m) => m.default);
+
   const serverSideExhibitions = await getExhibitionsForCity(slug);
 
   const exhibitions = serverSideExhibitions.exhibitions;
@@ -241,12 +253,12 @@ export default async function CityPage({
   const showVenueFilters =
     currentExhibitions.length + upcomingExhibitions.length > 8;
 
-  const rawAds = await getValidAds();
-  const ads: Ad[] = rawAds.map((ad) => ({
-    image_url: ad.image_url,
-    link: ad.link,
-    title: ad.title,
-  }));
+  // const rawAds = await getValidAds();
+  // const ads: Ad[] = rawAds.map((ad) => ({
+  //   image_url: ad.image_url,
+  //   link: ad.link,
+  //   title: ad.title,
+  // }));
   // const normalizedSlug = normalizeCitySlugForSeo(slug);
   // const seoCityRoute = SEO_CITY_ROUTE_BY_CITY_SLUG[normalizedSlug];
   // const thisWeekRoute = THIS_WEEK_CITY_ROUTE_BY_CITY_SLUG[normalizedSlug];

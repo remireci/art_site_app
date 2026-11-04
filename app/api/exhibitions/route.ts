@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getAgendaItems, addExhibition } from "../../db/mongo.js";
+import { getPublicExhibitionFilter } from "@/lib/map/getPublicExhibitionFilter";
 
 export async function GET(
   req: NextRequest,
@@ -9,35 +10,7 @@ export async function GET(
     const { searchParams } = new URL(req.url);
     const domain = searchParams.get("domain");
 
-    const currentDateString = new Date().toISOString().split("T")[0];
-
-    const upperDateLimit = "2048-06-16";
-
-    const baseFilter: any = {
-      show: true,
-      image_reference: {
-        $exists: true,
-        $ne: [],
-      },
-      date_end_st: {
-        $gt: currentDateString,
-        $lt: upperDateLimit,
-        $regex: /^\d{4}-\d{2}-\d{2}$/, // Only valid YYYY-MM-DD format
-      },
-      $or: [
-        { date_begin_st: { $exists: false } },
-        { date_begin_st: null },
-        { date_begin_st: "" },
-        { date_begin_st: { $not: { $regex: /^\d{4}-\d{2}-\d{2}$/ } } },
-        {
-          date_begin_st: {
-            $lte: currentDateString,
-            $regex: /^\d{4}-\d{2}-\d{2}$/, // valid and not in future
-          },
-        },
-      ],
-    };
-
+    const baseFilter = getPublicExhibitionFilter();
     // Override when domain is present
     const filter = domain
       ? {

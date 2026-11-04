@@ -2,13 +2,19 @@ import Search from "../components/Search";
 import ExploreNavigation from "@/components/ExploreNavigation";
 import { extractDomain } from "../utils/extractDomain";
 import { shuffleArray } from "../utils/shuffleArray";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import { locales } from "../../i18n.config";
 import { getValidAds } from "@/lib/ads";
 import Link from "next/link";
 import { getMapData } from "@/lib/map/getMapData";
 // export const runtime = 'edge';
 
-export const revalidate = 300;
+// Regenerate the homepage at most every 12 hours
+export const revalidate = 43200;
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 function getRandomSubset(arr, count) {
   const shuffled = [...arr]; // avoid mutating the original array
@@ -35,6 +41,9 @@ function normalizeExhibition(exh) {
 
 export default async function HomePage({ params }) {
   const { locale } = params;
+
+  unstable_setRequestLocale(locale);
+
   const t = await getTranslations("homepage");
   // const t = await getTranslations();
 
@@ -43,21 +52,21 @@ export default async function HomePage({ params }) {
       ? "https://www.artnowdatabase.eu"
       : "http://localhost:3000";
 
-  const initialSearchTerms = [
-    "pain",
-    "scul",
-    "phot",
-    "imag",
-    "mode",
-    "arch",
-    "ber",
-    "ams",
-    "kunsthal",
-    "dessin",
-  ];
-  const number = initialSearchTerms.length;
-  const indexInitialSearch = Math.floor(Math.random(number) * number);
-  const initialSearchTerm = initialSearchTerms[indexInitialSearch];
+  // const initialSearchTerms = [
+  //   "pain",
+  //   "scul",
+  //   "phot",
+  //   "imag",
+  //   "mode",
+  //   "arch",
+  //   "ber",
+  //   "ams",
+  //   "kunsthal",
+  //   "dessin",
+  // ];
+  // const number = initialSearchTerms.length;
+  // const indexInitialSearch = Math.floor(Math.random(number) * number);
+  // const initialSearchTerm = initialSearchTerms[indexInitialSearch];
 
   try {
     // const cacheOption =
@@ -110,11 +119,11 @@ export default async function HomePage({ params }) {
       normalizeExhibition,
     );
 
-    const extractWords = (title) =>
-      title
-        .toLowerCase()
-        .split(/\s+/) // Split by whitespace
-        .filter((word) => word.length >= 4); // Keep words with at least 4 characters
+    // const extractWords = (title) =>
+    //   title
+    //     .toLowerCase()
+    //     .split(/\s+/) // Split by whitespace
+    //     .filter((word) => word.length >= 4); // Keep words with at least 4 characters
 
     const locationsMap = filteredLocations.reduce((map, location) => {
       // Store array of locations per domain for multi-location case
@@ -123,42 +132,42 @@ export default async function HomePage({ params }) {
       return map;
     }, {});
 
-    const groupedExhibitions = {};
+    // const groupedExhibitions = {};
 
-    for (const exhibition of exhibitions) {
-      const domain = extractDomain(exhibition.url);
-      if (!domain) continue;
+    // for (const exhibition of exhibitions) {
+    //   const domain = extractDomain(exhibition.url);
+    //   if (!domain) continue;
 
-      // Get all locations for this domain
-      const domainLocations = locationsMap[domain] || [];
+    //   // Get all locations for this domain
+    //   const domainLocations = locationsMap[domain] || [];
 
-      // Check if any location is marked as multi-location
-      const hasMultiLocations = domainLocations.some(
-        (loc) => loc.hasMultipleLocations,
-      );
+    //   // Check if any location is marked as multi-location
+    //   const hasMultiLocations = domainLocations.some(
+    //     (loc) => loc.hasMultipleLocations,
+    //   );
 
-      // Create the group key
-      const groupKey = hasMultiLocations
-        ? `${domain}_${exhibition.location}`
-        : domain;
+    //   // Create the group key
+    //   const groupKey = hasMultiLocations
+    //     ? `${domain}_${exhibition.location}`
+    //     : domain;
 
-      // Initialize the group if it doesn't exist
-      if (!groupedExhibitions[groupKey]) {
-        groupedExhibitions[groupKey] = {
-          key: groupKey,
-          domain,
-          location: exhibition.location,
-          exhibitions: [], // This will directly contain the array
-        };
-      }
-      // Push the exhibition directly into the array
-      groupedExhibitions[groupKey].exhibitions.push(exhibition);
-    }
+    //   // Initialize the group if it doesn't exist
+    //   if (!groupedExhibitions[groupKey]) {
+    //     groupedExhibitions[groupKey] = {
+    //       key: groupKey,
+    //       domain,
+    //       location: exhibition.location,
+    //       exhibitions: [], // This will directly contain the array
+    //     };
+    //   }
+    //   // Push the exhibition directly into the array
+    //   groupedExhibitions[groupKey].exhibitions.push(exhibition);
+    // }
 
     // Now you can get your unique exhibitions if needed
-    const uniqueExhibitions = uniqueGroups.flatMap(
-      (group) => group.exhibitions,
-    );
+    // const uniqueExhibitions = uniqueGroups.flatMap(
+    //   (group) => group.exhibitions,
+    // );
 
     // Filter for SMB museum
     // const smbGroups = uniqueGroups.filter(group => group.domain === 'smb.museum');
@@ -211,7 +220,7 @@ export default async function HomePage({ params }) {
       </div>
     );
   } catch (error) {
-    console.error("Error fetching data:", error);
-    return <div>Error loading data. Please try again later.</div>;
+    console.error("Error fetching homepage data:", error);
+    throw error;
   }
 }
